@@ -1,0 +1,14 @@
+.employee-form {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+    box-shadow: 5px 5px 30px 0px rgba(145, 144, 144, 0.75);
+}
+
+.form-container {
+    padding: 25px;
+    display: flex;
+    justify-content: center;
+}

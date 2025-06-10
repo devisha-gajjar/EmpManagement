@@ -1,0 +1,35 @@
+<div class="mat-elevation-z2 form-container">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="employee-form">
+        <h3>{{ form.value.id ? 'Edit Employee' : 'Add New Employee' }}</h3>
+
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>Name</mat-label>
+            <input matInput placeholder="Enter name" formControlName="name" />
+            <mat-error *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+                Name is required.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" placeholder="Enter email" formControlName="email" />
+            <mat-error *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+                Enter a valid email.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>Department</mat-label>
+            <mat-select formControlName="departmentId">
+                <mat-option *ngFor="let dept of departments" [value]="dept.id.toString()">
+                    {{ dept.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+            {{ form.value.id ? 'Update' : 'Add' }}
+        </button>
+        <button mat-button type="button" (click)="cancel()">Cancel</button>
+    </form>
+</div>

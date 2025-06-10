@@ -1,0 +1,24 @@
+<div class="mat-app-background basic-container" style="margin: 24px;">
+    <mat-card class="department-card">
+        <div class="department-header">
+            <h2>Department List</h2>
+            <div class="employee-count">
+                Total Employees: <span class="employee-count-number">{{ totalEmployees }}</span>
+            </div>
+        </div>
+        <mat-list>
+            <mat-list-item class="department-list-header">
+                <span class="dept-id">ID</span>
+                <span class="dept-name">Department Name</span>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            @for(item of department; track item.id){
+            <mat-list-item>
+                <span class="dept-id">{{ item.id }}</span>
+                <span class="dept-name">{{ item.name }}</span>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            }
+        </mat-list>
+    </mat-card>
+</div>
