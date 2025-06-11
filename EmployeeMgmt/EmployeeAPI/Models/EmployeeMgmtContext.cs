@@ -43,6 +43,9 @@ public partial class EmployeeMgmtContext : DbContext
             entity.ToTable("employees");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedOn)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("createdOn");
             entity.Property(e => e.DepartmentId).HasColumnName("department_id");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
@@ -50,6 +53,7 @@ public partial class EmployeeMgmtContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
+            entity.Property(e => e.Salary).HasColumnName("salary");
 
             entity.HasOne(d => d.Department).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.DepartmentId)

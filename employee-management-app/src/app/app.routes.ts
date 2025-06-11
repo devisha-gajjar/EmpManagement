@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { EmployeeListComponent } from './employees/employee-list/employee-list';
-import { DepartmentListComponent } from './department/department-list/department-list';
-import { AboutComponent } from './about/about-info/about-info';
+import { EmployeeListComponent } from './pages/home/employee-list/employee-list';
+import { DepartmentListComponent } from './pages/department/department-list';
+import { AboutComponent } from './pages/about/about-info';
 
 export const routes: Routes = [
   { path: 'home', component: EmployeeListComponent },

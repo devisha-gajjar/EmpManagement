@@ -13,5 +13,9 @@ public partial class Employee
 
     public int DepartmentId { get; set; }
 
+    public decimal? Salary { get; set; }
+
+    public DateTime? CreatedOn { get; set; }
+
     public virtual Department Department { get; set; } = null!;
 }

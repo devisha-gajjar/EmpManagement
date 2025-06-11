@@ -1,13 +1,13 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, OnInit, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { Employee } from '../../models/employee.model';
-import { Department } from '../../models/department.model';
-import { DepartmentService } from '../../services/department';
+import { Employee } from '../../../types/employee.model';
+import { Department } from '../../../types/department.model';
+import { DepartmentService } from '../../../services/department.service';
 
 @Component({
   selector: 'app-employee-form',
@@ -21,18 +21,23 @@ import { DepartmentService } from '../../services/department';
     MatButtonModule
   ],
   templateUrl: './employee-form.html',
-  styleUrl:'./employee-form.css'
+  styleUrl: './employee-form.css'
 })
-  
+
 export class EmployeeFormComponent implements OnInit {
   @Input() employee: Employee | null = null;
-  @Input() departments: Department[] = [];
-  @Output() saved = new EventEmitter<Employee>();
-  @Output() cancelled = new EventEmitter<void>();
+  // @Output() saved = new EventEmitter<Employee>();
+  // @Output() cancelled = new EventEmitter<void>();
+
+  saved = output<Employee>();
+  cancelled = output<void>();
+
+  getDepartmentSubscription: any;
 
   form!: FormGroup;
+  departments: Department[] = [];
 
-  constructor(private fb: FormBuilder, private departmentService: DepartmentService) {}
+  constructor(private fb: FormBuilder, private departmentService: DepartmentService) { }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -42,14 +47,22 @@ export class EmployeeFormComponent implements OnInit {
       departmentId: [this.employee?.departmentId.toString() || '', Validators.required],
     });
 
-    this.departmentService.getDepartments().subscribe({
+    this.getDepartmentSubscription = this.departmentService.getDepartments().subscribe({
       next: (departments) => this.departments = departments,
-      
+
       error: (err) => {
         this.departments = [];
         console.error('Error fetching departments:', err);
       }
     });
+  }
+
+  get name() {
+    return this.form.get('name');
+  }
+
+  get email() {
+    return this.form.get('email');
   }
 
   onSubmit() {
@@ -61,4 +74,9 @@ export class EmployeeFormComponent implements OnInit {
   cancel() {
     this.cancelled.emit();
   }
+
+  ngOnDestroy() {
+    this.getDepartmentSubscription?.unsubscribe();
+  }
+
 }

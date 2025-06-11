@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { EmployeeService } from '../../services/employee';
-import { Employee } from '../../models/employee.model';
+import { EmployeeService } from '../../../services/employee.service';
+import { Employee } from '../../../types/employee.model';
 import { EmployeeFormComponent } from '../employee-form/employee-form';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-employee-list',
@@ -17,21 +18,27 @@ import { MatButtonModule } from '@angular/material/button';
     MatTableModule,
     MatButtonModule],
   templateUrl: "employee-list.html",
-  styleUrl:"employee-list.css"
+  styleUrl: "employee-list.css"
 })
-  
+
 export class EmployeeListComponent {
-  displayedColumns = ['name', 'email', 'departmentName', 'actions'];
+  displayedColumns = ['name', 'email', 'departmentName', 'salary', 'createdOn', 'actions'];
   employees: Employee[] = [];
   selectedEmployee: Employee | null = null;
   showForm = false;
+
+  loadEmpSubscription?: Subscription;
+  deleteEmpSubscription?: Subscription;
+  addEmpSubsciption?: Subscription;
+  updateEmpSubsciption?: Subscription;
+
 
   constructor(private employeeService: EmployeeService) {
     this.loadEmployees();
   }
 
   loadEmployees() {
-    this.employeeService.getEmployees().subscribe((data) => {
+    this.loadEmpSubscription = this.employeeService.getEmployees().subscribe((data) => {
       this.employees = data;
     });
   }
@@ -48,13 +55,13 @@ export class EmployeeListComponent {
 
   onDelete(id: number) {
     if (confirm('Are you sure you want to delete this employee?')) {
-      this.employeeService.deleteEmployee(id).subscribe(() => this.loadEmployees());
+      this.deleteEmpSubscription = this.employeeService.deleteEmployee(id).subscribe(() => this.loadEmployees());
     }
   }
 
   onFormSaved(employee: Employee) {
     if (employee.id) {
-      this.employeeService.updateEmployee(employee.id, employee).subscribe({
+      this.updateEmpSubsciption = this.employeeService.updateEmployee(employee.id, employee).subscribe({
         next: () => {
           this.showForm = false;
           this.loadEmployees();
@@ -64,9 +71,10 @@ export class EmployeeListComponent {
           alert(err.error || 'An error occurred while updating!!');
         }
       });
-    } else {
+    }
+    else {
       const { name, email, departmentId } = employee;
-      this.employeeService.addEmployee({ name, email, departmentId: departmentId.toString() }).subscribe({
+      this.addEmpSubsciption = this.employeeService.addEmployee({ name, email, departmentId: departmentId.toString() }).subscribe({
         next: () => {
           this.showForm = false;
           this.loadEmployees();
@@ -82,4 +90,12 @@ export class EmployeeListComponent {
   onFormCancelled() {
     this.showForm = false;
   }
+
+  ngOnDestroy() {
+    this.loadEmpSubscription?.unsubscribe();
+    this.deleteEmpSubscription?.unsubscribe();
+    this.addEmpSubsciption?.unsubscribe();
+    this.updateEmpSubsciption?.unsubscribe();
+  }
+
 }

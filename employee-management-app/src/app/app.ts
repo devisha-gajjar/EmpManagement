@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { EmployeeService } from '../app/services/employee';
-import { Employee } from './models/employee.model';
-import { NavbarComponent } from './layout/navbar/navbar';
-import { FooterComponent } from './layout/footer/footer';
+import { NavbarComponent } from './shared/components/navbar/navbar';
+import { FooterComponent } from './shared/components/footer/footer';
 import { RouterOutlet } from '@angular/router';
 
 @Component({

@@ -4,4 +4,6 @@ export interface Employee {
   email: string;
   departmentId: number;
   departmentName?: string;
+  salary?: number;
+  createdOn?: Date;
 }

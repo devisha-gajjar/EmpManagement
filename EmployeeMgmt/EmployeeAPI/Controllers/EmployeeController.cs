@@ -27,7 +27,9 @@ public class EmployeeController : ControllerBase
             Name = e.Name,
             Email = e.Email,
             DepartmentName = e.Department.Name,
-            DepartmentId = e.Department.Id
+            DepartmentId = e.Department.Id,
+            Salary = e.Salary,
+            CreatedOn = e.CreatedOn
         }).ToList();
 
         return Ok(employees);
