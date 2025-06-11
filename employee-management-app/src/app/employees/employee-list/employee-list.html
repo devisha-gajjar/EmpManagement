@@ -30,7 +30,7 @@
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let emp">
-                <button matButton="tonal" class="me-2" (click)="onEdit(emp)">Edit</button>
+                <button matButton="tonal" (click)="onEdit(emp)">Edit</button>
                 <button matButton="outlined" (click)="onDelete(emp.id)">Delete</button>
             </td>
         </ng-container>

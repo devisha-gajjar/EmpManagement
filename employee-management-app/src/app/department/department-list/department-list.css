@@ -1,3 +1,7 @@
+.basic-container {
+    margin: 24px;
+}
+
 .department-card {
     max-width: 800px;
     margin: 0 auto;
@@ -15,7 +19,7 @@ mat-list {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-around;
     text-align: center;
     margin-bottom: 16px;
 }
@@ -43,4 +47,12 @@ mat-list-item {
     color: #333;
     margin-left: 20px;
     font-weight: 400;
+}
+
+.employee-count {
+    font-size: 20px;
+    font-weight: 500;
+    border: 1px solid rgb(134, 133, 133);
+    padding: 10px;
+    border-radius: 10px;
 }

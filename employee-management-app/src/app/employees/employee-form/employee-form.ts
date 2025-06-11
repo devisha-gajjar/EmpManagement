@@ -23,6 +23,7 @@ import { DepartmentService } from '../../services/department';
   templateUrl: './employee-form.html',
   styleUrl:'./employee-form.css'
 })
+  
 export class EmployeeFormComponent implements OnInit {
   @Input() employee: Employee | null = null;
   @Input() departments: Department[] = [];
@@ -34,7 +35,6 @@ export class EmployeeFormComponent implements OnInit {
   constructor(private fb: FormBuilder, private departmentService: DepartmentService) {}
 
   ngOnInit() {
-    console.log('Employee input at ngOnInit:', this.employee);
     this.form = this.fb.group({
       id: [this.employee?.id],
       name: [this.employee?.name || '', Validators.required],

@@ -10,7 +10,12 @@ import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, EmployeeFormComponent, MatTableModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    EmployeeFormComponent,
+    MatTableModule,
+    MatButtonModule],
   templateUrl: "employee-list.html",
   styleUrl:"employee-list.css"
 })

@@ -17,10 +17,7 @@ import { EmployeeService } from '../../services/employee';
 })
   
 export class DepartmentListComponent {
-  displayedColumns = ['id', 'name', 'actions'];
   department: Department[] = [];
-  selectedEmployee: Employee | null = null;
-  showForm = false; 
   totalEmployees = 0;
 
   constructor(private departmentService: DepartmentService, private employeeService: EmployeeService) {
@@ -29,7 +26,7 @@ export class DepartmentListComponent {
   }
 
    loadTotalEmployees() {
-    this.employeeService.getEmployees().subscribe(employees => {
+    this.employeeService.getEmployees().subscribe((employees) => {
       this.totalEmployees = employees.length;
     });
   }
