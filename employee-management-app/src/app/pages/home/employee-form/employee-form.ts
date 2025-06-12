@@ -1,4 +1,4 @@
-import { Component, Input, Output, OnInit, output } from '@angular/core';
+import { Component, Input, Output, OnInit, output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,7 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { Employee } from '../../../types/employee.model';
 import { Department } from '../../../types/department.model';
-import { DepartmentService } from '../../../services/department.service';
+import { DepartmentService } from '../../../services/department/department.service';
 
 @Component({
   selector: 'app-employee-form',
@@ -26,11 +26,11 @@ import { DepartmentService } from '../../../services/department.service';
 
 export class EmployeeFormComponent implements OnInit {
   @Input() employee: Employee | null = null;
-  // @Output() saved = new EventEmitter<Employee>();
-  // @Output() cancelled = new EventEmitter<void>();
+  @Output() saved = new EventEmitter<Employee>();
+  @Output() cancelled = new EventEmitter<void>();
 
-  saved = output<Employee>();
-  cancelled = output<void>();
+  // saved = output<Employee>();
+  // cancelled = output<void>();
 
   getDepartmentSubscription: any;
 

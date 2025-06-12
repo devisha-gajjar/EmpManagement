@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { EmployeeService } from '../../../services/employee.service';
+import { EmployeeService } from '../../../services/employee/employee.service';
 import { Employee } from '../../../types/employee.model';
 import { EmployeeFormComponent } from '../employee-form/employee-form';
 import { MatTableModule } from '@angular/material/table';
@@ -34,6 +34,7 @@ export class EmployeeListComponent {
 
 
   constructor(private employeeService: EmployeeService) {
+    console.log("constructor in emp list");
     this.loadEmployees();
   }
 
@@ -92,6 +93,7 @@ export class EmployeeListComponent {
   }
 
   ngOnDestroy() {
+    console.log("NgOnDestroy in emp list");
     this.loadEmpSubscription?.unsubscribe();
     this.deleteEmpSubscription?.unsubscribe();
     this.addEmpSubsciption?.unsubscribe();

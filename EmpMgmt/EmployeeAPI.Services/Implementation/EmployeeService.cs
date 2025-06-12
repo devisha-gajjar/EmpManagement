@@ -1,0 +1,95 @@
+using EmployeeAPI.Entities.DTO;
+using EmployeeAPI.Entities.Models;
+using EmployeeAPI.Repositories.IRepositories;
+using EmployeeAPI.Services.IServices;
+
+namespace EmployeeAPI.Services.Implementation;
+
+public class EmployeeService : IEmployeeService
+{
+    private readonly IEmployeeRepository _empRepository;
+
+    public EmployeeService(IEmployeeRepository empRepository)
+    {
+        _empRepository = empRepository;
+    }
+
+    public IEnumerable<EmployeeListDTO> GetEmployees()
+    {
+        var employees = _empRepository.GetEmployeesWithDepartments();
+        return employees.Select(e => new EmployeeListDTO
+        {
+            Id = e.Id,
+            Name = e.Name,
+            Email = e.Email,
+            DepartmentName = e.Department?.Name,
+            DepartmentId = e.DepartmentId,
+            Salary = e.Salary,
+            CreatedOn = e.CreatedOn
+        });
+    }
+
+    public AddEmployeeViewModelDTO GetEmployeeById(int id)
+    {
+        var emp = _empRepository.GetEmployeeWithDepartmentById(id);
+        if (emp == null)
+            return null;
+
+        return new AddEmployeeViewModelDTO
+        {
+            Id = emp.Id,
+            Name = emp.Name,
+            Email = emp.Email,
+            DepartmentId = emp.DepartmentId
+        };
+    }
+
+    public bool AddEmployee(AddEmployeeViewModelDTO employeeDto)
+    {
+        if (_empRepository.EmployeeExistsByEmail(employeeDto.Email))
+            return false;
+
+        var emp = new Employee
+        {
+            Name = employeeDto.Name,
+            Email = employeeDto.Email,
+            DepartmentId = employeeDto.DepartmentId
+        };
+
+        _empRepository.Add(emp);
+        _empRepository.Save();
+        return true;
+    }
+
+    public bool UpdateEmployee(int id, AddEmployeeViewModelDTO employeeDto)
+    {
+        if (id != employeeDto.Id)
+            return false;
+
+        var existing = _empRepository.GetById(id);
+        if (existing == null)
+            return false;
+
+        if (existing.Email != employeeDto.Email && _empRepository.EmployeeExistsByEmail(employeeDto.Email))
+            return false;
+
+        existing.Name = employeeDto.Name;
+        existing.Email = employeeDto.Email;
+        existing.DepartmentId = employeeDto.DepartmentId;
+
+        _empRepository.Update(existing);
+        _empRepository.Save();
+        return true;
+    }
+
+    public bool DeleteEmployee(int id)
+    {
+        var emp = _empRepository.GetById(id);
+        if (emp == null)
+            return false;
+
+        _empRepository.Delete(emp);
+        _empRepository.Save();
+        return true;
+    }
+}
