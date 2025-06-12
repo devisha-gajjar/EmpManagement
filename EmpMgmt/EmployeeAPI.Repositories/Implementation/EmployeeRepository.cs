@@ -1,5 +1,6 @@
 using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Entities.Models;
+using EmployeeAPI.Repositories.Implementation;
 using EmployeeAPI.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 

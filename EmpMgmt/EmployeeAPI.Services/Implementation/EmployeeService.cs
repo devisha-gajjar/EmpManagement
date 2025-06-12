@@ -57,7 +57,6 @@ public class EmployeeService : IEmployeeService
         };
 
         _empRepository.Add(emp);
-        _empRepository.Save();
         return true;
     }
 
@@ -78,7 +77,6 @@ public class EmployeeService : IEmployeeService
         existing.DepartmentId = employeeDto.DepartmentId;
 
         _empRepository.Update(existing);
-        _empRepository.Save();
         return true;
     }
 
@@ -89,7 +87,6 @@ public class EmployeeService : IEmployeeService
             return false;
 
         _empRepository.Delete(emp);
-        _empRepository.Save();
         return true;
     }
 }

@@ -1,54 +1,58 @@
-namespace EmployeeAPI.Repositories.Repositories;
-
 using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Repositories.IRepositories;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
+
+
+namespace EmployeeAPI.Repositories.Implementation;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    private readonly EmployeeMgmtContext _context;
-    private readonly DbSet<T> _dbSet;
+    protected readonly EmployeeMgmtContext _db;
 
-    public GenericRepository(EmployeeMgmtContext context)
+    public GenericRepository(EmployeeMgmtContext db)
     {
-        _context = context;
-        _dbSet = _context.Set<T>();
+        _db = db;
     }
 
-    public IEnumerable<T> GetAll()
+    public T? GetById(int id)
     {
-        return _dbSet.ToList();
+        return _db.Set<T>().Find(id);
     }
 
-    public T GetById(object id)
+    public IQueryable<T> GetAll()
     {
-        return _dbSet.Find(id);
+        return _db.Set<T>();
     }
 
     public void Add(T entity)
     {
-        _dbSet.Add(entity);
+        _db.Set<T>().Add(entity);
+        Save();
+    }
+
+    public void AddRange(IEnumerable<T> entities)
+    {
+        _db.Set<T>().AddRange(entities);
+        Save();
     }
 
     public void Update(T entity)
     {
-        _dbSet.Attach(entity);
-        _context.Entry(entity).State = EntityState.Modified;
+        _db.Set<T>().Update(entity);
+        Save();
     }
+
+    public void UpdateRange(IEnumerable<T> entities)
+    {
+        _db.Set<T>().UpdateRange(entities);
+        Save();
+    }
+
+    public void Save() => _db.SaveChanges();
 
     public void Delete(T entity)
     {
-        if (_context.Entry(entity).State == EntityState.Detached)
-        {
-            _dbSet.Attach(entity);
-        }
-        _dbSet.Remove(entity);
+        _db.Set<T>().Remove(entity);
+        Save();
     }
 
-    public void Save()
-    {
-        _context.SaveChanges();
-    }
 }

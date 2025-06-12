@@ -1,4 +1,5 @@
 using EmployeeAPI.Entities.Data;
+using EmployeeAPI.Repositories.Implementation;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Repositories.Repositories;
 using EmployeeAPI.Services.Implementation;
@@ -14,6 +15,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICustomService, CustomService>();
 
 builder.Services.AddDbContext<EmployeeMgmtContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -21,6 +24,7 @@ builder.Services.AddDbContext<EmployeeMgmtContext>(options =>
 
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
