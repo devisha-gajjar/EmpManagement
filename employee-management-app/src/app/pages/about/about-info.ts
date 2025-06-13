@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-about-info',
   imports: [MatCardModule, MatDividerModule, MatIconModule],
   templateUrl: './about-info.html',
-  styleUrl: './about-info.css'
+  styleUrl: './about-info.scss'
 })
 export class AboutComponent {
 

@@ -1,1 +1,46 @@
-<p>login works!</p>
+<mat-card appearance="outlined" class="login-card">
+
+    <!-- Add an image at the top -->
+    <img src="assets/images/login.jpg" alt="Login Illustration" class="login-image" />
+
+
+    <h2>Login</h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="submit()">
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email" autocomplete="email" />
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched">
+                Email is required
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched">
+                Please enter a valid email address
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" type="password" autocomplete="current-password" />
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">
+                Password is required
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Buttons container -->
+        <div class="buttons-container">
+            <app-reusable-button type="submit" color="primary" [disabled]="loginForm.invalid">
+                Login
+            </app-reusable-button>
+
+            <app-reusable-button type="button" color="warn" (click)="cancel()">
+                Cancel
+            </app-reusable-button>
+        </div>
+    </form>
+
+    <p class="register-link">
+        Not a user? <a routerLink="/register">Register here</a>
+    </p>
+
+</mat-card>

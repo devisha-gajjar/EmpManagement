@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
     MatIconModule,
     RouterModule],
   templateUrl: "navbar.html",
-  styleUrl: "navbar.css"
+  styleUrl: "navbar.scss"
 })
-  
-export class NavbarComponent {}
+
+export class NavbarComponent { }

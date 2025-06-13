@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-department-list',
   imports: [MatDividerModule, MatListModule, FormsModule, CommonModule, MatCard],
   templateUrl: './department-list.html',
-  styleUrl: './department-list.css'
+  styleUrl: './department-list.scss'
 })
 
 export class DepartmentListComponent {

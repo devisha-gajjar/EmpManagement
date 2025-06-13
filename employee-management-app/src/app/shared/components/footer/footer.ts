@@ -10,7 +10,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
       <span>&copy; 2025 Devisha Gajjar. All rights reserved.</span>
     </mat-toolbar>
   `,
-  styleUrl : "footer.css"
+  styleUrl: "footer.scss"
 })
-  
-export class FooterComponent {}
+
+export class FooterComponent { }

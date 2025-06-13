@@ -18,7 +18,7 @@ import { Subscription } from 'rxjs';
     MatTableModule,
     MatButtonModule],
   templateUrl: "employee-list.html",
-  styleUrl: "employee-list.css"
+  styleUrl: "employee-list.scss"
 })
 
 export class EmployeeListComponent {

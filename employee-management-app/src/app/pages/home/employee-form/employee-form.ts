@@ -21,7 +21,7 @@ import { DepartmentService } from '../../../services/department/department.servi
     MatButtonModule
   ],
   templateUrl: './employee-form.html',
-  styleUrl: './employee-form.css'
+  styleUrl: './employee-form.scss'
 })
 
 export class EmployeeFormComponent implements OnInit {
