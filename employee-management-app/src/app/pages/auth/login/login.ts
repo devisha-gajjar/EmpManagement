@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
       this.authService.login(credentials).subscribe({
         next: (response) => {
           console.log("success", response);
-          localStorage.setItem('token', response.token); // if response includes a token
+          localStorage.setItem('token', response.token); 
           this.router.navigate(['/app/home']);
         },
         error: (err) => {
