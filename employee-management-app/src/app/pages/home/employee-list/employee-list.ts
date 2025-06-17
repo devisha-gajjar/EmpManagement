@@ -73,20 +73,34 @@ export class EmployeeListComponent {
         }
       });
     }
-    else {
-      const { name, email, departmentId } = employee;
-      this.addEmpSubsciption = this.employeeService.addEmployee({ name, email, departmentId: departmentId.toString() }).subscribe({
-        next: () => {
-          this.showForm = false;
-          this.loadEmployees();
-          alert('Employee added successfully!!');
-        },
-        error: (err) => {
-          alert(err.error || 'An error occurred while adding!!');
-        }
-      });
+      else {
+        const { name, email, departmentId, salary } = employee;
+        console.log('Submitting:', {
+          name,
+          email,
+          departmentId: Number(departmentId),
+          salary: Number(salary)
+        });
+
+        this.addEmpSubsciption = this.employeeService.addEmployee({ name, email, departmentId: departmentId.toString(), salary: Number(salary) ?? 0 }).subscribe({
+          next: () => {
+            console.log('Submitting:', {
+              name,
+              email,
+              departmentId: Number(departmentId),
+              salary: Number(salary)
+            });
+
+            this.showForm = false;
+            this.loadEmployees();
+            alert('Employee added successfully!!');
+          },
+          error: (err) => {
+            alert(err.error || 'An error occurred while adding!!');
+          }
+        });
+      }
     }
-  }
 
   onFormCancelled() {
     this.showForm = false;

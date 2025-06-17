@@ -27,6 +27,14 @@
             </mat-select>
         </mat-form-field>
 
+        <mat-form-field appearance="outline">
+            <mat-label>Salary</mat-label>
+            <input matInput type="number" placeholder="Enter Salary" formControlName="salary" />
+            <mat-error *ngIf="salary?.invalid && salary?.touched">
+                Enter a valid Salary
+            </mat-error>
+        </mat-form-field>
+
         <button matButton="elevated" color="primary" type="submit" [disabled]="form.invalid">
             {{ form.value.id ? 'Update' : 'Add' }}
         </button>

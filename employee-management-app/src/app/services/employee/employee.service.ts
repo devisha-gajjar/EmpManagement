@@ -15,8 +15,8 @@ export class EmployeeService {
     return this.http.get<Employee[]>(this.apiUrl);
   }
 
-  addEmployee(employee: { name: string; email: string; departmentId: string }): Observable<Employee> {
-    return this.http.post<Employee>(this.apiUrl, employee);
+  addEmployee(employee: { name: string; email: string; departmentId: string; salary: number }): Observable<Employee> {
+    return this.http.post<Employee>(this.apiUrl, { employeeDto: employee });
   }
 
   updateEmployee(id: number, employee: Employee): Observable<void> {

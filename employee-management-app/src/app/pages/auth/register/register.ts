@@ -6,7 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { ReusableButtonComponent } from '../../../shared/components/reusable-button/reusable-button';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { passwordMatchValidator } from '../../../shared/validators/password-match.validator';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-register',
@@ -19,16 +22,20 @@ import { RouterModule, RouterOutlet } from '@angular/router';
     MatButtonModule,
     MatCardModule,
     ReusableButtonComponent,
-    RouterModule
+    RouterModule,
+    MatIcon
   ],
   templateUrl: './register.html',
   styleUrls: ['./register.scss']
 })
-  
+
 export class RegisterComponent implements OnInit {
+  hidePassword = true;
+  hideConfirmPassword = true;
+
   registerForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.registerForm = this.fb.group({
@@ -38,13 +45,13 @@ export class RegisterComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [
         Validators.required,
-        Validators.pattern('^(?=.*[A-Z])(?=.*\\d).+$')  // At least 1 uppercase letter and 1 number
+        Validators.pattern('^(?=.*[A-Z])(?=.*\\d).+$')
       ]],
       confirmPassword: ['', [Validators.required]],
       phone: [''],
       address: [''],
       zipcode: [''],
-    }, { validators: this.passwordMatchValidator });
+    }, { validators: passwordMatchValidator });
   }
 
   passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
@@ -55,9 +62,9 @@ export class RegisterComponent implements OnInit {
 
   submit() {
     if (this.registerForm.valid) {
-      console.log('Register Data:', this.registerForm.value);
-      // Your registration logic here
+      this.toastr.success('Registration Suceessful!!', 'Success')
     } else {
+      this.toastr.error('Registration Failed!!', 'Failed')
       this.registerForm.markAllAsTouched();
     }
   }

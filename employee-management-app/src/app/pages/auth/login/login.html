@@ -1,7 +1,7 @@
 <mat-card appearance="outlined" class="login-card">
 
     <!-- Add an image at the top -->
-    <img src="assets/images/login.jpg" alt="Login Illustration" class="login-image" />
+    <img src="/assets/images/login.jpg" alt="Login Illustration" class="login-image" />
 
 
     <h2>Login</h2>
@@ -21,11 +21,20 @@
 
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Password</mat-label>
-            <input matInput formControlName="password" type="password" autocomplete="current-password" />
+
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password"
+                autocomplete="current-password" />
+
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="'Toggle password visibility'" [attr.aria-pressed]="!hidePassword" type="button">
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+
             <mat-error *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">
                 Password is required
             </mat-error>
         </mat-form-field>
+
 
         <!-- Buttons container -->
         <div class="buttons-container">

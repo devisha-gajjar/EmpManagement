@@ -1,7 +1,11 @@
 <mat-toolbar class="navbar">
     <span class="nav-logo">Employee Management</span>
 
-    <button class="nav-button" matButton routerLink="/home" routerLinkActive="active-link">Home</button>
-    <a class="nav-button" matButton routerLink="/department" routerLinkActive="active-link">Department</a>
-    <button class="nav-button" matButton routerLink="/about" routerLinkActive="active-link">About</button>
+    <button class="nav-button" matButton routerLink="/app/home" routerLinkActive="active-link">Home</button>
+    <a class="nav-button" matButton routerLink="/app/department" routerLinkActive="active-link">Department</a>
+    <button class="nav-button" matButton routerLink="/app/about" routerLinkActive="active-link">About</button>
+
+    <button matIconButton class="logout-btn" (click)="confirmLogout()">
+        <mat-icon>logout</mat-icon>
+    </button>
 </mat-toolbar>

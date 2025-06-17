@@ -33,7 +33,7 @@ namespace EmployeeAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddEmployee(AddEmployeeViewModelDTO employeeDto)
+        public IActionResult AddEmployee([FromBody] AddEmployeeViewModelDTO employeeDto)
         {
             if (!_service.AddEmployee(employeeDto))
                 return BadRequest("Employee Already Exists!!");

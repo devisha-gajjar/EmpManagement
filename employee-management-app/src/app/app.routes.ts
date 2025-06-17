@@ -3,17 +3,10 @@ import { EmployeeListComponent } from './pages/home/employee-list/employee-list'
 import { DepartmentListComponent } from './pages/department/department-list';
 import { AboutComponent } from './pages/about/about-info';
 import { LoginComponent } from './pages/auth/login/login';
+import { RegisterComponent } from './pages/auth/register/register';
 import { MainLayoutComponent } from './layout/main-layout/main-layout';
 import { AuthLayoutComponent } from './layout/auth-layout/auth-layout';
-import { RegisterComponent } from './pages/auth/register/register';
-
-// export const routes: Routes = [
-//   { path: 'home', component: EmployeeListComponent },
-//   { path: 'department', component: DepartmentListComponent },
-//   { path: 'about', component: AboutComponent },
-//   { path: '', component: LoginComponent },
-// ];
-
+import { authGuard } from '../app/gaurds/auth-guard'; // 👈 Import your guard
 
 export const routes: Routes = [
   {
@@ -28,6 +21,8 @@ export const routes: Routes = [
   {
     path: 'app',
     component: MainLayoutComponent,
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
     children: [
       { path: 'home', component: EmployeeListComponent },
       { path: 'department', component: DepartmentListComponent },
@@ -36,4 +31,3 @@ export const routes: Routes = [
   },
   { path: '**', redirectTo: '' }
 ];
-

@@ -53,7 +53,9 @@ public class EmployeeService : IEmployeeService
         {
             Name = employeeDto.Name,
             Email = employeeDto.Email,
-            DepartmentId = employeeDto.DepartmentId
+            DepartmentId = employeeDto.DepartmentId,
+            Salary = employeeDto.Salary,
+            CreatedOn = DateTime.Now
         };
 
         _empRepository.Add(emp);
@@ -75,6 +77,7 @@ public class EmployeeService : IEmployeeService
         existing.Name = employeeDto.Name;
         existing.Email = employeeDto.Email;
         existing.DepartmentId = employeeDto.DepartmentId;
+        existing.Salary = employeeDto.Salary;
 
         _empRepository.Update(existing);
         return true;

@@ -45,6 +45,7 @@ export class EmployeeFormComponent implements OnInit {
       name: [this.employee?.name || '', Validators.required],
       email: [this.employee?.email || '', [Validators.required, Validators.email]],
       departmentId: [this.employee?.departmentId.toString() || '', Validators.required],
+      salary: [this.employee?.salary || 0, Validators.required]
     });
 
     this.getDepartmentSubscription = this.departmentService.getDepartments().subscribe({
@@ -63,6 +64,10 @@ export class EmployeeFormComponent implements OnInit {
 
   get email() {
     return this.form.get('email');
+  }
+
+  get salary() {
+    return this.form.get('salary');
   }
 
   onSubmit() {

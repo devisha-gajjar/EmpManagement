@@ -8,6 +8,8 @@ import { MatCardModule } from '@angular/material/card';
 import { ReusableButtonComponent } from '../../../shared/components/reusable-button/reusable-button';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router, RouterModule } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { MatIcon } from '@angular/material/icon';
 
 
 @Component({
@@ -21,15 +23,17 @@ import { Router, RouterModule } from '@angular/router';
     MatButtonModule,
     MatCardModule,
     ReusableButtonComponent,
-    RouterModule
+    RouterModule,
+    MatIcon
   ],
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
 })
 export class LoginComponent implements OnInit {
+  hidePassword = true;
   loginForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.loginForm = this.fb.group({
@@ -48,12 +52,13 @@ export class LoginComponent implements OnInit {
       this.authService.login(credentials).subscribe({
         next: (response) => {
           console.log("success", response);
-          localStorage.setItem('token', response.token); 
+          localStorage.setItem('token', response.token);
+          this.toastr.success('Login successful!', 'Success');
           this.router.navigate(['/app/home']);
         },
         error: (err) => {
           console.log("error", err);
-
+          this.toastr.error('Login Failed!', 'Error');
         }
       })
     } else {

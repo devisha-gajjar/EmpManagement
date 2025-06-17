@@ -1,0 +1,11 @@
+<div>
+    <h3 mat-dialog-title class="flex modal-header">
+        <mat-icon class="warning-icon">warning</mat-icon>
+        <span>{{ data.title }}</span>
+    </h3>
+    <mat-dialog-content>{{ data.message }}</mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button matButton="filled" [mat-dialog-close]="true">{{ data.confirmText || 'Confirm' }}</button>
+        <button matButton="tonal" mat-dialog-close>{{ data.cancelText || 'Cancel' }}</button>
+    </mat-dialog-actions>
+</div>
