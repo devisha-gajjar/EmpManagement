@@ -35,11 +35,14 @@ namespace EmployeeAPI.Controllers
         [HttpPost]
         public IActionResult AddEmployee([FromBody] AddEmployeeViewModelDTO employeeDto)
         {
-            if (!_service.AddEmployee(employeeDto))
+            var createdEmployee = _service.AddEmployee(employeeDto);
+
+            if (createdEmployee == null)
                 return BadRequest("Employee Already Exists!!");
 
-            return CreatedAtAction(nameof(GetById), new { id = employeeDto.Id }, employeeDto);
+            return CreatedAtAction(nameof(GetById), new { id = createdEmployee.Id }, createdEmployee);
         }
+
 
         [HttpPut("{id}")]
         public IActionResult EditEmployee(int id, AddEmployeeViewModelDTO employeeDto)

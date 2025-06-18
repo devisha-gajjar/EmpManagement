@@ -17,7 +17,7 @@ public class EmployeeService : IEmployeeService
     public IEnumerable<EmployeeListDTO> GetEmployees()
     {
         var employees = _empRepository.GetEmployeesWithDepartments();
-        return employees.Select(e => new EmployeeListDTO
+        return employees.OrderBy(e => e.Id).Select(e => new EmployeeListDTO
         {
             Id = e.Id,
             Name = e.Name,
@@ -44,10 +44,10 @@ public class EmployeeService : IEmployeeService
         };
     }
 
-    public bool AddEmployee(AddEmployeeViewModelDTO employeeDto)
+    public Employee? AddEmployee(AddEmployeeViewModelDTO employeeDto)
     {
         if (_empRepository.EmployeeExistsByEmail(employeeDto.Email))
-            return false;
+            return null;
 
         var emp = new Employee
         {
@@ -59,7 +59,7 @@ public class EmployeeService : IEmployeeService
         };
 
         _empRepository.Add(emp);
-        return true;
+        return _empRepository.GetById(emp.Id);
     }
 
     public bool UpdateEmployee(int id, AddEmployeeViewModelDTO employeeDto)

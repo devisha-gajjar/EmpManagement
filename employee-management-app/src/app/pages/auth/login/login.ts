@@ -10,6 +10,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { MatIcon } from '@angular/material/icon';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @Component({
@@ -33,7 +34,12 @@ export class LoginComponent implements OnInit {
   hidePassword = true;
   loginForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private toastr: ToastrService) { }
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private toastr: ToastrService,
+    private cookieService: CookieService) { }
 
   ngOnInit() {
     this.loginForm = this.fb.group({
@@ -42,25 +48,57 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  // submit() {
+  //   if (this.loginForm.valid) {
+  //     const credentials = {
+  //       UsernameOrEmail: this.loginForm.value.email,
+  //       Password: this.loginForm.value.password
+  //     }
+
+  //     this.authService.login(credentials).subscribe({
+  //       next: (response) => {
+  //         console.log("success", response);
+  //         localStorage.setItem('token', response.token);
+  //         this.toastr.success('Login successful!', 'Success');
+  //         this.router.navigate(['/app/home']);
+  //       },
+  //       error: (err) => {
+  //         console.log("error", err);
+  //         this.toastr.error('Login Failed!', 'Error');
+  //       }
+  //     })
+  //   } else {
+  //     this.loginForm.markAllAsTouched();
+  //   }
+  // }
+
   submit() {
     if (this.loginForm.valid) {
       const credentials = {
         UsernameOrEmail: this.loginForm.value.email,
         Password: this.loginForm.value.password
-      }
+      };
 
       this.authService.login(credentials).subscribe({
         next: (response) => {
           console.log("success", response);
-          localStorage.setItem('token', response.token);
+
+          // Store token in cookie with 1-hour expiry
+          const expireDate = new Date();
+          expireDate.setHours(expireDate.getHours() + 1);
+          this.cookieService.set('token', response.token, expireDate, '/', '', true, 'Strict');
+
           this.toastr.success('Login successful!', 'Success');
+          console.log('Navigating to /app/home');
           this.router.navigate(['/app/home']);
+
+          // this.router.navigate(['/app/home']);
         },
         error: (err) => {
           console.log("error", err);
           this.toastr.error('Login Failed!', 'Error');
         }
-      })
+      });
     } else {
       this.loginForm.markAllAsTouched();
     }

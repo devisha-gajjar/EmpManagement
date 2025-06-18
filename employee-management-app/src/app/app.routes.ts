@@ -6,7 +6,7 @@ import { LoginComponent } from './pages/auth/login/login';
 import { RegisterComponent } from './pages/auth/register/register';
 import { MainLayoutComponent } from './layout/main-layout/main-layout';
 import { AuthLayoutComponent } from './layout/auth-layout/auth-layout';
-import { authGuard } from '../app/gaurds/auth-guard'; // 👈 Import your guard
+import { authGuard } from '../app/gaurds/auth-guard'; 
 
 export const routes: Routes = [
   {

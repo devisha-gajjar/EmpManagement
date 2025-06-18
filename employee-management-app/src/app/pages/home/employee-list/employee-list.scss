@@ -1,8 +1,22 @@
-.flex {
-    display: flex;
-    justify-content: space-between;
+@use 'base' as *;
+
+table {
+  margin-bottom: 20px;
 }
 
-.basic-container {
-    margin: 25px;
+
+.basic-container{
+    margin: 2rem;
+}
+
+.search-container {
+  margin: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.search-field {
+  width: 300px;
+  max-width: 100%;
 }

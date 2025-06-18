@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm-dialog/confirm-dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-navbar',
@@ -19,7 +20,10 @@ import { MatDialog } from '@angular/material/dialog';
 })
 
 export class NavbarComponent {
-  constructor(private dialog: MatDialog, private router: Router) { }
+  constructor(
+    private dialog: MatDialog,
+    private router: Router,
+    private cookieService: CookieService) { }
 
   confirmLogout() {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -43,7 +47,7 @@ export class NavbarComponent {
   }
 
   logout() {
-    localStorage.removeItem('token');
+    this.cookieService.delete('token', '/');
     this.router.navigate(['/login']);
   }
 }
