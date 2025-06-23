@@ -14,4 +14,8 @@ export class AuthService {
     login(credentials: any): Observable<any> {
         return this.http.post(this.apiUrl + "login", credentials);
     }
+
+    googleLogin(data: { idToken: string }) {
+        return this.http.post<{ token: string }>(`${this.apiUrl}google-login`, data);
+    }
 }

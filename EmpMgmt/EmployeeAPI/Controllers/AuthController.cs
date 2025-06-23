@@ -3,6 +3,8 @@ using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Google.Apis.Auth;
+using EmployeeAPI.Entities.Data;
 
 namespace EmployeeAPI.Controllers;
 
@@ -13,9 +15,14 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
 
-    public AuthController(IAuthService authService)
+    private readonly EmployeeMgmtContext _db;
+    private readonly ICustomService _customService;
+
+    public AuthController(IAuthService authService, EmployeeMgmtContext db, ICustomService customService)
     {
         _authService = authService;
+        _db = db;
+        _customService = customService;
     }
 
     [HttpPost("register")]
@@ -47,6 +54,48 @@ public class AuthController : ControllerBase
         var token = _authService.Login(dto.UsernameOrEmail, dto.Password);
         if (token == null)
             return Unauthorized("Invalid username/email or password.");
+
+        return Ok(new { Token = token });
+    }
+
+
+
+    [HttpPost("google-login")]
+    public IActionResult GoogleLogin([FromBody] GoogleLoginDTO dto)
+    {
+        GoogleJsonWebSignature.Payload payload;
+
+        try
+        {
+            // Blocking call instead of async/await
+            payload = GoogleJsonWebSignature.ValidateAsync(dto.IdToken).Result;
+        }
+        catch
+        {
+            return BadRequest("Invalid Google token.");
+        }
+
+        var user = _db.Users.FirstOrDefault(u => u.Email == payload.Email && !u.IsDeleted);
+        if (user == null)
+        {
+            user = new User
+            {
+                Email = payload.Email,
+                FirstName = payload.GivenName,
+                LastName = payload.FamilyName,
+                Username = payload.Email, // or generate unique username
+                Password = "", // no password for Google login
+                RoleId = 2, // default role id
+                CreatedOn = DateTime.Now,
+                IsDeleted = false,
+                ProfilePicture = payload.Picture
+            };
+
+            _db.Users.Add(user);
+            _db.SaveChanges();
+        }
+
+        var token = _customService.GenerateJwtToken(user.Username);
 
         return Ok(new { Token = token });
     }
