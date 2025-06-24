@@ -11,8 +11,10 @@ import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { MatIcon } from '@angular/material/icon';
 import { CookieService } from 'ngx-cookie-service';
+import { environment } from '../../../../environments/environment';
 
 declare const google: any;  // Declare the google variable from the Google Identity Services SDK
+declare const FB: any;
 
 @Component({
   selector: 'app-login',
@@ -51,12 +53,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Initialize Google Identity Services button
     console.log("hello reach ngafterview")
     if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
       console.log("if account id")
       google.accounts.id.initialize({
-        client_id: '766613231208-vtvrekunpd3j4lg4j31ropef2vq1uspe.apps.googleusercontent.com',
+        client_id: environment.googleClientId,
         callback: (response: any) => {
           this.handleGoogleResponse(response);
           console.log("response" + response);
@@ -89,6 +90,27 @@ export class LoginComponent implements OnInit, AfterViewInit {
     });
   }
 
+  loginWithFacebook() {
+    FB.login((response: any) => {
+      if (response.authResponse) {
+        const accessToken = response.authResponse.accessToken;
+
+        this.authService.facebookLogin({ accessToken }).subscribe({
+          next: (res) => {
+            this.cookieService.set('token', res.token);
+            this.toastr.success('Facebook login successful');
+            this.router.navigate(['/app/home']);
+          },
+          error: () => {
+            this.toastr.error('Facebook login failed');
+          }
+        });
+      } else {
+        this.toastr.error('Facebook login cancelled or failed');
+      }
+    }, { scope: 'email,public_profile' });
+  }
+
   submit() {
     if (this.loginForm.valid) {
       const credentials = {
@@ -98,7 +120,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
       this.authService.login(credentials).subscribe({
         next: (response) => {
-          // Store token in cookie with 1-hour expiry
           const expireDate = new Date();
           expireDate.setHours(expireDate.getHours() + 1);
           this.cookieService.set('token', response.token, expireDate, '/', '', true, 'Strict');

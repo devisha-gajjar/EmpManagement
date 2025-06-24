@@ -1,3 +1,4 @@
+using System.Text;
 using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Repositories.Implementation;
 using EmployeeAPI.Repositories.IRepositories;
@@ -5,7 +6,9 @@ using EmployeeAPI.Repositories.Repositories;
 using EmployeeAPI.Services.Implementation;
 using EmployeeAPI.Services.IServices;
 using EmployeeAPI.Services.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +40,32 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+            {
+                if (context.Request.Cookies.ContainsKey("Token"))
+                {
+                    context.Token = context.Request.Cookies["Token"];
+                }
+                return Task.CompletedTask;
+            }
+    };
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+    };
+});
+
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()!;
 
 builder.Services.AddCors(options =>
@@ -62,6 +91,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

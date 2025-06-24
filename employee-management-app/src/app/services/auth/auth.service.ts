@@ -15,7 +15,11 @@ export class AuthService {
         return this.http.post(this.apiUrl + "login", credentials);
     }
 
-    googleLogin(data: { idToken: string }) {
-        return this.http.post<{ token: string }>(`${this.apiUrl}google-login`, data);
+    googleLogin(data: { idToken: string }): Observable<any> {
+        return this.http.post(`${this.apiUrl}google-login`, data);
+    }
+
+    facebookLogin(data: { accessToken: string }): Observable<any> {
+        return this.http.post(`${this.apiUrl}facebook-login`, data);
     }
 }
