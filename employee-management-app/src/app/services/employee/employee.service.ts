@@ -12,18 +12,19 @@ export class EmployeeService {
   constructor(private http: HttpClient) { }
 
   getEmployees(): Observable<Employee[]> {
-    return this.http.get<Employee[]>(this.apiUrl);
+    return this.http.get<Employee[]>(this.apiUrl, { withCredentials: true });
   }
 
   addEmployee(employee: { name: string; email: string; departmentId: string; salary: number; }): Observable<Employee> {
-    return this.http.post<Employee>(this.apiUrl, employee);
+    return this.http.post<Employee>(this.apiUrl, employee, { withCredentials: true });
   }
 
   updateEmployee(id: number, employee: Employee): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}`, employee);
+    return this.http.put<void>(`${this.apiUrl}/${id}`, employee, { withCredentials: true });
   }
 
   deleteEmployee(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
+
 }

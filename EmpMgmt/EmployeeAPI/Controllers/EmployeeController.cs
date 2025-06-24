@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EmployeeAPI.Controllers
 {
     [EnableCors("AllowAll")]
     [ApiController]
     [Route("api/Employee")]
+    [Authorize]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _service;
