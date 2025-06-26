@@ -1,10 +1,7 @@
 import { Component, Input, Output, OnInit, output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
+import { materialImports } from '../../../shared/material';
 import { Employee } from '../../../types/employee.model';
 import { Department } from '../../../types/department.model';
 import { DepartmentService } from '../../../services/department/department.service';
@@ -15,10 +12,7 @@ import { DepartmentService } from '../../../services/department/department.servi
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule
+    ...materialImports
   ],
   templateUrl: './employee-form.html',
   styleUrl: './employee-form.scss'

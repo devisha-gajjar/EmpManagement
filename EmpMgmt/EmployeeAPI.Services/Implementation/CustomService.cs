@@ -38,7 +38,7 @@ public class CustomService : ICustomService
     {
         User? user = _userRepository.GetAll().Include(u => u.Role).FirstOrDefault(u => u.Username == name);
 
-        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+        JwtSecurityTokenHandler tokenHandler = new();
         byte[] key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]!);
 
         Claim[]? authClaims = new[]

@@ -3,16 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Department } from '../../types/department.model';
 import { DepartmentService } from '../../services/department/department.service';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatListModule } from '@angular/material/list';
-import { MatCard } from '@angular/material/card';
 import { EmployeeService } from '../../services/employee/employee.service';
 import { Subscription } from 'rxjs';
+import { materialImports } from '../../shared/material';
 
 
 @Component({
   selector: 'app-department-list',
-  imports: [MatDividerModule, MatListModule, FormsModule, CommonModule, MatCard],
+  imports: [
+    FormsModule,
+    CommonModule,
+    ...materialImports
+  ],
   templateUrl: './department-list.html',
   styleUrl: './department-list.scss'
 })

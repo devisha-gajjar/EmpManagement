@@ -1,19 +1,17 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
+export const authGuard: CanActivateFn = () => {
+  const router = inject(Router);
   const cookieService = inject(CookieService);
+
   const token = cookieService.get('token');
 
   if (token) {
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return next(cloned);
+    return true;
+  } else {
+    router.navigate(['/login']);
+    return false;
   }
-
-  return next(req);
 };

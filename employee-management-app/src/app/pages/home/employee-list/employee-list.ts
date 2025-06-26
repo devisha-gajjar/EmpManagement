@@ -4,14 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { EmployeeService } from '../../../services/employee/employee.service';
 import { Employee } from '../../../types/employee.model';
 import { EmployeeFormComponent } from '../employee-form/employee-form';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { materialImports } from '../../../shared/material';
 import { Subscription } from 'rxjs';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-employee-list',
@@ -20,13 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
     CommonModule,
     FormsModule,
     EmployeeFormComponent,
-    MatTableModule,
-    MatButtonModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule
+    ...materialImports
   ],
   templateUrl: './employee-list.html',
   styleUrl: './employee-list.scss'

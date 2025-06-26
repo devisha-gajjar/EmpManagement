@@ -1,112 +1,47 @@
 <mat-card appearance="outlined" class="register-card">
-
     <h2>Register</h2>
 
     <form [formGroup]="registerForm" (ngSubmit)="submit()">
 
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>First Name</mat-label>
-            <input matInput formControlName="first_name" />
-            <mat-error *ngIf="firstName?.hasError('required') && firstName?.touched">
-                First name is required.
-            </mat-error>
-            <mat-error *ngIf="firstName?.hasError('maxlength') && firstName?.touched">
-                First name cannot be longer than 255 characters.
-            </mat-error>
-        </mat-form-field>
+        <app-reusable-mat-input label="First Name" formControlName="first_name" type="text"
+            autocomplete="given-name"></app-reusable-mat-input>
 
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Last Name</mat-label>
-            <input matInput formControlName="last_name" />
-        </mat-form-field>
+        <app-reusable-mat-input label="Last Name" formControlName="last_name" type="text"
+            autocomplete="family-name"></app-reusable-mat-input>
 
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Username</mat-label>
-            <input matInput formControlName="username" />
-        </mat-form-field>
+        <app-reusable-mat-input label="Username" formControlName="username" type="text"
+            autocomplete="username"></app-reusable-mat-input>
 
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email" />
-            <mat-error *ngIf="email?.hasError('required') && email?.touched">
-                Email is required.
-            </mat-error>
-            <mat-error *ngIf="email?.hasError('email') && email?.touched">
-                Enter a valid email.
-            </mat-error>
-        </mat-form-field>
+        <app-reusable-mat-input label="Email" formControlName="email" type="email"
+            autocomplete="email"></app-reusable-mat-input>
 
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Password</mat-label>
+        <app-reusable-mat-input label="Password" formControlName="password" type="password"
+            autocomplete="new-password"></app-reusable-mat-input>
 
-            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password"
-                autocomplete="current-password" />
+        <app-reusable-mat-input label="Confirm Password" formControlName="confirmPassword" type="password"
+            autocomplete="new-password"></app-reusable-mat-input>
 
-            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
-                [attr.aria-label]="'Toggle password visibility'" [attr.aria-pressed]="!hidePassword" type="button">
-                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
+        <app-reusable-mat-input label="Phone" formControlName="phone" type="tel"
+            autocomplete="tel"></app-reusable-mat-input>
 
-            <mat-error *ngIf="password?.hasError('required') && password?.touched">
-                Password is required
-            </mat-error>
-            <mat-error *ngIf="password?.hasError('pattern') && password?.touched">
-                Password must contain at least 1 uppercase letter and 1 number.
-            </mat-error>
-        </mat-form-field>
+        <app-reusable-mat-input label="Address" formControlName="address" type="text"
+            autocomplete="street-address"></app-reusable-mat-input>
 
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Confirm Password</mat-label>
-
-            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword"
-                autocomplete="current-password" />
-
-            <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword"
-                [attr.aria-label]="'Toggle confirm password visibility'" [attr.aria-pressed]="!hideConfirmPassword"
-                type="button">
-                <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-
-            <mat-error *ngIf="confirmPassword?.hasError('required') && confirmPassword?.touched">
-                Confirm Password is required.
-            </mat-error>
-            <mat-error *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched"
-                class="text-danger">
-                Passwords do not match
-            </mat-error>
-            <!-- <mat-error *ngIf="confirmPassword?.hasError('passwordMismatch') && confirmPassword?.touched">
-                Passwords do not match.2
-            </mat-error> -->
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Phone</mat-label>
-            <input matInput formControlName="phone" />
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Address</mat-label>
-            <textarea matInput formControlName="address"></textarea>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Zipcode</mat-label>
-            <input matInput formControlName="zipcode" />
-        </mat-form-field>
+        <app-reusable-mat-input label="Zipcode" formControlName="zipcode" type="text"
+            autocomplete="postal-code"></app-reusable-mat-input>
 
         <div class="buttons-container">
-            <app-reusable-button type="submit" color="primary" [disabled]="registerForm.invalid">
+            <button type="submit" color="primary" mat-raised-button [disabled]="registerForm.invalid">
                 Register
-            </app-reusable-button>
+            </button>
 
-            <app-reusable-button type="button" color="warn" (click)="cancel()">
+            <button type="button" color="warn" mat-raised-button (click)="cancel()">
                 Cancel
-            </app-reusable-button>
+            </button>
         </div>
     </form>
 
     <p class="login-link">
-        Alredy a user? <a routerLink="/login">Login here</a>
+        Already a user? <a routerLink="/login">Login here</a>
     </p>
-
 </mat-card>

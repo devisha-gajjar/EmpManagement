@@ -1,19 +1,16 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { ReusableButtonComponent } from '../../../shared/components/reusable-button/reusable-button';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { MatIcon } from '@angular/material/icon';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../../../environments/environment';
+import { materialImports } from '../../../shared/material';
+import { ReusableMatInputComponent } from '../../../shared/components/reusable-mat-input/reusable-mat-input';
 
-declare const google: any;  // Declare the google variable from the Google Identity Services SDK
+declare const google: any;
 declare const FB: any;
 
 @Component({
@@ -22,18 +19,15 @@ declare const FB: any;
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCardModule,
     ReusableButtonComponent,
     RouterModule,
-    MatIcon
+    ReusableMatInputComponent,
+    ...materialImports
   ],
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
 })
-export class LoginComponent implements OnInit, AfterViewInit {
+export class LoginComponent implements OnInit {
   hidePassword = true;
   loginForm!: FormGroup;
 
@@ -50,10 +44,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
-  }
 
-  ngAfterViewInit() {
-    console.log("hello reach ngafterview")
     if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
       console.log("if account id")
       google.accounts.id.initialize({

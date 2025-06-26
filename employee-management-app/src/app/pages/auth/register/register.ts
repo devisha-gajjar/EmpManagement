@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
 import { ReusableButtonComponent } from '../../../shared/components/reusable-button/reusable-button';
 import { RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { passwordMatchValidator } from '../../../shared/validators/password-match.validator';
-import { MatIcon } from '@angular/material/icon';
+import { materialImports } from '../../../shared/material';
+import { ReusableMatInputComponent } from '../../../shared/components/reusable-mat-input/reusable-mat-input';
 
 @Component({
   selector: 'app-register',
@@ -17,13 +14,10 @@ import { MatIcon } from '@angular/material/icon';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCardModule,
     ReusableButtonComponent,
     RouterModule,
-    MatIcon
+    ReusableMatInputComponent,
+    ...materialImports
   ],
   templateUrl: './register.html',
   styleUrls: ['./register.scss']

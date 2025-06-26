@@ -8,35 +8,12 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="submit()">
 
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" type="email" autocomplete="email" />
-            <mat-error *ngIf="loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched">
-                Email is required
-            </mat-error>
-            <mat-error *ngIf="loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched">
-                Please enter a valid email address
-            </mat-error>
-        </mat-form-field>
+        <app-reusable-mat-input label="Email" formControlName="email" type="email"
+            autocomplete="email"></app-reusable-mat-input>
 
-        <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Password</mat-label>
+        <app-reusable-mat-input label="Password" formControlName="password" type="password"
+            autocomplete="current-password"></app-reusable-mat-input>
 
-            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password"
-                autocomplete="current-password" />
-
-            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
-                [attr.aria-label]="'Toggle password visibility'" [attr.aria-pressed]="!hidePassword" type="button">
-                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-
-            <mat-error *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">
-                Password is required
-            </mat-error>
-        </mat-form-field>
-
-
-        <!-- Buttons container -->
         <div class="buttons-container">
             <app-reusable-button type="submit" color="primary" [disabled]="loginForm.invalid">
                 Login
