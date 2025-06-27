@@ -1,13 +1,10 @@
 <mat-card appearance="outlined" class="login-card">
-
-    <!-- Add an image at the top -->
     <img src="/assets/images/login.jpg" alt="Login Illustration" class="login-image" />
-
 
     <h2>Login</h2>
 
     <form [formGroup]="loginForm" (ngSubmit)="submit()">
-
+        <!-- Use formControlName for both inputs for consistency -->
         <app-reusable-mat-input label="Email" formControlName="email" type="email"
             autocomplete="email"></app-reusable-mat-input>
 
@@ -30,10 +27,10 @@
     </p>
 
     <div id="googleSignInDiv">login with google</div>
+
     <div>
         <button (click)="loginWithFacebook()" class="facebook-button">
             Login with Facebook
         </button>
     </div>
-
 </mat-card>

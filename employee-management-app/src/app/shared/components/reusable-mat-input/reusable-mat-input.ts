@@ -1,55 +1,43 @@
-import { Component, Input, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, NgControl } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { Component, Input, OnInit, Optional, Self } from '@angular/core';
+import { ControlValueAccessor, NgControl, FormControl, Validators } from '@angular/forms';
+import { MatError, MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-reusable-mat-input',
-  standalone: true,
+  templateUrl: './reusable-mat-input.html',
+  styleUrls: ['./reusable-mat-input.scss'],
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-  ],
-  templateUrl: './reusable-mat-input.html',
-  styleUrl: './reusable-mat-input.scss',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ReusableMatInputComponent),
-      multi: true,
-    },
-  ],
+    CommonModule
+  ]
 })
-export class ReusableMatInputComponent implements ControlValueAccessor {
-  @Input() label = '';
-  @Input() type = 'text';
-  @Input() autocomplete = '';
+export class ReusableMatInputComponent implements ControlValueAccessor, OnInit {
+  @Input() label: string = '';
+  @Input() type: string = 'text';
+  @Input() autocomplete: string = '';
+  @Input() formControl?: FormControl;
 
-  value = '';
+  value: any = '';
   disabled = false;
-  hidePassword = true;
 
-  control: NgControl | null = null;
-
-  get inputType() {
-    if (this.type === 'password') {
-      return this.hidePassword ? 'password' : 'text';
-    }
-    return this.type;
-  }
-
-  private onChange = (_: any) => { };
+  onChange = (_: any) => { };
   onTouched = () => { };
 
-  writeValue(value: any): void {
-    this.value = value ?? '';
+  constructor(@Optional() @Self() public ngControl: NgControl) {
+    if (this.ngControl != null) {
+      this.ngControl.valueAccessor = this;
+    }
+  }
+
+  ngOnInit() {
+    // You can add extra initialization if needed
+  }
+
+  writeValue(obj: any): void {
+    this.value = obj;
   }
 
   registerOnChange(fn: any): void {
@@ -60,17 +48,46 @@ export class ReusableMatInputComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  setDisabledState?(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
 
-  onInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.value = input.value;
-    this.onChange(this.value);
+  onInput(event: any) {
+    const value = event.target.value;
+    this.value = value;
+    this.onChange(value);
   }
 
-  togglePasswordVisibility() {
-    this.hidePassword = !this.hidePassword;
+  onBlur() {
+    this.onTouched();
+    if (this.ngControl?.control) {
+      this.ngControl.control.markAsTouched();
+    }
+  }
+
+
+  // Helper to check if control has errors and has been touched or dirty
+  get showError(): boolean {
+    console.log('Invalid:', this.ngControl?.invalid);
+    console.log('Touched:', this.ngControl?.touched);
+    console.log('Dirty:', this.ngControl?.dirty);
+    console.log('Errors:', this.ngControl?.errors);
+    return !!this.ngControl?.invalid && (!!this.ngControl?.touched || !!this.ngControl?.dirty);
+  }
+
+
+
+
+  get errorMessage(): string | null {
+    if (!this.ngControl || !this.ngControl.errors) return null;
+    const errors = this.ngControl.errors;
+
+    if (errors['required']) return 'This field is required';
+    if (errors['email']) return 'Please enter a valid email address';
+    if (errors['minlength']) return `Minimum length is ${errors['minlength'].requiredLength}`;
+    if (errors['maxlength']) return `Maximum length is ${errors['maxlength'].requiredLength}`;
+    // Add more error messages as needed
+
+    return null;
   }
 }

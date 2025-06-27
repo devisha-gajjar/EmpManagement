@@ -1,14 +1,7 @@
-<mat-form-field appearance="fill" class="full-width">
+<mat-form-field appearance="outline" class="full-width">
     <mat-label>{{ label }}</mat-label>
-    <input matInput [type]="inputType" [value]="value" (input)="onInput($event)" (blur)="onTouched()"
-        [disabled]="disabled" [attr.autocomplete]="autocomplete" />
-    <button *ngIf="type === 'password'" mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()"
-        [attr.aria-label]="'Toggle password visibility'" [attr.aria-pressed]="!hidePassword">
-        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-    </button>
+    <input matInput [type]="type" [autocomplete]="autocomplete" [value]="value ?? ''" (input)="onInput($event)"
+        (blur)="onBlur()" [disabled]="disabled" />
+    <mat-error *ngIf="showError && errorMessage">{{ errorMessage }}</mat-error>
 
-    <mat-error *ngIf="control?.invalid && (control?.dirty || control?.touched)">
-        <ng-container *ngIf="control?.errors?.['required']">{{ label }} is required</ng-container>
-        <ng-container *ngIf="control?.errors?.['email']">Please enter a valid email address</ng-container>
-    </mat-error>
 </mat-form-field>
