@@ -8,6 +8,7 @@ const config: StorybookConfig = {
   "addons": [
     "@storybook/addon-docs"
   ],
+  "staticDirs": ['../src/assets'],
   "framework": {
     "name": "@storybook/angular",
     "options": {}

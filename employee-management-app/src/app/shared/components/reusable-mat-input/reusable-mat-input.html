@@ -1,7 +1,19 @@
 <mat-form-field appearance="outline" class="full-width">
-    <mat-label>{{ label }}</mat-label>
-    <input matInput [type]="type" [autocomplete]="autocomplete" [value]="value ?? ''" (input)="onInput($event)"
-        (blur)="onBlur()" [disabled]="disabled" />
-    <mat-error *ngIf="showError && errorMessage">{{ errorMessage }}</mat-error>
+    <mat-label>{{ label }} <span *ngIf="required" class="required"></span></mat-label>
 
+    <input matInput [type]="type" [formControl]="control" [placeholder]="placeholder" [id]="inputId"
+        [autocomplete]="autocomplete" />
+
+    <!-- <mat-error *ngIf="control?.invalid && (control?.touched || control?.dirty)" [id]="inputId + '-error'">
+        <span *ngIf="control.errors?.['required']">This field is required.</span>
+        <div *ngIf="control.errors?.['email']">Invalid email format.</div>
+    </mat-error> -->
+
+    <mat-error *ngIf="control?.invalid && (control?.touched || control?.dirty)" [id]="inputId + '-error'">
+        <ng-container *ngFor="let errorKey of errorKeys()">
+            <div *ngIf="control.errors?.[errorKey]">
+                {{ getErrorMessage(errorKey, control.errors && control.errors[errorKey]) }}
+            </div>
+        </ng-container>
+    </mat-error>
 </mat-form-field>

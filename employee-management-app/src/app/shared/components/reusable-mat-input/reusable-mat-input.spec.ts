@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ReusableMatInput } from './reusable-mat-input';
+import { ReusableMatInputComponent } from './reusable-mat-input';
 
 describe('ReusableMatInput', () => {
-  let component: ReusableMatInput;
-  let fixture: ComponentFixture<ReusableMatInput>;
+  let component: ReusableMatInputComponent;
+  let fixture: ComponentFixture<ReusableMatInputComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReusableMatInput]
+      imports: [ReusableMatInputComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
-    fixture = TestBed.createComponent(ReusableMatInput);
+    fixture = TestBed.createComponent(ReusableMatInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

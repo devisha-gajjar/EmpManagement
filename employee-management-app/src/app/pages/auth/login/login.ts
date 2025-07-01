@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReusableButtonComponent } from '../../../shared/components/reusable-button/reusable-button';
 import { AuthService } from '../../../services/auth/auth.service';
@@ -9,6 +9,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../../../environments/environment';
 import { materialImports } from '../../../shared/material';
 import { ReusableMatInputComponent } from '../../../shared/components/reusable-mat-input/reusable-mat-input';
+import { VALIDATION_MESSAGES } from '../../../config/validation-messages';
 
 declare const google: any;
 declare const FB: any;
@@ -30,6 +31,7 @@ declare const FB: any;
 export class LoginComponent implements OnInit {
   hidePassword = true;
   loginForm!: FormGroup;
+  validationMessages = VALIDATION_MESSAGES;
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +44,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
 
     if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
@@ -130,4 +132,14 @@ export class LoginComponent implements OnInit {
   cancel() {
     this.loginForm.reset();
   }
+
+  get emailControl(): FormControl {
+    return this.loginForm.get('email') as FormControl;
+  }
+
+  get passwordControl(): FormControl {
+    return this.loginForm.get('password') as FormControl;
+  }
 }
+
+

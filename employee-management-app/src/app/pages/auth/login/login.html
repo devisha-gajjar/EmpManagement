@@ -2,35 +2,30 @@
     <img src="assets/images/login.jpg" alt="Login Illustration" class="login-image" />
 
     <h2>Login</h2>
-
     <form [formGroup]="loginForm" (ngSubmit)="submit()">
-        <!-- Use formControlName for both inputs for consistency -->
-        <app-reusable-mat-input label="Email" formControlName="email" type="email"
-            autocomplete="email"></app-reusable-mat-input>
+        <app-reusable-mat-input label="Email" type="email" [control]="emailControl" [required]="true"
+            [validationMessages]="validationMessages.email" autocomplete=" email"></app-reusable-mat-input>
 
-        <app-reusable-mat-input label="Password" formControlName="password" type="password"
-            autocomplete="current-password"></app-reusable-mat-input>
+        <app-reusable-mat-input label="Password" type="password" [control]="passwordControl" [required]="true"
+            [validationMessages]="validationMessages.password" autocomplete="current-password"></app-reusable-mat-input>
+
 
         <div class="buttons-container">
-            <app-reusable-button type="submit" color="primary" [disabled]="loginForm.invalid">
+            <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
                 Login
-            </app-reusable-button>
-
-            <app-reusable-button type="button" color="warn" (click)="cancel()">
-                Cancel
-            </app-reusable-button>
+            </button>
+            <button mat-button type="button" (click)="cancel()">Cancel</button>
         </div>
     </form>
-
     <p class="register-link">
         Not a user? <a routerLink="/register">Register here</a>
     </p>
 
     <div id="googleSignInDiv">login with google</div>
 
-    <div>
+    <!-- <div>
         <button (click)="loginWithFacebook()" class="facebook-button">
             Login with Facebook
         </button>
-    </div>
+    </div> -->
 </mat-card>
