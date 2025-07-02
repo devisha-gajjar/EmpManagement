@@ -28,7 +28,7 @@ const meta: Meta<LoginComponent> = {
             ],
             providers: [
                 provideHttpClientTesting(),
-                // ✅ Mock AuthService
+                //  Mock AuthService
                 {
                     provide: AuthService,
                     useValue: {
@@ -37,7 +37,7 @@ const meta: Meta<LoginComponent> = {
                         facebookLogin: () => of({ token: 'mock-fb-token' }),
                     },
                 },
-                // ✅ Mock ToastrService
+                //  Mock ToastrService
                 {
                     provide: ToastrService,
                     useValue: {
@@ -45,24 +45,24 @@ const meta: Meta<LoginComponent> = {
                         error: (msg: string) => console.log('Toastr Error:', msg),
                     },
                 },
-                // ✅ Mock CookieService
+                //  Mock CookieService
                 {
                     provide: CookieService,
                     useValue: {
                         set: (...args: any[]) => console.log('Cookie set:', args),
                     },
                 },
-                // ✅ Mock Router
+                //  Mock Router
                 {
                     provide: Router,
                     useValue: {
                         navigate: (commands: string[]) => console.log('Mock navigate:', commands),
-                        createUrlTree: (commands: any[]) => commands, // ✅ mock this to prevent crash
+                        createUrlTree: (commands: any[]) => commands, //  mock this to prevent crash
                         serializeUrl: (urlTree: any) => urlTree.join('/'), // Optional for [routerLink] href
                         events: of({})
                     },
                 },
-                // ✅ Mock ActivatedRoute
+                // Mock ActivatedRoute
                 {
                     provide: ActivatedRoute,
                     useValue: {

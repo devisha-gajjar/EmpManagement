@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeAPI.Repositories", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeAPI.Entities", "EmployeeAPI.Entities\EmployeeAPI.Entities.csproj", "{16B4347F-409A-49AE-8B55-418DD931F3C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeAPI.Tests", "EmployeeAPI.Tests\EmployeeAPI.Tests.csproj", "{2A2504C9-61F7-4AD5-B19E-2DD6A4E32A0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{16B4347F-409A-49AE-8B55-418DD931F3C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16B4347F-409A-49AE-8B55-418DD931F3C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16B4347F-409A-49AE-8B55-418DD931F3C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A2504C9-61F7-4AD5-B19E-2DD6A4E32A0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A2504C9-61F7-4AD5-B19E-2DD6A4E32A0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A2504C9-61F7-4AD5-B19E-2DD6A4E32A0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A2504C9-61F7-4AD5-B19E-2DD6A4E32A0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

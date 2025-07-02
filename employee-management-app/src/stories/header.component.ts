@@ -62,15 +62,11 @@ import type { User } from './user';
   styleUrls: ['./header.css'],
 })
 export class HeaderComponent {
-  @Input()
-  user: User | null = null;
+  @Input() user: User | null = null;
 
-  @Output()
-  onLogin = new EventEmitter<Event>();
+  @Output() onLogin = new EventEmitter<Event>();
 
-  @Output()
-  onLogout = new EventEmitter<Event>();
+  @Output() onLogout = new EventEmitter<Event>();
 
-  @Output()
-  onCreateAccount = new EventEmitter<Event>();
+  @Output() onCreateAccount = new EventEmitter<Event>();
 }
