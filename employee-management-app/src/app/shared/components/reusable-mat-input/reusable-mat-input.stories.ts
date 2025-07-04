@@ -3,6 +3,8 @@ import { ReusableMatInputComponent } from './reusable-mat-input';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { action } from 'storybook/actions';
+
 
 const meta: Meta<ReusableMatInputComponent> = {
     title: 'Shared/ReusableMatInput',
@@ -19,7 +21,9 @@ const renderWithControl = (
     label = 'Input',
     type = 'text',
     placeholder = 'Enter value',
-    required = false
+    required = false,
+    onInput = action('input'),
+    onBlur = action('blur')
 ) => ({
     props: {
         label,
@@ -27,6 +31,8 @@ const renderWithControl = (
         placeholder,
         required,
         control,
+        input: onInput,
+        blur: onBlur,
     },
     moduleMetadata: {
         imports: [
@@ -35,13 +41,15 @@ const renderWithControl = (
             MatInputModule],
     },
     template: `
-    <div style="padding: 1rem;">
+     <div style="padding: 1rem;">
       <app-reusable-mat-input
         [label]="label"
         [type]="type"
         [placeholder]="placeholder"
         [required]="required"
         [control]="control"
+        (input)="input($event)"
+        (blur)="blur($event)"
       ></app-reusable-mat-input>
     </div>
   `,
@@ -64,7 +72,7 @@ export const RequiredError: Story = {
 export const MinLengthError: Story = {
     render: () => {
         const control = new FormControl('a', [Validators.minLength(5)]);
-        control.markAsTouched(); // force error
+        control.markAsTouched();
         return renderWithControl(control, 'Min Length Field', 'text', 'At least 5 chars', true);
     },
 };
@@ -72,7 +80,7 @@ export const MinLengthError: Story = {
 export const MaxLengthError: Story = {
     render: () => {
         const control = new FormControl('abcdefghij', [Validators.maxLength(5)]);
-        control.markAsTouched(); // force error
+        control.markAsTouched();
         return renderWithControl(control, 'Max Length Field', 'text', 'Max 5 chars', true);
     },
 };
@@ -80,7 +88,7 @@ export const MaxLengthError: Story = {
 export const EmailFormatError: Story = {
     render: () => {
         const control = new FormControl('invalid-email', [Validators.email]);
-        control.markAsTouched(); // force error
+        control.markAsTouched();
         return renderWithControl(control, 'Email Field', 'email', 'Enter valid email');
     },
 };

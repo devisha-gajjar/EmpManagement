@@ -2,6 +2,7 @@ import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { ReusableButtonComponent } from './reusable-button';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { fn } from 'storybook/internal/test';
 
 export default {
     title: 'Shared/ReusableButton',
@@ -34,6 +35,7 @@ export const Primary: Story = {
         color: 'primary',
         type: 'button',
         disabled: false,
+        onClick: fn()
     },
     render: (args) => ({
         props: args,

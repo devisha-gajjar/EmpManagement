@@ -11,6 +11,8 @@ import { materialImports } from '../../../shared/material';
 import { ReusableMatInputComponent } from '../../../shared/components/reusable-mat-input/reusable-mat-input';
 import { VALIDATION_MESSAGES } from '../../../config/validation-messages';
 
+import { ReusableInputControlvalue } from '../../../shared/components/reusable-input-controlvalueaccessor/reusable-input-controlvalueaccessor';
+
 declare const google: any;
 declare const FB: any;
 
@@ -23,6 +25,7 @@ declare const FB: any;
     ReusableButtonComponent,
     RouterModule,
     ReusableMatInputComponent,
+    ReusableInputControlvalue,
     ...materialImports
   ],
   templateUrl: './login.html',

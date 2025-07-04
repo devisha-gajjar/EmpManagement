@@ -16,5 +16,6 @@ export class ReusableButtonComponent {
 
   onClick(event: Event) {
     // Optional: you can emit events if needed
+    console.log("button clicked!!");
   }
 }

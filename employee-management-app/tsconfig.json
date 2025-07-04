@@ -1,42 +1,7 @@
-// /* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-// /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
-// {
-//   "compileOnSave": false,
-//   "compilerOptions": {
-//     "strict": true,
-//     "noImplicitOverride": true,
-//     "noPropertyAccessFromIndexSignature": true,
-//     "noImplicitReturns": true,
-//     "noFallthroughCasesInSwitch": true,
-//     "skipLibCheck": true,
-//     "isolatedModules": true,
-//     "experimentalDecorators": true,
-//     "importHelpers": true,
-//     "target": "ES2022",
-//     "module": "preserve",
-//     "moduleResolution": "node",
-//     "esModuleInterop": true,
-//     "types": ["node"],
-//     "lib": ["ESNext"]
-//   },
-//   "angularCompilerOptions": {
-//     "enableI18nLegacyMessageIdFormat": false,
-//     "strictInjectionParameters": true,
-//     "strictInputAccessModifiers": true,
-//     "typeCheckHostBindings": true,
-//     "strictTemplates": true
-//   },
-//   "files": [],
-//   "references": [
-//     {
-//       "path": "./tsconfig.app.json"
-//     },
-//     {
-//       "path": "./tsconfig.spec.json"
-//     }
-//   ]
-// }
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
+  "compileOnSave": false,
   "compilerOptions": {
     "strict": true,
     "noImplicitOverride": true,
@@ -47,12 +12,8 @@
     "isolatedModules": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "ES2022",  // Set target to modern JS
-    "module": "ESNext",  // Use ESNext modules for compatibility with `import.meta.url`
-    "moduleResolution": "node",  // Resolve modules as Node.js does
-    "esModuleInterop": true,  // Enable interoperability with CommonJS
-    "types": ["node"],  // Include Node.js types for globals like `__dirname`
-    "lib": ["ESNext", "dom"]  // Add DOM types for browser globals
+    "target": "ES2022",
+    "module": "preserve"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
