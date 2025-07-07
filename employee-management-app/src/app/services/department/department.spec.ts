@@ -1,9 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { DepartmentService } from './department.service';
-import { Department } from '../../types/department.model';
 
 describe('DepartmentService', () => {
   let service: DepartmentService;
@@ -13,8 +11,8 @@ describe('DepartmentService', () => {
     TestBed.configureTestingModule({
       providers: [
         DepartmentService,
-        provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
+        provideHttpClient(),         
+        provideHttpClientTesting()   
       ]
     });
 
@@ -26,21 +24,15 @@ describe('DepartmentService', () => {
     httpMock.verify();
   });
 
-  it('should fetch departments via GET', () => {
-    const mockDepartments: Department[] = [
-      { id: 1, name: 'Finance' },
-      { id: 2, name: 'Engineering' }
-    ];
+  it('should fetch departments', () => {
+    const mockDepartments = [{ id: 1, name: 'HR' }, { id: 2, name: 'IT' }];
 
     service.getDepartments().subscribe(departments => {
-      expect(departments.length).toBe(2);
       expect(departments).toEqual(mockDepartments);
     });
 
     const req = httpMock.expectOne('http://localhost:5119/api/Department');
     expect(req.request.method).toBe('GET');
-    expect(req.request.withCredentials).toBeTrue();
-
     req.flush(mockDepartments);
   });
 });

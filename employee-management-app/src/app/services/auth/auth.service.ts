@@ -22,4 +22,4 @@ export class AuthService {
     facebookLogin(data: { accessToken: string }): Observable<any> {
         return this.http.post(`${this.apiUrl}facebook-login`, data);
     }
-}
+}   
