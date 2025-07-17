@@ -1,5 +1,6 @@
 using System.Text;
 using EmployeeAPI.Entities.Data;
+using EmployeeAPI.Middlewares;
 using EmployeeAPI.Repositories.Implementation;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Repositories.Repositories;
@@ -11,51 +12,69 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+using NLog;
+using NLog.Web;
 
-// Add services to the container.
+var logger = LogManager.Setup()
+    .LoadConfigurationFromFile("nlog.config")
+    .GetCurrentClassLogger();
 
-// builder.Services.AddControllers();
-
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-    });
-
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICustomService, CustomService>();
-
-builder.Services.AddDbContext<EmployeeMgmtContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+try
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Employee API", Version = "v1" });
+    logger.Info("🔧 Application is starting up");
 
-    // Define the security scheme
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
+    var builder = WebApplication.CreateBuilder(args);
 
-    // Require the bearer token globally
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    builder.Logging.ClearProviders(); // Remove default logging providers
+    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information);
+    builder.Host.UseNLog(); // Enable NLog
+
+    // Add services to the container.
+
+    // builder.Services.AddControllers();
+
+    builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        });
+
+    builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+    builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<ICustomService, CustomService>();
+
+    builder.Services.AddDbContext<EmployeeMgmtContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+    builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+    builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+
+    builder.Services.AddScoped<ExceptionHandlingMiddleware>(); // 2. register IMiddleware
+
+
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(c =>
     {
+        c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Employee API", Version = "v1" });
+
+        // Define the security scheme
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
+
+        // Require the bearer token globally
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+        {
         {
             new OpenApiSecurityScheme
             {
@@ -66,64 +85,216 @@ builder.Services.AddSwaggerGen(c =>
             },
             new List<string>()
         }
+        });
     });
-});
 
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.Events = new JwtBearerEvents
+    builder.Services.AddAuthorization();
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
     {
-        OnMessageReceived = context =>
-            {
-                if (context.Request.Cookies.ContainsKey("Token"))
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
                 {
-                    context.Token = context.Request.Cookies["Token"];
+                    if (context.Request.Cookies.ContainsKey("Token"))
+                    {
+                        context.Token = context.Request.Cookies["Token"];
+                    }
+                    return Task.CompletedTask;
                 }
-                return Task.CompletedTask;
-            }
-    };
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-    };
-});
-
-var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()!;
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.WithOrigins(allowedOrigins)
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials(); ;
+        };
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
     });
-});
 
-var app = builder.Build();
+    var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()!;
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", policy =>
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials(); ;
+        });
+    });
+
+    var app = builder.Build();
+
+    // 1.  app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+
+    app.Use(async (context, next) =>
+    {
+        var middleware = context.RequestServices.GetRequiredService<ExceptionHandlingMiddleware>();
+        await middleware.InvokeAsync(context, next);
+    });                         // 2. IMiddleware
+
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+
+    app.UseCors("AllowAll");
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception ex)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    logger.Error(ex, "❌ Application stopped due to an exception");
+    throw;
+}
+finally
+{
+    LogManager.Shutdown();
 }
 
-app.UseHttpsRedirection();
+// using System.Text;
+// using EmployeeAPI.Entities.Data;
+// using EmployeeAPI.Middlewares;
+// using EmployeeAPI.Repositories.Implementation;
+// using EmployeeAPI.Repositories.IRepositories;
+// using EmployeeAPI.Repositories.Repositories;
+// using EmployeeAPI.Services.Implementation;
+// using EmployeeAPI.Services.IServices;
+// using EmployeeAPI.Services.Services;
+// using Microsoft.AspNetCore.Authentication.JwtBearer;
+// using Microsoft.EntityFrameworkCore;
+// using Microsoft.IdentityModel.Tokens;
+// using Microsoft.OpenApi.Models;
 
-app.UseCors("AllowAll");
+// var builder = WebApplication.CreateBuilder(args);
 
-app.UseAuthentication();
-app.UseAuthorization();
+// // Default logging (optional customization)
+// builder.Logging.ClearProviders();
+// builder.Logging.AddConsole(); // Optional: you can remove this if you want no logs
 
-app.MapControllers();
+// // Add services to the container.
+// builder.Services.AddControllers()
+//     .AddJsonOptions(options =>
+//     {
+//         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+//     });
 
-app.Run();
+// builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+// builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+// builder.Services.AddScoped<IAuthService, AuthService>();
+// builder.Services.AddScoped<ICustomService, CustomService>();
+
+// builder.Services.AddDbContext<EmployeeMgmtContext>(options =>
+//     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+// builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+// builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// builder.Services.AddScoped<ExceptionHandlingMiddleware>();
+
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen(c =>
+// {
+//     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Employee API", Version = "v1" });
+
+//     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//     {
+//         Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
+//         Name = "Authorization",
+//         In = ParameterLocation.Header,
+//         Type = SecuritySchemeType.ApiKey,
+//         Scheme = "Bearer"
+//     });
+
+//     c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+//     {
+//         {
+//             new OpenApiSecurityScheme
+//             {
+//                 Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
+//                 Scheme = "oauth2",
+//                 Name = "Bearer",
+//                 In = ParameterLocation.Header,
+//             },
+//             new List<string>()
+//         }
+//     });
+// });
+
+// builder.Services.AddAuthorization();
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+// {
+//     options.Events = new JwtBearerEvents
+//     {
+//         OnMessageReceived = context =>
+//         {
+//             if (context.Request.Cookies.ContainsKey("Token"))
+//             {
+//                 context.Token = context.Request.Cookies["Token"];
+//             }
+//             return Task.CompletedTask;
+//         }
+//     };
+//     options.TokenValidationParameters = new TokenValidationParameters
+//     {
+//         ValidateIssuer = true,
+//         ValidateAudience = true,
+//         ValidateLifetime = true,
+//         ValidateIssuerSigningKey = true,
+//         ValidIssuer = builder.Configuration["Jwt:Issuer"],
+//         ValidAudience = builder.Configuration["Jwt:Issuer"],
+//         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+//     };
+// });
+
+// var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()!;
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowAll", policy =>
+//     {
+//         policy.WithOrigins(allowedOrigins)
+//               .AllowAnyMethod()
+//               .AllowAnyHeader()
+//               .AllowCredentials();
+//     });
+// });
+
+// var app = builder.Build();
+
+// // Register global exception middleware
+// app.Use(async (context, next) =>
+// {
+//     var middleware = context.RequestServices.GetRequiredService<ExceptionHandlingMiddleware>();
+//     await middleware.InvokeAsync(context, next);
+// });
+
+// // Configure middleware pipeline
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
+
+// app.UseHttpsRedirection();
+// app.UseCors("AllowAll");
+// app.UseAuthentication();
+// app.UseAuthorization();
+// app.MapControllers();
+
+// app.Run();

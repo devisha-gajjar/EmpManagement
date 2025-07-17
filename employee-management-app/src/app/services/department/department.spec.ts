@@ -11,8 +11,8 @@ describe('DepartmentService', () => {
     TestBed.configureTestingModule({
       providers: [
         DepartmentService,
-        provideHttpClient(),         
-        provideHttpClientTesting()   
+        provideHttpClient(),
+        provideHttpClientTesting()
       ]
     });
 

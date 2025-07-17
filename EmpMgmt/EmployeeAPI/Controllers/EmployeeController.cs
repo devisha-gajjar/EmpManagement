@@ -9,7 +9,7 @@ namespace EmployeeAPI.Controllers
     [EnableCors("AllowAll")]
     [ApiController]
     [Route("api/Employee")]
-    [Authorize]
+    // [Authorize]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _service;
@@ -29,8 +29,7 @@ namespace EmployeeAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var emp = _service.GetEmployeeById(id);
-            if (emp == null) return NotFound();
+            var emp = _service.GetEmployeeById(id) ?? throw new AppException($"User with ID this {id} not found.", 404);
             return Ok(emp);
         }
 
