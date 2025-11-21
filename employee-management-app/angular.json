@@ -27,7 +27,7 @@
               "src/assets/images",
               "src/favicon.ico"
             ],
-            "styles": [
+            "styles": [ 
               "node_modules/ngx-toastr/toastr.css",
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"

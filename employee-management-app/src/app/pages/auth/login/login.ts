@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit {
     this.authService.googleLogin({ idToken }).subscribe({
       next: (res) => {
         this.cookieService.set('token', res.token);
-        this.toastr.success('Google login successful');
+        this.toastr.success('Google login successful', "Success");
         this.router.navigate(['/app/home']);
       },
       error: () => {
