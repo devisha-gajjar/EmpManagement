@@ -55,7 +55,7 @@ public class CustomService : ICustomService
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Issuer"],
             claims: authClaims,
-            expires: DateTime.UtcNow.AddMinutes(2),
+            expires: DateTime.UtcNow.AddHours(2),
             signingCredentials: credentials
         );
 

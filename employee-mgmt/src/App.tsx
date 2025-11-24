@@ -1,53 +1,33 @@
-import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Employees from "./pages/Employee";
 import Login from "./pages/Login";
+import MainLayout from "./components/layout/MainLayout";
+import Register from "./pages/Register";
 
 function App() {
   return (
-    <>
-      <Navbar />
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/" element={<Navigate to="/login" />} />
 
-      <Routes>
-        {/* Auth Routes */}
-        <Route path="/login" element={<Login />} />
-        {/* <Route path="/register" element={<Register />} /> */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/employees" element={<Employees />} />
+        {/* Add other protected routes here */}
+        {/* <Route path="/employees/add" element={<AddEmployee />} /> */}
+        {/* <Route path="/employees/edit/:id" element={<EditEmployee />} /> */}
+      </Route>
 
-        {/* Protected Routes */}
-        <Route
-          path="/employees"
-          element={
-            <ProtectedRoute>
-              <Employees />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* <Route
-          path="/employees/add"
-          element={
-            <ProtectedRoute>
-              <AddEmployee />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/employees/edit/:id"
-          element={
-            <ProtectedRoute>
-              <EditEmployee />
-            </ProtectedRoute>
-          }
-        /> */}
-
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="*" element={<h2>404 - Page Not Found</h2>} />
-      </Routes>
-    </>
+      {/* Fallback Route */}
+      <Route path="*" element={<h2>404 - Page Not Found</h2>} />
+    </Routes>
   );
 }
 

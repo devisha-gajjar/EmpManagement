@@ -21,6 +21,7 @@ namespace EmployeeAPI.Services.Implementation
             if (_db.Users.Any(u => u.Email == user.Email || u.Username == user.Username))
                 return null;
 
+            user.RoleId = 2;
             user.Password = _customService.Hash(password);
             user.CreatedOn = DateTime.Now;
             user.IsDeleted = false;

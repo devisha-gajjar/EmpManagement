@@ -1,11 +1,12 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosClient from "../../api/axiosClient";
+import { createSlice } from "@reduxjs/toolkit";
+import { login, registerUser } from "./authApi"; // Import registerUser
 
 export interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
+    registerSuccess: string | null; // New state for registration success message
 }
 
 const initialState: AuthState = {
@@ -13,30 +14,8 @@ const initialState: AuthState = {
     isAuthenticated: !!localStorage.getItem("token"),
     loading: false,
     error: null,
+    registerSuccess: null, // Initialize new state
 };
-
-export const login = createAsyncThunk(
-    "auth/login",
-    async (data: { usernameOrEmail: string; password: string }, thunkAPI) => {
-        try {
-            const res = await axiosClient.post("/auth/login", data);
-            return res.data.token;
-        } catch (err) {
-            return thunkAPI.rejectWithValue("Invalid credentials");
-        }
-    }
-);
-
-export const registerUser = createAsyncThunk(
-    "auth/register",
-    async (data: any, thunkAPI) => {
-        try {
-            await axiosClient.post("/auth/register", data);
-        } catch (err) {
-            return thunkAPI.rejectWithValue("Registration failed");
-        }
-    }
-);
 
 const authSlice = createSlice({
     name: "auth",
@@ -45,27 +24,56 @@ const authSlice = createSlice({
         logout(state) {
             state.token = null;
             state.isAuthenticated = false;
+            state.error = null;
+            state.registerSuccess = null; // Clear success message on logout
             localStorage.removeItem("token");
         },
+        // Action to clear any previous errors or success messages
+        clearAuthStatus(state) {
+            state.error = null;
+            state.registerSuccess = null;
+        }
     },
     extraReducers: (builder) => {
         builder
+            // --- Login Cases ---
             .addCase(login.pending, (state) => {
                 state.loading = true;
+                state.error = null;
             })
             .addCase(login.fulfilled, (state, action) => {
                 state.loading = false;
                 state.token = action.payload;
                 state.isAuthenticated = true;
+                state.error = null;
+                state.registerSuccess = null;
                 localStorage.setItem("token", action.payload as string);
             })
             .addCase(login.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+                state.registerSuccess = null;
+            })
+            // --- Register Cases ---
+            .addCase(registerUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.registerSuccess = null;
+            })
+            .addCase(registerUser.fulfilled, (state, action) => {
+                state.loading = false;
+                // We don't log in automatically, just show success
+                state.registerSuccess = action.payload as string;
+                state.error = null;
+            })
+            .addCase(registerUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+                state.registerSuccess = null;
             });
     },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, clearAuthStatus } = authSlice.actions;
 
 export default authSlice.reducer;
