@@ -12,9 +12,9 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { NAV_LINKS } from "../utils/constant";
+import { NAV_LINKS } from "../../utils/constant";
 import { useDispatch } from "react-redux";
-import { logout } from "../features/auth/authSlice";
+import { logout } from "../../features/auth/authSlice";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 export default function Navbar() {

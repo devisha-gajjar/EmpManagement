@@ -7,3 +7,10 @@ export interface Employee {
     departmentName: string;
     createdOn: string; // ISO Date string
 }
+
+export interface EmployeesState {
+    list: Employee[];
+    employee: Employee | null;
+    loading: boolean;
+    isDeleted: boolean;
+}

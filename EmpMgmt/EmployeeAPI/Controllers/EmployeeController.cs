@@ -36,10 +36,7 @@ namespace EmployeeAPI.Controllers
         [HttpPost]
         public IActionResult AddEmployee([FromBody] AddEmployeeViewModelDTO employeeDto)
         {
-            var createdEmployee = _service.AddEmployee(employeeDto);
-
-            if (createdEmployee == null)
-                return BadRequest("Employee Already Exists!!");
+            var createdEmployee = _service.AddEmployee(employeeDto) ?? throw new AppException("Employee Already Exists!!");
 
             return CreatedAtAction(nameof(GetById), new { id = createdEmployee.Id }, createdEmployee);
         }
@@ -52,7 +49,7 @@ namespace EmployeeAPI.Controllers
                 return BadRequest(ModelState);
 
             if (!_service.UpdateEmployee(id, employeeDto))
-                return BadRequest("Update failed: invalid data or duplicate email!!");
+                throw new AppException("Update failed: invalid data or duplicate email!!");
 
             return NoContent();
         }

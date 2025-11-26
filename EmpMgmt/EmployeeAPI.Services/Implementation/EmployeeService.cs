@@ -40,7 +40,8 @@ public class EmployeeService : IEmployeeService
             Id = emp.Id,
             Name = emp.Name,
             Email = emp.Email,
-            DepartmentId = emp.DepartmentId
+            DepartmentId = emp.DepartmentId,
+            Salary = emp.Salary
         };
     }
 
@@ -72,7 +73,9 @@ public class EmployeeService : IEmployeeService
             return false;
 
         if (existing.Email != employeeDto.Email && _empRepository.EmployeeExistsByEmail(employeeDto.Email))
+        {
             return false;
+        }
 
         existing.Name = employeeDto.Name;
         existing.Email = employeeDto.Email;

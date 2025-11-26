@@ -1,9 +1,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
 import Employees from "./pages/Employee";
 import Login from "./pages/Login";
 import MainLayout from "./components/layout/MainLayout";
 import Register from "./pages/Register";
+import { Department } from "./pages/Department";
 
 function App() {
   return (
@@ -20,9 +21,7 @@ function App() {
         }
       >
         <Route path="/employees" element={<Employees />} />
-        {/* Add other protected routes here */}
-        {/* <Route path="/employees/add" element={<AddEmployee />} /> */}
-        {/* <Route path="/employees/edit/:id" element={<EditEmployee />} /> */}
+        <Route path="/departments" element={<Department />} />
       </Route>
 
       {/* Fallback Route */}
