@@ -26,7 +26,6 @@ export const getEmployee = createAsyncThunk(
     async (id: number, { rejectWithValue }) => {
         try {
             const response = await axiosClient.get(`/employee/${id}`)
-            console.log("response", response)
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data);
@@ -39,7 +38,8 @@ export const updateEmployee = createAsyncThunk(
     async ({ id, data }: { id: number; data: any }, { rejectWithValue }) => {
         try {
             const response = await axiosClient.put(`/employee/${id}`, data);
-            return response.data;
+            if (response)
+                return { ...data, id };
         } catch (error: any) {
             return rejectWithValue(error.response?.data);
         }

@@ -1,22 +1,21 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  TextField,
-  Button,
-  Box,
-  FormControl,
   CircularProgress,
-  InputLabel,
-  MenuItem,
-  Select,
+  Box,
 } from "@mui/material";
 import { useAppDispatch, useAppSelector, useSnackbar } from "../app/hooks";
-import { updateEmployee, addEmployee } from "../features/employees/empApi";
-import type { Employee } from "../interfaces/employee.interface";
+import {
+  updateEmployee,
+  addEmployee,
+  fetchEmployees,
+} from "../features/employees/empApi";
 import { fetchDepartments } from "../features/department/departmentApi";
+import type { Employee } from "../interfaces/employee.interface";
+import type { DynamicFormField } from "../interfaces/form.interface";
+import DynamicFormComponent from "../components/shared/form/CommonForm";
 
 interface Props {
   open: boolean;
@@ -30,62 +29,81 @@ export default function EmployeeFormDialog({
   employeeToEdit,
 }: Props) {
   const dispatch = useAppDispatch();
-  const toast = useSnackbar();
-  const { departments, loading, error } = useAppSelector(
+  const snackbar = useSnackbar();
+
+  const { departments, loading: deptLoading } = useAppSelector(
     (state) => state.department
   );
 
-  // Local Form State
-  const [formData, setFormData] = useState<{
-    name: string;
-    email: string;
-    salary: number;
-    departmentId: number | null;
-  }>({
-    name: "",
-    email: "",
-    salary: 0,
-    departmentId: null,
-  });
-
   useEffect(() => {
     if (open) {
-      dispatch(fetchDepartments()); 
+      dispatch(fetchDepartments());
     }
   }, [dispatch, open]);
 
-  useEffect(() => {
+  const formConfig: DynamicFormField[] = useMemo(
+    () => [
+      {
+        name: "name",
+        label: "Full Name",
+        type: "text",
+        rules: { required: "Name is required" },
+      },
+      {
+        name: "email",
+        label: "Email Address",
+        type: "text",
+        rules: {
+          required: "Email is required",
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: "Invalid email address",
+          },
+        },
+      },
+      {
+        name: "salary",
+        label: "Salary",
+        type: "number",
+        gridClass: "half",
+        rules: {
+          required: "Salary is required",
+          min: { value: 1, message: "Salary must be positive" },
+        },
+      },
+      {
+        name: "departmentId",
+        label: "Department",
+        type: "select",
+        gridClass: "half",
+        rules: { required: "Department is required" },
+        disabled: deptLoading,
+        options: departments.map((dept) => ({
+          label: dept.name,
+          value: dept.id,
+        })),
+      },
+    ],
+    [departments, deptLoading]
+  );
+
+  const defaultValues = useMemo(() => {
     if (employeeToEdit) {
-      setFormData({
+      return {
         name: employeeToEdit.name,
         email: employeeToEdit.email,
         salary: employeeToEdit.salary,
         departmentId: employeeToEdit.departmentId,
-      });
-      console.log("formdata ", employeeToEdit.salary);
-    } else {
-      setFormData({ name: "", email: "", salary: 0, departmentId: null });
+      };
     }
-  }, [employeeToEdit, open]);
+    return { name: "", email: "", salary: "", departmentId: "" };
+  }, [employeeToEdit]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSelectChange = (e: any) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value as string });
-  };
-
-  const handleSubmit = async () => {
-    if (!formData.name || !formData.email) {
-      toast.error("Please fill required fields");
-      return;
-    }
-
+  const handleFormSubmit = async (data: any) => {
     const payload = {
-      ...formData,
+      ...data,
       id: employeeToEdit?.id,
-      salary: Number(formData.salary),
+      salary: Number(data.salary),
     };
 
     try {
@@ -93,16 +111,17 @@ export default function EmployeeFormDialog({
         await dispatch(
           updateEmployee({ id: employeeToEdit.id, data: payload })
         ).unwrap();
-        toast.success("Employee updated successfully");
+        snackbar.success("Employee updated successfully");
       } else {
-        console.log;
         await dispatch(addEmployee(payload)).unwrap();
-        toast.success("Employee added successfully");
+        snackbar.success("Employee added successfully");
       }
+
+      dispatch(fetchEmployees());
       onClose();
     } catch (error: any) {
       const errorMessage = error?.Message || "Failed to save employee";
-      toast.error(errorMessage);
+      snackbar.error(errorMessage);
     }
   };
 
@@ -113,69 +132,21 @@ export default function EmployeeFormDialog({
       </DialogTitle>
 
       <DialogContent>
-        <Box
-          component="form"
-          sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
-        >
-          <TextField
-            label="Full Name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            fullWidth
-            required
+        {deptLoading && departments.length === 0 ? (
+          <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <DynamicFormComponent
+            formConfig={formConfig}
+            defaultValues={defaultValues}
+            onSubmit={handleFormSubmit}
+            onCancel={onClose}
+            submitLabel={employeeToEdit ? "Update" : "Create"}
+            cancleLabel="Cancel"
           />
-          <TextField
-            label="Email Address"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            fullWidth
-            required
-          />
-          <TextField
-            label="Salary"
-            name="salary"
-            type="number"
-            value={formData.salary}
-            onChange={handleChange}
-            fullWidth
-          />
-          <FormControl fullWidth>
-            <InputLabel>Department</InputLabel>
-            <Select
-              label="Department"
-              name="departmentId"
-              value={formData.departmentId}
-              onChange={handleSelectChange}
-              required
-            >
-              {loading ? (
-                <MenuItem disabled>
-                  <CircularProgress size={24} />
-                </MenuItem>
-              ) : error ? (
-                <MenuItem disabled>{error}</MenuItem>
-              ) : (
-                departments.map((dept) => (
-                  <MenuItem key={dept.id} value={dept.id}>
-                    {dept.name}
-                  </MenuItem>
-                ))
-              )}
-            </Select>
-          </FormControl>
-        </Box>
+        )}
       </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose} color="inherit">
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
-          {employeeToEdit ? "Update" : "Create"}
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 }

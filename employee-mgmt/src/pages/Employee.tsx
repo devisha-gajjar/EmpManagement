@@ -45,12 +45,15 @@ export default function Employees() {
   // searching and pagination
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const dispatch = useAppDispatch();
   const snackbar = useSnackbar();
-  const { list, loading, error } = useAppSelector((s: any) => s.employees);
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { entities, loading, error } = useAppSelector(
+    (state: any) => state.employees
+  );
+  const employees = Object.values(entities as Record<number, Employee>);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -102,7 +105,7 @@ export default function Employees() {
     setEmployeeToDelete(null);
   };
 
-  const filteredEmployees = list.filter(
+  const filteredEmployees = employees.filter(
     (emp: Employee) =>
       emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -236,12 +239,12 @@ export default function Employees() {
         onPageChange={(event, newPage) => setPage(newPage)}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 5));
+          setRowsPerPage(parseInt(e.target.value, 10));
           setPage(0);
         }}
       />
 
-      {list.length === 0 && (
+      {employees.length === 0 && (
         <Alert severity="info" sx={{ mt: 2 }}>
           No employees found.
         </Alert>
