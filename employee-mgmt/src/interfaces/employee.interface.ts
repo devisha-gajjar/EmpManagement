@@ -18,7 +18,7 @@ export interface Employee {
 export interface EmployeesState {
     ids: number[];                // Array of employee IDs
     entities: { [id: number]: Employee };  // Object with employee entities by id
-    employee: Employee | null;     // For the single selected employee
+    employee: Employee | null;     // single selected employee
     loading: boolean;
     isDeleted: boolean;
 }

@@ -1,6 +1,7 @@
 import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "./store";
 import { openSnackbar } from "../features/shared/snackbarSlice";
+import { useEffect, useState } from "react";
 
 export const useAppDispatch = () => useDispatch<AppDispatch>(); // define which type of action can be dispatched 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector; // same for the selector
@@ -18,4 +19,23 @@ export const useSnackbar = () => {
 
     return toast;
 };
+//#endregion
+
+//#region Debounce time
+export function useDebounce(value: string, delay: number) {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        // Clean up the timeout when the component unmounts or when the value changes
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+}
 //#endregion

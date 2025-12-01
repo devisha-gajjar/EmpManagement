@@ -25,14 +25,23 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { useAppDispatch, useAppSelector, useSnackbar } from "../app/hooks";
 import {
-  fetchEmployees,
-  getEmployee,
-  deleteEmployee,
-} from "../features/employees/empApi";
+  useAppDispatch,
+  useAppSelector,
+  useDebounce,
+  useSnackbar,
+} from "../app/hooks";
+// import {
+//   fetchEmployees,
+//   getEmployee,
+//   deleteEmployee,
+// } from "../features/employees/empApi";
 import type { Employee } from "../interfaces/employee.interface";
 import EmployeeFormDialog from "./EmployeeFormDialog";
+import {
+  useDeleteEmployeeMutation,
+  useGetEmployeesQuery,
+} from "../features/employees/empApi";
 
 export default function Employees() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -43,23 +52,36 @@ export default function Employees() {
   const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
 
   // searching and pagination
+
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
   const dispatch = useAppDispatch();
   const snackbar = useSnackbar();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
-  const { entities, loading, error } = useAppSelector(
-    (state: any) => state.employees
-  );
-  const employees = Object.values(entities as Record<number, Employee>);
+  // const { entities, loading, error } = useAppSelector(
+  //   (state: any) => state.employees
+  // );
+  // const employees = Object.values(entities as Record<number, Employee>);
+
+  const { data: employeesData, isLoading, isError } = useGetEmployeesQuery();
+  const employees = employeesData || [];
+
+  const [deleteEmployee] = useDeleteEmployeeMutation();
+
+  useEffect(() => {
+    console.log("Search Term:", searchTerm); // Logs the search term immediately
+    console.log("Debounced Search Term:", debouncedSearchTerm); // Logs the debounced value
+  }, [searchTerm, debouncedSearchTerm]);
 
   useEffect(() => {
     if (!isAuthenticated) {
       snackbar.error("Unauthorized Access!!");
     }
-    dispatch(fetchEmployees());
+    // dispatch(fetchEmployees());
   }, [dispatch, isAuthenticated]);
 
   const formatDate = (dateString: string) => {
@@ -76,8 +98,9 @@ export default function Employees() {
   };
 
   const handleEditEmployee = async (employee: Employee) => {
-    const employeeFetched = await dispatch(getEmployee(employee.id)).unwrap();
-    setSelectedEmployee(employeeFetched);
+    // const employeeFetched = await dispatch(getEmployee(employee.id)).unwrap();
+    setSelectedEmployee(employee);
+    // setSelectedEmployee(employeeFetched);
     setIsDialogOpen(true);
   };
 
@@ -89,9 +112,10 @@ export default function Employees() {
   const handleConfirmDelete = async () => {
     if (employeeToDelete !== null) {
       try {
-        await dispatch(deleteEmployee(employeeToDelete)).unwrap();
+        // await dispatch(deleteEmployee(employeeToDelete)).unwrap();
+        await deleteEmployee(employeeToDelete).unwrap();
         snackbar.success("Employee deleted successfully");
-        dispatch(fetchEmployees());
+        // dispatch(fetchEmployees());
       } catch (err) {
         snackbar.error("Failed to delete employee");
       } finally {
@@ -107,9 +131,11 @@ export default function Employees() {
 
   const filteredEmployees = employees.filter(
     (emp: Employee) =>
-      emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.departmentName.toLowerCase().includes(searchTerm.toLowerCase())
+      emp.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+      emp.email.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+      emp.departmentName
+        .toLowerCase()
+        .includes(debouncedSearchTerm.toLowerCase())
   );
 
   const paginatedEmployees = filteredEmployees.slice(
@@ -117,7 +143,8 @@ export default function Employees() {
     page * rowsPerPage + rowsPerPage
   );
 
-  if (loading && !isDeleteDialogOpen) {
+  // if (loading && !isDeleteDialogOpen) {
+  if (isLoading && !isDeleteDialogOpen) {
     return (
       <Box
         display="flex"
@@ -133,13 +160,21 @@ export default function Employees() {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <Box m={4}>
-        <Alert severity="error">Error fetching employees: {error}</Alert>
+        <Alert severity="error">Error fetching employees</Alert>
       </Box>
     );
   }
+
+  // if (error) {
+  //   return (
+  //     <Box m={4}>
+  //       <Alert severity="error">Error fetching employees: {error}</Alert>
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Box m={4}>

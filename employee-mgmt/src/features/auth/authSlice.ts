@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login, registerUser } from "./authApi"; // Import registerUser
+import { login, registerUser } from "./authApi";
 
 export interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
-    registerSuccess: string | null; // New state for registration success message
+    registerSuccess: string | null;
 }
 
 const initialState: AuthState = {
@@ -14,7 +14,7 @@ const initialState: AuthState = {
     isAuthenticated: !!localStorage.getItem("token"),
     loading: false,
     error: null,
-    registerSuccess: null, // Initialize new state
+    registerSuccess: null,
 };
 
 const authSlice = createSlice({
@@ -25,7 +25,7 @@ const authSlice = createSlice({
             state.token = null;
             state.isAuthenticated = false;
             state.error = null;
-            state.registerSuccess = null; // Clear success message on logout
+            state.registerSuccess = null;
             localStorage.removeItem("token");
         },
         // Action to clear any previous errors or success messages
@@ -62,7 +62,6 @@ const authSlice = createSlice({
             })
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.loading = false;
-                // We don't log in automatically, just show success
                 state.registerSuccess = action.payload as string;
                 state.error = null;
             })

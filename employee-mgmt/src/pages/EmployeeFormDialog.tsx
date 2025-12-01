@@ -7,15 +7,19 @@ import {
   Box,
 } from "@mui/material";
 import { useAppDispatch, useAppSelector, useSnackbar } from "../app/hooks";
-import {
-  updateEmployee,
-  addEmployee,
-  fetchEmployees,
-} from "../features/employees/empApi";
+// import {
+//   updateEmployee,
+//   addEmployee,
+//   fetchEmployees,
+// } from "../features/employees/empApi";
 import { fetchDepartments } from "../features/department/departmentApi";
 import type { Employee } from "../interfaces/employee.interface";
 import type { DynamicFormField } from "../interfaces/form.interface";
 import DynamicFormComponent from "../components/shared/form/CommonForm";
+import {
+  useAddEmployeeMutation,
+  useUpdateEmployeeMutation,
+} from "../features/employees/empApi";
 
 interface Props {
   open: boolean;
@@ -28,6 +32,9 @@ export default function EmployeeFormDialog({
   onClose,
   employeeToEdit,
 }: Props) {
+  const [addEmployee] = useAddEmployeeMutation();
+  const [updateEmployee] = useUpdateEmployeeMutation();
+
   const dispatch = useAppDispatch();
   const snackbar = useSnackbar();
 
@@ -88,6 +95,7 @@ export default function EmployeeFormDialog({
   );
 
   const defaultValues = useMemo(() => {
+    console.log("employee form value change");
     if (employeeToEdit) {
       return {
         name: employeeToEdit.name,
@@ -108,16 +116,18 @@ export default function EmployeeFormDialog({
 
     try {
       if (employeeToEdit) {
-        await dispatch(
-          updateEmployee({ id: employeeToEdit.id, data: payload })
-        ).unwrap();
+        // await dispatch(
+        //   updateEmployee({ id: employeeToEdit.id, data: payload })
+        // ).unwrap();
+        await updateEmployee({ id: employeeToEdit.id, data: payload }).unwrap();
         snackbar.success("Employee updated successfully");
       } else {
-        await dispatch(addEmployee(payload)).unwrap();
+        // await dispatch(addEmployee(payload)).unwrap();
+        await addEmployee(payload).unwrap();
         snackbar.success("Employee added successfully");
       }
 
-      dispatch(fetchEmployees());
+      // dispatch(fetchEmployees());
       onClose();
     } catch (error: any) {
       const errorMessage = error?.Message || "Failed to save employee";
