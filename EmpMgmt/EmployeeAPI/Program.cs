@@ -167,15 +167,11 @@
 //     LogManager.Shutdown();
 // }
 
+using System.Security.Claims;
 using System.Text;
+using EmployeeAPI;
 using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Middlewares;
-using EmployeeAPI.Repositories.Implementation;
-using EmployeeAPI.Repositories.IRepositories;
-using EmployeeAPI.Repositories.Repositories;
-using EmployeeAPI.Services.Implementation;
-using EmployeeAPI.Services.IServices;
-using EmployeeAPI.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -183,29 +179,25 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Default logging (optional customization)
+// Default logging 
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole(); // Optional: you can remove this if you want no logs
+builder.Logging.AddConsole();
 
-// Add services to the container.
+// register all service - repo depenedency
+builder.Services.RegisterDependency();
+
+// Add services to the container
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     });
 
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICustomService, CustomService>();
-
+// db contect
 builder.Services.AddDbContext<EmployeeMgmtContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+// exception handler
 builder.Services.AddScoped<ExceptionHandlingMiddleware>();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -259,7 +251,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+        RoleClaimType = ClaimTypes.Role
     };
 });
 

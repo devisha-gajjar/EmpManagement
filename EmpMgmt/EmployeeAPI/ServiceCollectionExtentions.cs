@@ -1,0 +1,26 @@
+using EmployeeAPI.Repositories.Implementation;
+using EmployeeAPI.Repositories.IRepositories;
+using EmployeeAPI.Services.Implementation;
+using EmployeeAPI.Services.IServices;
+
+namespace EmployeeAPI;
+
+
+public static class ServiceCollectionExtensions
+{
+    public static void RegisterDependency(this IServiceCollection services)
+    {
+        // services
+        services.AddScoped<IDepartmentService, DepartmentService>();
+        services.AddScoped<IEmployeeService, EmployeeService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ICustomService, CustomService>();
+        services.AddScoped<IDashboardService, DashboardService>();
+
+        // repository
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+    }
+}

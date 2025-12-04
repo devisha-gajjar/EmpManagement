@@ -52,7 +52,7 @@ export default function Employees() {
   const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
 
   // searching and pagination
-
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);

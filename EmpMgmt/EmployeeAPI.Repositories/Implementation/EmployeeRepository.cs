@@ -1,10 +1,9 @@
 using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Entities.Models;
-using EmployeeAPI.Repositories.Implementation;
 using EmployeeAPI.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace EmployeeAPI.Repositories.Repositories;
+namespace EmployeeAPI.Repositories.Implementation;
 
 public class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepository
 {

@@ -1,0 +1,77 @@
+data insert 
+-- Update the employment_start_date for user with user_id 1 (devisha)
+UPDATE public.users
+SET employment_start_date = '2023-01-01',  -- example date, adjust accordingly
+    date_of_birth = '1995-05-10',            -- example date, adjust accordingly
+    position = 'Admin'                        -- example position, adjust accordingly
+WHERE user_id = 1;
+
+-- Update the employment_start_date for user with user_id 2 (DEVISHA)
+UPDATE public.users
+SET employment_start_date = '2023-01-15',
+    date_of_birth = '1996-07-12',
+    position = 'Manager'
+WHERE user_id = 2;
+
+-- Update the employment_start_date for user with user_id 3 (Bhumi)
+UPDATE public.users
+SET employment_start_date = '2023-03-01',
+    date_of_birth = '1994-02-18',
+    position = 'Developer'
+WHERE user_id = 3;
+
+-- Update the employment_start_date for user with user_id 5 (devisha)
+UPDATE public.users
+SET employment_start_date = '2025-05-10',
+    date_of_birth = '1997-08-25',
+    position = 'Intern'
+WHERE user_id = 5;
+
+
+
+
+
+
+INSERT INTO public.users (first_name, last_name, username, email, password, phone, address, zipcode, role_id, created_on, is_deleted, employment_start_date, date_of_birth, position)
+VALUES
+('devisha', 'gajjar', 'devisha123', 'admin@gmail.com', '$2b$10$SZCKwlF2bxNrFyMSVwwOPem.yFo.wLTbCEu3cqFdUhCA4Sw9iAX6q', '9106074255', 'some address', '365520', 1, '2025-06-12 18:38:48', false, '2025-06-12', '1995-05-10', 'Admin'),
+('DEVISHA', 'GAJJAR', '21ce153.devisha.gajjar@vvpedulink.ac.in', '21ce153.devisha.gajjar@vvpedulink.ac.in', '', '9106074255', 'some address', '365520', 2, '2025-06-23 17:18:39', false, '2025-06-23', '1995-07-12', 'Manager'),
+('Bhumi', 'Shah', 'bhumi.workid@gmail.com', 'bhumi.workid@gmail.com', '', '9106074255', 'some address', '365520', 2, '2025-06-24 09:47:43', false, '2025-06-24', '1992-02-15', 'Developer'),
+('devisha', 'gajjar', 'devisha', 'devisha@gmail.com', '$2b$10$K9lxMzP.IuEHraZVk6GTHulswn2AMYpbv2uE3UoA0ELlgz1kZKstW', '9106074228', 'abcd', '36400', 2, '2025-11-24 14:25:12', false, '2025-11-24', '1997-08-25', 'Intern');
+
+
+INSERT INTO public.attendance (user_id, clock_in, clock_out, date, status)
+VALUES
+(1, '2025-06-12 08:00:00', '2025-06-12 17:00:00', '2025-06-12', 'Present'),
+(2, '2025-06-23 08:00:00', '2025-06-23 17:00:00', '2025-06-23', 'Present'),
+(3, '2025-06-24 08:00:00', '2025-06-24 17:00:00', '2025-06-24', 'On Leave');
+
+
+INSERT INTO public.leave_requests (user_id, leave_type, start_date, end_date, status)
+VALUES
+(1, 'Vacation', '2025-07-01', '2025-07-05', 'Pending'),
+(2, 'Sick', '2025-06-25', '2025-06-26', 'Approved'),
+(3, 'Vacation', '2025-08-10', '2025-08-15', 'Denied');
+
+
+INSERT INTO public.user_task (user_id, task_name, description, assigned_by, start_date, due_date, priority, status)
+VALUES
+(1, 'Task 1', 'Complete the admin dashboard', 2, '2025-06-10', '2025-06-12', 'High', 'In Progress'),
+(2, 'Task 2', 'Update the user profile page', 1, '2025-06-20', '2025-06-23', 'Medium', 'Pending'),
+(3, 'Task 3', 'Fix bug in login screen', 1, '2025-06-22', '2025-06-25', 'Low', 'Completed');
+
+
+INSERT INTO public.employee_departments (user_id, department_id, start_date, end_date, current)
+VALUES
+(1, 1, '2025-06-12', NULL, TRUE),
+(2, 2, '2025-06-23', NULL, TRUE),
+(3, 3, '2025-06-24', NULL, TRUE);
+
+
+INSERT INTO public.performance_reviews (user_id, reviewed_by, review_date, score, comments)
+VALUES
+(1, 2, '2025-07-01', 4, 'Good performance, but needs improvement on time management.'),
+(2, 1, '2025-06-25', 5, 'Excellent performance, no issues.'),
+(3, 1, '2025-06-22', 3, 'Needs improvement in coding skills and communication.');
+
+

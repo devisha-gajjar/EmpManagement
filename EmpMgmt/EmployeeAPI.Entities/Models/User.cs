@@ -31,5 +31,27 @@ public partial class User
 
     public bool IsDeleted { get; set; }
 
+    public DateTime? EmploymentStartDate { get; set; }
+
+    public DateTime? DateOfBirth { get; set; }
+
+    public string? Position { get; set; }
+
+    public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
+
+    public virtual ICollection<Department> Departments { get; set; } = new List<Department>();
+
+    public virtual ICollection<EmployeeDepartment> EmployeeDepartments { get; set; } = new List<EmployeeDepartment>();
+
+    public virtual ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();
+
+    public virtual ICollection<PerformanceReview> PerformanceReviewReviewedByNavigations { get; set; } = new List<PerformanceReview>();
+
+    public virtual ICollection<PerformanceReview> PerformanceReviewUsers { get; set; } = new List<PerformanceReview>();
+
     public virtual Role Role { get; set; } = null!;
+
+    public virtual ICollection<UserTask> UserTaskAssignedByNavigations { get; set; } = new List<UserTask>();
+
+    public virtual ICollection<UserTask> UserTaskUsers { get; set; } = new List<UserTask>();
 }

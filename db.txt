@@ -1,0 +1,106 @@
+employee mgmt system db
+
+dotnet ef dbcontext scaffold "Name=ConnectionStrings:DefaultConnection" Npgsql.EntityFrameworkCore.PostgreSQL -o ../EmployeeAPI.Entities/Models --context EmployeeMgmtContext --context-dir ../EmployeeAPI.Entities/Data -f --namespace EmployeeAPI.Entities.Models --context-namespace EmployeeAPI.Entities.Data
+
+
+ALTER TABLE public.users
+    ADD COLUMN employment_start_date DATE,
+    ADD COLUMN date_of_birth DATE,
+    ADD COLUMN position VARCHAR(100);
+
+
+CREATE TABLE IF NOT EXISTS public.attendance (
+    attendance_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES public.users(user_id),
+    clock_in TIMESTAMP NOT NULL,
+    clock_out TIMESTAMP,
+    date DATE NOT NULL,
+    status VARCHAR(50) CHECK (status IN ('Present', 'Absent', 'On Leave')) DEFAULT 'Present',
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+CREATE TABLE IF NOT EXISTS public.leave_requests (
+    leave_request_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES public.users(user_id),
+    leave_type VARCHAR(50),  -- E.g., 'Sick', 'Vacation', etc.
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    status VARCHAR(50) CHECK (status IN ('Pending', 'Approved', 'Denied')) DEFAULT 'Pending',
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+CREATE TABLE IF NOT EXISTS public.user_task(
+    task_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES public.users(user_id),
+    task_name VARCHAR(255) NOT NULL,
+    description TEXT,
+    assigned_by INTEGER REFERENCES public.users(user_id),
+    start_date DATE NOT NULL,
+    due_date DATE NOT NULL,
+    priority VARCHAR(50) CHECK (priority IN ('Low', 'Medium', 'High')) DEFAULT 'Medium',
+    status VARCHAR(50) CHECK (status IN ('Pending', 'In Progress', 'Completed')) DEFAULT 'Pending',
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.departments
+    ADD COLUMN manager_id INTEGER REFERENCES public.users(user_id);
+
+
+
+CREATE TABLE IF NOT EXISTS public.employee_departments (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES public.users(user_id),
+    department_id INTEGER REFERENCES public.departments(id),
+    start_date DATE NOT NULL,  -- The date the employee joined the department
+    end_date DATE,  -- The date the employee left the department, if applicable
+    current BOOLEAN DEFAULT TRUE  -- Whether the employee is currently in the department
+);
+
+
+
+CREATE TABLE IF NOT EXISTS public.performance_reviews (
+    review_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES public.users(user_id),
+    reviewed_by INTEGER REFERENCES public.users(user_id),  -- Manager or admin
+    review_date DATE NOT NULL,
+    score INTEGER,  -- A score or rating (e.g., 1-5)
+    comments TEXT,  -- Review comments
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+-- Convert columns from DATE to TIMESTAMP
+
+-- For the 'users' table:
+ALTER TABLE public.users
+    ALTER COLUMN employment_start_date TYPE TIMESTAMP USING employment_start_date::TIMESTAMP,
+    ALTER COLUMN date_of_birth TYPE TIMESTAMP USING date_of_birth::TIMESTAMP;
+
+-- For the 'attendance' table (if required):
+ALTER TABLE public.attendance
+    ALTER COLUMN date TYPE TIMESTAMP USING date::TIMESTAMP;
+
+-- For the 'leave_requests' table:
+ALTER TABLE public.leave_requests
+    ALTER COLUMN start_date TYPE TIMESTAMP USING start_date::TIMESTAMP,
+    ALTER COLUMN end_date TYPE TIMESTAMP USING end_date::TIMESTAMP;
+
+-- For the 'user_task' table:
+ALTER TABLE public.user_task
+    ALTER COLUMN start_date TYPE TIMESTAMP USING start_date::TIMESTAMP,
+    ALTER COLUMN due_date TYPE TIMESTAMP USING due_date::TIMESTAMP;
+
+-- For the 'employee_departments' table:
+ALTER TABLE public.employee_departments
+    ALTER COLUMN start_date TYPE TIMESTAMP USING start_date::TIMESTAMP,
+    ALTER COLUMN end_date TYPE TIMESTAMP USING end_date::TIMESTAMP;
+
+-- For the 'performance_reviews' table:
+ALTER TABLE public.performance_reviews
+    ALTER COLUMN review_date TYPE TIMESTAMP USING review_date::TIMESTAMP;

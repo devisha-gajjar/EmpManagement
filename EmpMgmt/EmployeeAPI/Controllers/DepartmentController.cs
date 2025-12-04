@@ -5,10 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeAPI.Controllers;
 
-[EnableCors("AllowAll")]
 [ApiController]
 [Route("api/Department")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class DepartmentController : ControllerBase
 {
     private readonly IDepartmentService _service;

@@ -2,7 +2,7 @@ using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
 
-namespace EmployeeAPI.Services.Services;
+namespace EmployeeAPI.Services.Implementation;
 
 public class DepartmentService : IDepartmentService
 {

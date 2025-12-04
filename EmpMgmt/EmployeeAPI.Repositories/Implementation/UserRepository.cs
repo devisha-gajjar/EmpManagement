@@ -1,7 +1,6 @@
 using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
-using EmployeeAPI.Repositories.Repositories;
 
 namespace EmployeeAPI.Repositories.Implementation;
 
