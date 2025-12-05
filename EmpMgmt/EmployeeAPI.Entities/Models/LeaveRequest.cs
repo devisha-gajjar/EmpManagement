@@ -19,5 +19,7 @@ public partial class LeaveRequest
 
     public DateTime? CreatedOn { get; set; }
 
+    public string Reason { get; set; } = null!;
+
     public virtual User? User { get; set; }
 }

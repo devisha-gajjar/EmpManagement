@@ -171,6 +171,7 @@ using System.Security.Claims;
 using System.Text;
 using EmployeeAPI;
 using EmployeeAPI.Entities.Data;
+using EmployeeAPI.Hubs;
 using EmployeeAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -199,6 +200,9 @@ builder.Services.AddDbContext<EmployeeMgmtContext>(options =>
 
 // exception handler
 builder.Services.AddScoped<ExceptionHandlingMiddleware>();
+
+// SignalR  
+builder.Services.AddSignalR();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -236,10 +240,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     {
         OnMessageReceived = context =>
         {
-            if (context.Request.Cookies.ContainsKey("Token"))
+            var accessToken = context.Request.Query["access_token"];
+
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) &&
+                path.StartsWithSegments("/leaveHub"))   // match your hub path
+            {
+                context.Token = accessToken;
+            }
+
+            if (context.Token == null && context.Request.Cookies.ContainsKey("Token"))
             {
                 context.Token = context.Request.Cookies["Token"];
             }
+
             return Task.CompletedTask;
         }
     };
@@ -289,5 +303,6 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<LeaveHub>("/leaveHub");
 
 app.Run();

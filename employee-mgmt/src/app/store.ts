@@ -4,6 +4,7 @@ import authReducer from "../features/auth/authSlice";
 import snackbarReducer from "../features/shared/snackbarSlice";
 import departmentReducer from "../features/department/departmentSlice";
 import dashboardReducer from "../features/user/dashboard/dashboardSlice";
+import leaveReducer from "../features/user/leave/leaveSlice";
 import { employeeApi } from "../features/employees/empApi";
 
 export const store = configureStore({
@@ -13,6 +14,7 @@ export const store = configureStore({
         snackbar: snackbarReducer,
         department: departmentReducer,
         dashboard: dashboardReducer,
+        leaves: leaveReducer,
         [employeeApi.reducerPath]: employeeApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>

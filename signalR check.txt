@@ -1,0 +1,28 @@
+{"protocol":"json","version":1}
+
+
+{"type":1, "target":"JoinAsAdmin", "arguments":[]}
+
+
+{
+  "type": 1,
+  "target": "JoinAsUser",
+  "arguments": ["5"]
+}
+
+
+{
+  "type": 1,
+  "target": "ApplyLeave",
+  "arguments": [
+    {
+      "userId": 1,
+      "leaveType": "Sick",
+      "startDate": "2025-01-01",
+      "endDate": "2025-01-02",
+      "reason": "Testing leave"
+    }
+  ]
+}
+
+{"type":1,"target":"ApproveLeave","arguments":[8,5]}

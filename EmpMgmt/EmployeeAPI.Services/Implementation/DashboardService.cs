@@ -29,7 +29,6 @@ public class DashboardService : IDashboardService
 
     public async Task<EmployeeDashboardDTO> GetEmployeeDashboardAsync(int userId)
     {
-        // GET EMPLOYEE WITH DEEP INCLUDES USING GENERIC METHOD
         var employee = await _userRepo.GetQueryableInclude(
                 includes: new Expression<Func<User, object>>[]
                 {
@@ -47,10 +46,8 @@ public class DashboardService : IDashboardService
         if (employee == null || employee.Role?.RoleName == "Admin")
             throw new AppException("Employee not found or insufficient permissions");
 
-        // Get department
         var department = employee.EmployeeDepartments?.FirstOrDefault()?.Department;
 
-        // MANAGER NAME USING GENERIC REPO
         string managerName = "No manager assigned";
 
         if (department?.ManagerId != null)
@@ -61,7 +58,6 @@ public class DashboardService : IDashboardService
                 .FirstOrDefaultAsync();
         }
 
-        // BUILD DASHBOARD DTO
         var dashboard = new EmployeeDashboardDTO
         {
             FullName = $"{employee.FirstName} {employee.LastName}",
@@ -102,12 +98,14 @@ public class DashboardService : IDashboardService
 
             LeaveRequests = await _leaveRepo.GetAll()
                 .Where(l => l.UserId == userId)
+                .OrderByDescending(l => l.CreatedOn)
+                .Take(3)
                 .Select(l => new LeaveRequestDTO
                 {
-                    LeaveType = l.LeaveType,
+                    LeaveType = l.LeaveType!,
                     StartDate = l.StartDate,
                     EndDate = l.EndDate,
-                    Status = l.Status
+                    Status = l.Status!
                 })
                 .ToListAsync(),
 

@@ -8,26 +8,16 @@ export const getNavLinksByRole = (role: string) => {
 
     if (role === "admin") {
         return [
-            { name: "Employees", path: "/employees" },
-            { name: "Departments", path: "/departments" },
-            { name: "Reports", path: "/reports" },
+            { name: "Employees", path: "employees" },
+            { name: "Departments", path: "departments" },
         ];
     }
 
-    if (role === "manager") {
+    if (role === "user") {
         return [
-            { name: "Employees", path: "/employees" },
-            { name: "Reports", path: "/reports" },
+            { name: "Leaves", path: "leaves" },
         ];
     }
-
-    if (role === "employee") {
-        return [
-            { name: "Profile", path: "/profile" },
-            { name: "Attendance", path: "/attendance" },
-        ];
-    }
-
     return [];
 };
 

@@ -148,7 +148,6 @@ public partial class EmployeeMgmtContext : DbContext
             entity.Property(e => e.LeaveRequestId).HasColumnName("leave_request_id");
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_on");
             entity.Property(e => e.EndDate)
                 .HasColumnType("timestamp without time zone")
@@ -156,6 +155,9 @@ public partial class EmployeeMgmtContext : DbContext
             entity.Property(e => e.LeaveType)
                 .HasMaxLength(50)
                 .HasColumnName("leave_type");
+            entity.Property(e => e.Reason)
+                .HasDefaultValueSql("''::text")
+                .HasColumnName("reason");
             entity.Property(e => e.StartDate)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("start_date");

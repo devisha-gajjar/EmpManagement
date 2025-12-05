@@ -91,6 +91,9 @@ ALTER TABLE public.leave_requests
     ALTER COLUMN start_date TYPE TIMESTAMP USING start_date::TIMESTAMP,
     ALTER COLUMN end_date TYPE TIMESTAMP USING end_date::TIMESTAMP;
 
+ALTER TABLE "leave_requests"
+ALTER COLUMN "CreatedOn" TYPE timestamp with time zone;
+
 -- For the 'user_task' table:
 ALTER TABLE public.user_task
     ALTER COLUMN start_date TYPE TIMESTAMP USING start_date::TIMESTAMP,

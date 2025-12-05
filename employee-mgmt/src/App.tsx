@@ -7,6 +7,7 @@ import Employees from "./pages/Employee";
 import { Department } from "./pages/Department";
 import { Unauthorized } from "./pages/Unauthorized";
 import UserDashboard from "./pages/UserDashboard";
+import Leaves from "./pages/Leaves";
 
 function App() {
   const routes = useRoutes([
@@ -24,7 +25,10 @@ function App() {
           <MainLayout />
         </AuthGuard>
       ),
-      children: [{ path: "dashboard", element: <UserDashboard /> }],
+      children: [
+        { path: "dashboard", element: <UserDashboard /> },
+        { path: "leaves", element: <Leaves /> },
+      ],
     },
 
     // ---------- ADMIN ROUTES ----------

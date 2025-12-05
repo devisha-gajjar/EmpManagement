@@ -16,11 +16,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICustomService, CustomService>();
         services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<ILeaveService, LeaveService>();
 
         // repository
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ILeaveRepository, LeaveRepository>();
     }
 }
