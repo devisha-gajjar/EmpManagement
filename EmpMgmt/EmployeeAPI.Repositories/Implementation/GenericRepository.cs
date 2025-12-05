@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace EmployeeAPI.Repositories.Implementation;
@@ -53,6 +55,29 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         _db.Set<T>().Remove(entity);
         Save();
+    }
+
+    public IQueryable<T> GetQueryableInclude(Expression<Func<T, object>>[] includes = null, string[] deepIncludes = null)
+    {
+        IQueryable<T> query = _db.Set<T>().AsNoTracking();
+
+        if (includes != null)
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        if (deepIncludes != null)
+        {
+            foreach (var deepInclude in deepIncludes)
+            {
+                query = query.Include(deepInclude);
+            }
+        }
+
+        return query;
     }
 
 }

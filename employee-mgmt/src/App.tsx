@@ -1,33 +1,48 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import ProtectedRoute from "./components/layout/ProtectedRoute";
-import Employees from "./pages/Employee";
-import Login from "./pages/Login";
+import { useRoutes, Navigate } from "react-router-dom";
+import AuthGuard from "./components/layout/authGaurd";
 import MainLayout from "./components/layout/MainLayout";
+import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Employees from "./pages/Employee";
 import { Department } from "./pages/Department";
+import { Unauthorized } from "./pages/Unauthorized";
+import UserDashboard from "./pages/UserDashboard";
 
 function App() {
-  return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/" element={<Navigate to="/login" />} />
+  const routes = useRoutes([
+    // ---------- PUBLIC ROUTES ----------
+    { path: "/login", element: <Login /> },
+    { path: "/register", element: <Register /> },
+    { path: "/", element: <Navigate to="/login" /> },
+    { path: "/unauthorized", element: <Unauthorized /> },
 
-      <Route
-        element={
-          <ProtectedRoute>
-            <MainLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/employees" element={<Employees />} />
-        <Route path="/departments" element={<Department />} />
-      </Route>
+    // ---------- USER ROUTES ----------
+    {
+      path: "/user",
+      element: (
+        <AuthGuard allowedRoles={["user"]}>
+          <MainLayout />
+        </AuthGuard>
+      ),
+      children: [{ path: "dashboard", element: <UserDashboard /> }],
+    },
 
-      {/* Fallback Route */}
-      <Route path="*" element={<h2>404 - Page Not Found</h2>} />
-    </Routes>
-  );
+    // ---------- ADMIN ROUTES ----------
+    {
+      path: "/admin",
+      element: (
+        <AuthGuard allowedRoles={["admin"]}>
+          <MainLayout />
+        </AuthGuard>
+      ),
+      children: [
+        { path: "employees", element: <Employees /> },
+        { path: "departments", element: <Department /> },
+      ],
+    },
+  ]);
+
+  return <>{routes}</>;
 }
 
 export default App;

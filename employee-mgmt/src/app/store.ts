@@ -3,6 +3,7 @@ import authReducer from "../features/auth/authSlice";
 // import employeesReducer from "../features/employees/empSlice";
 import snackbarReducer from "../features/shared/snackbarSlice";
 import departmentReducer from "../features/department/departmentSlice";
+import dashboardReducer from "../features/user/dashboard/dashboardSlice";
 import { employeeApi } from "../features/employees/empApi";
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
         // employees: employeesReducer,
         snackbar: snackbarReducer,
         department: departmentReducer,
+        dashboard: dashboardReducer,
         [employeeApi.reducerPath]: employeeApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>

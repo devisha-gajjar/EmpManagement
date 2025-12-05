@@ -75,3 +75,36 @@ VALUES
 (3, 1, '2025-06-22', 3, 'Needs improvement in coding skills and communication.');
 
 
+
+for user 5 
+-- Insert for user with user_id 5
+INSERT INTO public.users (first_name, last_name, username, email, password, phone, address, zipcode, role_id, created_on, is_deleted, employment_start_date, date_of_birth, position)
+VALUES
+('devisha', 'gajjar', 'devisha_5', 'devisha5@example.com', '$2b$10$szckwlF2bxNrFyMSVwwOPem.yFo.wLTbCEu3cqFdUhCA4Sw9iAX6q', '9106074228', 'some address', '36400', 2, '2025-11-24 14:25:12', false, '2025-11-24', '1997-08-25', 'Intern');
+
+-- Insert attendance for user with user_id 5
+INSERT INTO public.attendance (user_id, clock_in, clock_out, date, status)
+VALUES
+(5, '2025-11-24 08:00:00', '2025-11-24 17:00:00', '2025-11-24', 'Present');
+
+-- Insert leave request for user with user_id 5
+INSERT INTO public.leave_requests (user_id, leave_type, start_date, end_date, status)
+VALUES
+(5, 'Vacation', '2025-12-01', '2025-12-05', 'Pending');
+
+-- Insert task for user with user_id 5
+INSERT INTO public.user_task (user_id, task_name, description, assigned_by, start_date, due_date, priority, status)
+VALUES
+(5, 'Task 4', 'Complete the intern onboarding process', 1, '2025-11-25', '2025-12-01', 'Low', 'Pending');
+
+-- Insert employee department for user with user_id 5
+INSERT INTO public.employee_departments (user_id, department_id, start_date, end_date, current)
+VALUES
+(5, 4, '2025-11-24', NULL, TRUE);
+
+-- Insert performance review for user with user_id 5
+INSERT INTO public.performance_reviews (user_id, reviewed_by, review_date, score, comments)
+VALUES
+(5, 1, '2025-12-10', 3, 'Average performance, needs more effort and skills improvement.');
+
+

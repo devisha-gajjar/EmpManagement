@@ -1,17 +1,32 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { login, registerUser } from "./authApi";
+import { roleClaimKey } from "../../utils/constant";
 
 export interface AuthState {
     token: string | null;
+    role: string | null;
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
     registerSuccess: string | null;
 }
 
+const getRoleFromToken = (token: string | null): string | null => {
+    try {
+        if (!token) return null;
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload[roleClaimKey]?.toLowerCase() || null;
+    } catch {
+        return null;
+    }
+};
+
+const initialToken = localStorage.getItem("token");
+
 const initialState: AuthState = {
-    token: localStorage.getItem("token"),
-    isAuthenticated: !!localStorage.getItem("token"),
+    token: initialToken,
+    role: getRoleFromToken(initialToken),
+    isAuthenticated: !!initialToken,
     loading: false,
     error: null,
     registerSuccess: null,
@@ -23,6 +38,7 @@ const authSlice = createSlice({
     reducers: {
         logout(state) {
             state.token = null;
+            state.role = null;
             state.isAuthenticated = false;
             state.error = null;
             state.registerSuccess = null;
@@ -47,6 +63,7 @@ const authSlice = createSlice({
                 state.isAuthenticated = true;
                 state.error = null;
                 state.registerSuccess = null;
+                state.role = getRoleFromToken(action.payload);
                 localStorage.setItem("token", action.payload as string);
             })
             .addCase(login.rejected, (state, action) => {

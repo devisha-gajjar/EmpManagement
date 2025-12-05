@@ -1,10 +1,11 @@
+using System.Security.Claims;
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeAPI.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/user")]
 [ApiController]
 public class DashboardController : ControllerBase
 {
@@ -14,9 +15,10 @@ public class DashboardController : ControllerBase
         _dashboardService = dashboardService;
     }
 
-    [HttpGet("dashboard/{userId}")]
-    public async Task<ActionResult<EmployeeDashboardDTO>> GetEmployeeDashboard(int userId)
+    [HttpGet("dashboard")]
+    public async Task<ActionResult<EmployeeDashboardDTO>> GetEmployeeDashboard()
     {
+        int userId = int.Parse(User.FindFirst(ClaimTypes.Name)?.Value!);
         var dashboard = await _dashboardService.GetEmployeeDashboardAsync(userId);
 
         return Ok(dashboard);

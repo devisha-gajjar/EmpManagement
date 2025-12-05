@@ -23,7 +23,7 @@ interface ValidationErrors {
 export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated } = useAppSelector(
+  const { loading, error, isAuthenticated, role } = useAppSelector(
     (state) => state.auth
   );
 
@@ -89,10 +89,20 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/employees");
+    if (isAuthenticated && role) {
+      console.log("Role", role);
+      switch (role) {
+        case "admin":
+          navigate("/admin/employees");
+          break;
+        case "user":
+          navigate("/user/dashboard");
+          break;
+        default:
+          navigate("/login");
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, role, navigate]);
 
   return (
     <Container

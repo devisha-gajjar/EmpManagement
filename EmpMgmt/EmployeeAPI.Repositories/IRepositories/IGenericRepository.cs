@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace EmployeeAPI.Repositories.IRepositories;
 
 public interface IGenericRepository<T> where T : class
@@ -10,4 +12,5 @@ public interface IGenericRepository<T> where T : class
     public void UpdateRange(IEnumerable<T> entities);
     public void Delete(T entity);
     void Save();
+    IQueryable<T> GetQueryableInclude(Expression<Func<T, object>>[] includes = null, string[] deepIncludes = null);
 }

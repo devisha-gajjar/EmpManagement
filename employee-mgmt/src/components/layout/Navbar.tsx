@@ -12,12 +12,17 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { NAV_LINKS } from "../../utils/constant";
+import { getNavLinksByRole } from "../../utils/constant";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useAppSelector } from "../../app/hooks";
 
 export default function Navbar() {
+  const role = useAppSelector((state) => state.auth.role);
+
+  const NAV_LINKS = getNavLinksByRole(role as string);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
