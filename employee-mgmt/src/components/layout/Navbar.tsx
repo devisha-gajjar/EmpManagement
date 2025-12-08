@@ -42,7 +42,7 @@ export default function Navbar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="fixed">
       <Toolbar>
         <Typography
           variant="h6"
@@ -52,7 +52,7 @@ export default function Navbar() {
           Employee Management
         </Typography>
 
-        <Box sx={{ display: { xs: "none", sm: "block" } }}>
+        {/* <Box sx={{ display: { xs: "none", sm: "block" } }}>
           {NAV_LINKS.map((item) => (
             <Button
               key={item.name}
@@ -64,7 +64,7 @@ export default function Navbar() {
               {item.name}
             </Button>
           ))}
-        </Box>
+        </Box> */}
 
         <Button
           color="inherit"

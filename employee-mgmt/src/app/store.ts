@@ -2,10 +2,11 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice";
 // import employeesReducer from "../features/employees/empSlice";
 import snackbarReducer from "../features/shared/snackbarSlice";
-import departmentReducer from "../features/department/departmentSlice";
+import departmentReducer from "../features/admin/department/departmentSlice";
 import dashboardReducer from "../features/user/dashboard/dashboardSlice";
 import leaveReducer from "../features/user/leave/leaveSlice";
-import { employeeApi } from "../features/employees/empApi";
+import leaveListReducer from "../features/admin/leave/leaveSlice";
+import { employeeApi } from "../features/admin/employees/empApi";
 
 export const store = configureStore({
     reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
         department: departmentReducer,
         dashboard: dashboardReducer,
         leaves: leaveReducer,
+        leaveList: leaveListReducer,
         [employeeApi.reducerPath]: employeeApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>

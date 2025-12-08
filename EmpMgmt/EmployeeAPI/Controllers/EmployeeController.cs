@@ -9,7 +9,7 @@ namespace EmployeeAPI.Controllers
     [EnableCors("AllowAll")]
     [ApiController]
     [Route("api/Employee")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _service;

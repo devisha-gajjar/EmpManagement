@@ -6,20 +6,20 @@ import {
   CircularProgress,
   Box,
 } from "@mui/material";
-import { useAppDispatch, useAppSelector, useSnackbar } from "../app/hooks";
+import { useAppDispatch, useAppSelector, useSnackbar } from "../../app/hooks";
 // import {
 //   updateEmployee,
 //   addEmployee,
 //   fetchEmployees,
 // } from "../features/employees/empApi";
-import { fetchDepartments } from "../features/department/departmentApi";
-import type { Employee } from "../interfaces/employee.interface";
-import type { DynamicFormField } from "../interfaces/form.interface";
-import DynamicFormComponent from "../components/shared/form/CommonForm";
+import { fetchDepartments } from "../../features/admin/department/departmentApi";
+import type { Employee } from "../../interfaces/employee.interface";
+import type { DynamicFormField } from "../../interfaces/form.interface";
+import DynamicFormComponent from "../../components/shared/form/CommonForm";
 import {
   useAddEmployeeMutation,
   useUpdateEmployeeMutation,
-} from "../features/employees/empApi";
+} from "../../features/admin/employees/empApi";
 
 interface Props {
   open: boolean;

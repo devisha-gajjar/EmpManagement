@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
-import { login } from "../features/auth/authApi";
+import { login } from "../../features/auth/authApi";
 
 import {
   Container,
@@ -12,7 +12,7 @@ import {
   Alert,
   Link,
 } from "@mui/material";
-import { emailRegex } from "../utils/constant";
+import { emailRegex } from "../../utils/constant";
 
 // validation errors
 interface ValidationErrors {

@@ -1,12 +1,14 @@
 using System.Security.Claims;
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeAPI.Controllers;
 
 [Route("api/user")]
 [ApiController]
+[Authorize(Roles = "User")]
 public class DashboardController : ControllerBase
 {
     private readonly IDashboardService _dashboardService;

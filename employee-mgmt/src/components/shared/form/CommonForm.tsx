@@ -80,6 +80,9 @@ export default function DynamicFormComponent({
                       fullWidth
                       type={field.type}
                       label={field.label}
+                      InputLabelProps={
+                        field.type === "date" ? { shrink: true } : {}
+                      }
                       placeholder={field.placeholder}
                       value={value || ""}
                       onChange={onChange}

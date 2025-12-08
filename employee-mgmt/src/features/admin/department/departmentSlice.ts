@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { DepartmentState } from "../../interfaces/department.interface";
+import type { DepartmentState } from "../../../interfaces/department.interface";
 import { fetchDepartments } from "./departmentApi";
 
 const initialState: DepartmentState = {

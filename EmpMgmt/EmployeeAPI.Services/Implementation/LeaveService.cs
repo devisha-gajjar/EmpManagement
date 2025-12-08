@@ -2,6 +2,7 @@ using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
 using EmployeeAPI.Entities.Models;
+using System.Linq.Expressions;
 
 namespace EmployeeAPI.Services.Implementation
 {
@@ -57,5 +58,34 @@ namespace EmployeeAPI.Services.Implementation
         {
             return _leaveRepo.GetUserLeaveHistory(userId);
         }
+
+        public IEnumerable<LeaveListDto> GetLeaveList()
+        {
+            return _leaveRepo
+                .GetQueryableInclude(new Expression<Func<LeaveRequest, object>>[]
+                {
+                    x => x.User
+                })
+                .Select(l => new LeaveListDto
+                {
+                    LeaveRequestId = l.LeaveRequestId,
+                    UserId = l.UserId,
+                    LeaveType = l.LeaveType,
+                    StartDate = l.StartDate,
+                    EndDate = l.EndDate,
+                    Status = l.Status,
+                    CreatedOn = l.CreatedOn,
+                    Reason = l.Reason,
+                    User = l.User == null ? null : new UserBasicDto
+                    {
+                        UserId = l.User.UserId,
+                        FirstName = l.User.FirstName,
+                        LastName = l.User.LastName,
+                        Email = l.User.Email
+                    }
+                })
+                .ToList();
+        }
+
     }
 }

@@ -9,5 +9,6 @@ namespace EmployeeAPI.Services.IServices
         Task<bool> ApproveLeaveAsync(int leaveRequestId);
         Task<bool> DenyLeaveAsync(int leaveRequestId);
         IEnumerable<LeaveRequest> GetUserLeaveHistory(int userId);
+        IEnumerable<LeaveListDto> GetLeaveList();
     }
 }

@@ -5,6 +5,7 @@ import { roleClaimKey } from "../../utils/constant";
 export interface AuthState {
     token: string | null;
     role: string | null;
+    userId: string | null;
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
@@ -21,11 +22,22 @@ const getRoleFromToken = (token: string | null): string | null => {
     }
 };
 
+const getUserIdFromToken = (token: string | null): string | null => {
+    try {
+        if (!token) return null;
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload[roleClaimKey]?.toLowerCase() || null;
+    } catch {
+        return null;
+    }
+};
+
 const initialToken = localStorage.getItem("token");
 
 const initialState: AuthState = {
     token: initialToken,
     role: getRoleFromToken(initialToken),
+    userId: getUserIdFromToken(initialToken),
     isAuthenticated: !!initialToken,
     loading: false,
     error: null,

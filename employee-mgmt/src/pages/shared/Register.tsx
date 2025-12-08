@@ -9,11 +9,11 @@ import {
   Alert,
   Link,
 } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { registerUser } from "../features/auth/authApi";
-import { clearAuthStatus } from "../features/auth/authSlice";
-import type { RegisterData } from "../interfaces/login.interface";
-import { emailRegex, phoneRegex } from "../utils/constant";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { registerUser } from "../../features/auth/authApi";
+import { clearAuthStatus } from "../../features/auth/authSlice";
+import type { RegisterData } from "../../interfaces/login.interface";
+import { emailRegex, phoneRegex } from "../../utils/constant";
 
 type ValidationErrors = Partial<Record<keyof RegisterData, string>>;
 

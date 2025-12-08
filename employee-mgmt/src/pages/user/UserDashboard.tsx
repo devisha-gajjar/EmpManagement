@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { Box, CircularProgress, Divider, Typography } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { fetchDashboardData } from "../features/user/dashboard/dashboardApi";
-import { ResponsiveCard } from "../components/dashboard/ResponsiveCard";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   CenteredContainer,
   DashboardCard,
   InfoText,
-} from "../components/dashboard/DashboardCard";
-import type { LeaveRequest } from "../interfaces/dashboard.interface";
+} from "../../components/dashboard/DashboardCard";
+import { ResponsiveCard } from "../../components/dashboard/ResponsiveCard";
+import { fetchDashboardData } from "../../features/user/dashboard/dashboardApi";
+import type { LeaveRequest } from "../../interfaces/dashboard.interface";
 
 export default function UserDashboard() {
   const dispatch = useAppDispatch();

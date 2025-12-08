@@ -1,13 +1,14 @@
 import { useRoutes, Navigate } from "react-router-dom";
-import AuthGuard from "./components/layout/authGaurd";
+import AuthGuard from "./features/auth/authGaurd";
 import MainLayout from "./components/layout/MainLayout";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Employees from "./pages/Employee";
-import { Department } from "./pages/Department";
-import { Unauthorized } from "./pages/Unauthorized";
-import UserDashboard from "./pages/UserDashboard";
-import Leaves from "./pages/Leaves";
+import Login from "./pages/shared/Login";
+import Employees from "./pages/admin/Employee";
+import Leaves from "./pages/user/Leaves";
+import { Unauthorized } from "./pages/shared/Unauthorized";
+import UserDashboard from "./pages/user/UserDashboard";
+import { Department } from "./pages/admin/Department";
+import Register from "./pages/shared/Register";
+import LeaveList from "./pages/admin/LeaveList";
 
 function App() {
   const routes = useRoutes([
@@ -42,6 +43,7 @@ function App() {
       children: [
         { path: "employees", element: <Employees /> },
         { path: "departments", element: <Department /> },
+        { path: "leavesList", element: <LeaveList /> },
       ],
     },
   ]);

@@ -3,7 +3,7 @@ import type { RegisterOptions, SubmitHandler } from "react-hook-form";
 export interface DynamicFormField {
     name: string;
     label: string;
-    type: "text" | "password" | "email" | "number" | "select";
+    type: "text" | "password" | "email" | "number" | "select" | "date";
     placeholder?: string;
     rules?: RegisterOptions; // React Hook Form rules (required, min, pattern, etc.)
     options?: { value: string | number; label: string }[]; // For Select inputs

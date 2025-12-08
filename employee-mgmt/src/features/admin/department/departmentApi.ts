@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axiosClient from "../../api/axiosClient";
+import axiosClient from "../../../api/axiosClient";
 
 export const fetchDepartments = createAsyncThunk(
     'departments/fetchDepartments',

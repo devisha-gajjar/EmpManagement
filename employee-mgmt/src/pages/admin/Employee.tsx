@@ -30,18 +30,15 @@ import {
   useAppSelector,
   useDebounce,
   useSnackbar,
-} from "../app/hooks";
+} from "../../app/hooks";
 // import {
 //   fetchEmployees,
 //   getEmployee,
 //   deleteEmployee,
 // } from "../features/employees/empApi";
-import type { Employee } from "../interfaces/employee.interface";
+import type { Employee } from "../../interfaces/employee.interface";
 import EmployeeFormDialog from "./EmployeeFormDialog";
-import {
-  useDeleteEmployeeMutation,
-  useGetEmployeesQuery,
-} from "../features/employees/empApi";
+import { useDeleteEmployeeMutation, useGetEmployeesQuery } from "../../features/admin/employees/empApi";
 
 export default function Employees() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -52,7 +49,7 @@ export default function Employees() {
   const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
 
   // searching and pagination
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -73,8 +70,8 @@ export default function Employees() {
   const [deleteEmployee] = useDeleteEmployeeMutation();
 
   useEffect(() => {
-    console.log("Search Term:", searchTerm); // Logs the search term immediately
-    console.log("Debounced Search Term:", debouncedSearchTerm); // Logs the debounced value
+    console.log("Search Term:", searchTerm);
+    console.log("Debounced Search Term:", debouncedSearchTerm);
   }, [searchTerm, debouncedSearchTerm]);
 
   useEffect(() => {
@@ -177,7 +174,7 @@ export default function Employees() {
   // }
 
   return (
-    <Box m={4}>
+    <Box m={2}>
       <Box
         display="flex"
         justifyContent="space-between"

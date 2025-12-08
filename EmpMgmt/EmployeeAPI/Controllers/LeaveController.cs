@@ -1,5 +1,6 @@
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -7,6 +8,8 @@ namespace EmployeeAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
+[Authorize(Roles = "Admin, User")]
 public class LeaveController : ControllerBase
 {
     private readonly ILeaveService _leaveService;
@@ -14,6 +17,13 @@ public class LeaveController : ControllerBase
     public LeaveController(ILeaveService leaveService)
     {
         _leaveService = leaveService;
+    }
+
+    [HttpGet("GetLeaveList")]
+    public IActionResult GetLeaveList()
+    {
+        var leaves = _leaveService.GetLeaveList();
+        return Ok(leaves);
     }
 
     [HttpGet("GetUserLeaveHistory")]
@@ -27,6 +37,8 @@ public class LeaveController : ControllerBase
     [HttpPost("ApplyLeave")]
     public async Task<IActionResult> ApplyLeave([FromBody] CreateLeaveRequestDto model)
     {
+        int userId = int.Parse(User.FindFirst(ClaimTypes.Name)?.Value!);
+        model.UserId = userId;
         var leave = await _leaveService.ApplyLeaveAsync(model);
         return Ok(leave);
     }

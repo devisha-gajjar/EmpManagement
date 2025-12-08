@@ -8,9 +8,9 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
-import { useAppDispatch, useAppSelector, useSnackbar } from "../app/hooks";
-import { fetchDepartments } from "../features/department/departmentApi";
 import { useEffect } from "react";
+import { useAppSelector, useSnackbar, useAppDispatch } from "../../app/hooks";
+import { fetchDepartments } from "../../features/admin/department/departmentApi";
 
 function Department() {
   const { departments, loading, error } = useAppSelector(
