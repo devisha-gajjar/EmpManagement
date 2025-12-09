@@ -16,6 +16,7 @@ public class LeaveHub : Hub
     {
         Console.WriteLine("CONNECTED to HUB");
         Console.WriteLine("ConnectionId: " + Context.ConnectionId);
+        Console.WriteLine("user contex" + Context.User.Identity);
         Console.WriteLine("User: " + Context.User?.Identity?.Name);
 
         await base.OnConnectedAsync();
@@ -37,6 +38,8 @@ public class LeaveHub : Hub
     {
         var leave = await _leaveService.ApplyLeaveAsync(model);
 
+        Console.WriteLine("NewLeaveRequest");
+
         // Notify all admins
         await Clients.Group("Admins")
             .SendAsync("NewLeaveRequest", new
@@ -51,7 +54,7 @@ public class LeaveHub : Hub
 
     public async Task ApproveLeave(string leaveRequestId, string userId)
     {
-        Console.WriteLine("Approve req");
+        Console.WriteLine("Approve req" + userId);
 
         int id = int.Parse(leaveRequestId);
         int uid = int.Parse(userId);
@@ -60,6 +63,12 @@ public class LeaveHub : Hub
         if (!updated) return;
 
         await Clients.Group($"User_{uid}")
+            .SendAsync("LeaveStatusChanged", new
+            {
+                leaveRequestId = id,
+                status = "Approved"
+            });
+        await Clients.Group("Admins")
             .SendAsync("LeaveStatusChanged", new
             {
                 leaveRequestId = id,
@@ -81,5 +90,12 @@ public class LeaveHub : Hub
                 leaveRequestId,
                 status = "Denied"
             });
+
+        await Clients.Group("Admins")
+       .SendAsync("LeaveStatusChanged", new
+       {    
+           leaveRequestId = id,
+           status = "Denied"
+       });
     }
 }

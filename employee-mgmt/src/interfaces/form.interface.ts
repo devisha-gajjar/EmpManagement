@@ -7,7 +7,7 @@ export interface DynamicFormField {
     placeholder?: string;
     rules?: RegisterOptions; // React Hook Form rules (required, min, pattern, etc.)
     options?: { value: string | number; label: string }[]; // For Select inputs
-    validationMessages?: { [key: string]: string }; // Custom error messages
+    validationMessages?: Record<string, string>; // Custom error messages
     gridClass?: string; // e.g., 'half' or 'full'
     disabled?: boolean;
 }

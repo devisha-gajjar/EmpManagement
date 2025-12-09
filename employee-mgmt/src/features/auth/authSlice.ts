@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { login, registerUser } from "./authApi";
-import { roleClaimKey } from "../../utils/constant";
+import { roleClaimKey, userIdClaimKey } from "../../utils/constant";
 
 export interface AuthState {
     token: string | null;
@@ -26,7 +26,7 @@ const getUserIdFromToken = (token: string | null): string | null => {
     try {
         if (!token) return null;
         const payload = JSON.parse(atob(token.split(".")[1]));
-        return payload[roleClaimKey]?.toLowerCase() || null;
+        return payload[userIdClaimKey]?.toLowerCase() || null;
     } catch {
         return null;
     }

@@ -54,36 +54,43 @@ export default function EmployeeFormDialog({
         name: "name",
         label: "Full Name",
         type: "text",
-        rules: { required: "Name is required" },
+        rules: { required: true },
+        validationMessages: { required: "Name is required" } as Record<
+          string,
+          string
+        >,
       },
       {
         name: "email",
         label: "Email Address",
         type: "text",
         rules: {
-          required: "Email is required",
-          pattern: {
-            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: "Invalid email address",
-          },
+          required: true,
+          pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
         },
+        validationMessages: {
+          required: "Email is required",
+          pattern: "Invalid email address",
+        } as Record<string, string>,
       },
       {
         name: "salary",
         label: "Salary",
         type: "number",
         gridClass: "half",
-        rules: {
+        rules: { required: true, min: 1 },
+        validationMessages: {
           required: "Salary is required",
-          min: { value: 1, message: "Salary must be positive" },
-        },
+          min: "Salary must be positive",
+        } as Record<string, string>,
       },
       {
         name: "departmentId",
         label: "Department",
         type: "select",
         gridClass: "half",
-        rules: { required: "Department is required" },
+        rules: { required: true },
+        validationMessages: { required: "Department is required" },
         disabled: deptLoading,
         options: departments.map((dept) => ({
           label: dept.name,

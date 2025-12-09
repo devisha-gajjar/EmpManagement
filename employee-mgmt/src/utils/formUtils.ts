@@ -6,9 +6,15 @@ export const getErrorMessage = (
 ): string | null => {
     if (!error) return null;
 
+    console.log("Custom message", customMessages);
     // specific message 
-    if (customMessages[error.type]) {
-        return customMessages[error.type];
+    const message = customMessages[error.type];
+    if (message) {
+        // If message is an object with 'message' key, return that
+        if (typeof message === "object" && "message" in message) {
+            return message;
+        }
+        return message; // string message
     }
 
     // default Standard Messages

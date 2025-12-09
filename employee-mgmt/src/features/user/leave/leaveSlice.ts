@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { createLeave, fetchLeaves } from './leaveApi';
+import { fetchLeaves } from './leaveApi';
 import type { LeaveSlice } from '../../../interfaces/leave.interface';
 
 const initialState: LeaveSlice = {
@@ -26,18 +26,6 @@ const leaveSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string;
             })
-
-            // Create Leave
-            .addCase(createLeave.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(createLeave.fulfilled, (state, action) => {
-                state.loading = false;
-            })
-            .addCase(createLeave.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string;
-            });
     },
 });
 

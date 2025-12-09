@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector, useDebounce } from "../../app/hooks";
 import {
   CircularProgress,
   Paper,
@@ -15,20 +15,67 @@ import {
   IconButton,
   Tooltip,
   Stack,
+  TablePagination,
 } from "@mui/material";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 import { fetchLeavesList } from "../../features/admin/leave/leaveApi";
+import { leaveHubService } from "../../services/signalR/leaveHub.service";
 
 export default function LeaveList() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
   const dispatch = useAppDispatch();
   const { leaves, loading, error } = useAppSelector((state) => state.leaveList);
 
   useEffect(() => {
+    // leaveHubService.startConnection().then(() => {
+    //   leaveHubService.joinAdmin();
+    // });
+
     dispatch(fetchLeavesList());
-  }, [dispatch]);
+
+    const onNewLeave = (data: any) => {
+      console.log("New Leave Arrived:", data);
+      dispatch(fetchLeavesList());
+    };
+
+    leaveHubService.onNewLeaveRequest(onNewLeave);
+
+    const handleStatusChange = (data: {
+      leaveRequestId: number;
+      status: string;
+    }) => {
+      console.log("Leave status updated:", data);
+      dispatch(fetchLeavesList());
+    };
+
+    leaveHubService.onLeaveStatusChanged(handleStatusChange);
+
+    return () => {
+      leaveHubService.offLeaveStatusChanged(handleStatusChange);
+      leaveHubService.connection.off("NewLeaveRequest", onNewLeave);
+    };
+  }, []);
+
+  const filteredLeaves = leaves.filter(
+    (leaves: any) =>
+      leaves.leaveType
+        .toLowerCase()
+        .includes(debouncedSearchTerm.toLowerCase()) ||
+      leaves.status.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+  );
+
+  const paginatedLeaves = filteredLeaves.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   if (loading)
     return (
@@ -44,9 +91,13 @@ export default function LeaveList() {
       </Typography>
     );
 
-  // Dummy handlers
-  const handleApprove = (id: number) => console.log("Approved:", id);
-  const handleDecline = (id: number) => console.log("Declined:", id);
+  const handleApprove = (leaveId: number, userId: number) => {
+    leaveHubService.approveLeave({ leaveId, userId });
+  };
+
+  const handleDecline = (leaveId: number, userId: number) => {
+    leaveHubService.denyLeave({ leaveId, userId });
+  };
 
   return (
     <Box p={2}>
@@ -69,7 +120,7 @@ export default function LeaveList() {
           </TableHead>
 
           <TableBody>
-            {leaves.map((leave: any) => (
+            {paginatedLeaves.map((leave: any) => (
               <TableRow
                 key={leave.leaveRequestId}
                 hover
@@ -91,9 +142,9 @@ export default function LeaveList() {
                     color={
                       leave.status === "Approved"
                         ? "success"
-                        : leave.status === "Rejected"
+                        : leave.status === "Denied"
                         ? "error"
-                        : "warning"
+                        : "primary"
                     }
                     variant="outlined"
                     size="small"
@@ -110,7 +161,12 @@ export default function LeaveList() {
                         <IconButton
                           color="success"
                           disabled={leave.status !== "Pending"}
-                          onClick={() => handleApprove(leave.leaveRequestId)}
+                          onClick={() =>
+                            handleApprove(
+                              leave.leaveRequestId,
+                              leave.user.userId
+                            )
+                          }
                         >
                           <CheckCircleIcon />
                         </IconButton>
@@ -122,7 +178,12 @@ export default function LeaveList() {
                         <IconButton
                           color="error"
                           disabled={leave.status !== "Pending"}
-                          onClick={() => handleDecline(leave.leaveRequestId)}
+                          onClick={() =>
+                            handleDecline(
+                              leave.leaveRequestId,
+                              leave.user.userId
+                            )
+                          }
                         >
                           <CancelIcon />
                         </IconButton>
@@ -135,6 +196,17 @@ export default function LeaveList() {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        component="div"
+        count={filteredLeaves.length}
+        page={page}
+        onPageChange={(event, newPage) => setPage(newPage)}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={(e) => {
+          setRowsPerPage(parseInt(e.target.value, 10));
+          setPage(0);
+        }}
+      />
     </Box>
   );
 }

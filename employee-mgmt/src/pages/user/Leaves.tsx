@@ -29,9 +29,11 @@ const Leaves = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchLeaves());
+    // leaveHubService.startConnection().then(() => {
+    //   leaveHubService.joinUser(userId!);
+    // });
 
-    leaveHubService.joinUser(userId!);
+    dispatch(fetchLeaves());
 
     const handleStatusChange = (data: {
       leaveRequestId: number;
@@ -46,7 +48,7 @@ const Leaves = () => {
     return () => {
       leaveHubService.offLeaveStatusChanged(handleStatusChange);
     };
-  }, [dispatch, userId]);
+  }, []);
 
   if (loading)
     return (
@@ -112,55 +114,65 @@ const Leaves = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {leaves.map((leave: LeaveRequestResponse, index) => (
-              <TableRow
-                key={leave.leaveRequestId}
-                sx={{
-                  backgroundColor: index % 2 === 0 ? "#f5f5f5" : "#fff",
-                  "&:hover": { backgroundColor: "#e3f2fd" },
-                }}
-              >
-                <TableCell>{leave.leaveRequestId}</TableCell>
-                <TableCell>{leave.leaveType}</TableCell>
-                <TableCell>
-                  {new Date(leave.startDate).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(leave.endDate).toLocaleDateString()}
-                </TableCell>
-                <TableCell>{leave.status}</TableCell>
-                <TableCell>
-                  {leave.reason?.trim() ? leave.reason : "-"}
-                </TableCell>
-                <TableCell>
-                  {new Date(leave.createdOn).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {leave.status === "Pending" ? (
-                    <>
-                      <Tooltip title="Edit Leave">
-                        <IconButton
-                          color="primary"
-                          // onClick={() => handleEditEmployee(employee)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete Leave">
-                        <IconButton
-                          color="primary"
-                          // onClick={() => handleDeleteClick(employee.id)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </>
-                  ) : (
-                    ""
-                  )}
+            {leaves.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} align="center">
+                  <Typography variant="h6" color="textSecondary">
+                    No leave requests added yet
+                  </Typography>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              leaves.map((leave: LeaveRequestResponse, index) => (
+                <TableRow
+                  key={leave.leaveRequestId}
+                  sx={{
+                    backgroundColor: index % 2 === 0 ? "#f5f5f5" : "#fff",
+                    "&:hover": { backgroundColor: "#e3f2fd" },
+                  }}
+                >
+                  <TableCell>{leave.leaveRequestId}</TableCell>
+                  <TableCell>{leave.leaveType}</TableCell>
+                  <TableCell>
+                    {new Date(leave.startDate).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(leave.endDate).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>{leave.status}</TableCell>
+                  <TableCell>
+                    {leave.reason?.trim() ? leave.reason : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(leave.createdOn).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {leave.status === "Pending" ? (
+                      <>
+                        <Tooltip title="Edit Leave">
+                          <IconButton
+                            color="primary"
+                            // onClick={() => handleEditEmployee(employee)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete Leave">
+                          <IconButton
+                            color="primary"
+                            // onClick={() => handleDeleteClick(employee.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    ) : (
+                      "No actions"
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>

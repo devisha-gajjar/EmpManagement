@@ -30,7 +30,6 @@ export function useDebounce(value: string, delay: number) {
             setDebouncedValue(value);
         }, delay);
 
-        // Clean up the timeout when the component unmounts or when the value changes
         return () => {
             clearTimeout(handler);
         };
