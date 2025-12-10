@@ -5,14 +5,16 @@ import { fetchLeaves } from "../../features/user/leave/leaveApi";
 import type { DynamicFormField } from "../../interfaces/form.interface";
 import type { CreateLeaveRequest } from "../../interfaces/leave.interface";
 import { leaveHubService } from "../../services/signalR/leaveHub.service";
+import { useMemo } from "react";
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  leaveToEdit: CreateLeaveRequest | null;
 }
 
-const AddLeaveDialog = ({ open, onClose }: Props) => {
-  const dispatch = useAppDispatch();
+const AddLeaveDialog = ({ open, onClose, leaveToEdit }: Props) => {
+  const dispatch = useAppDispatch();  
   const { userId } = useAppSelector((state) => state.auth);
 
   const formConfig: DynamicFormField[] = [
@@ -54,8 +56,35 @@ const AddLeaveDialog = ({ open, onClose }: Props) => {
     },
   ];
 
+  const defaultValues = useMemo(() => {
+    if (leaveToEdit) {
+      const formatDate = (d: string | Date) => {
+        const date = new Date(d);
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, "0");
+        const dd = String(date.getDate()).padStart(2, "0");
+        return `${yyyy}-${mm}-${dd}`;
+      };
+
+      return {
+        leaveType: leaveToEdit.leaveType,
+        startDate: formatDate(leaveToEdit.startDate),
+        endDate: formatDate(leaveToEdit.endDate),
+        reason: leaveToEdit.reason,
+      };
+    }
+
+    return {
+      leaveType: "",
+      startDate: "",
+      endDate: "",
+      reason: "",
+    };
+  }, [leaveToEdit]);
+
   const handleSubmit = async (data: CreateLeaveRequest) => {
     data.userId = parseInt(userId!);
+    data.leaveRequestId = leaveToEdit?.leaveRequestId!;
     leaveHubService.applyLeave(data);
 
     // if (response?.payload?.leaveRequestId > 0) {
@@ -70,6 +99,7 @@ const AddLeaveDialog = ({ open, onClose }: Props) => {
       <DialogContent>
         <DynamicFormComponent
           formConfig={formConfig}
+          defaultValues={defaultValues}
           onSubmit={handleSubmit}
           onCancel={onClose}
           submitLabel="Submit"

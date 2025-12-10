@@ -38,7 +38,11 @@ import {
 // } from "../features/employees/empApi";
 import type { Employee } from "../../interfaces/employee.interface";
 import EmployeeFormDialog from "./EmployeeFormDialog";
-import { useDeleteEmployeeMutation, useGetEmployeesQuery } from "../../features/admin/employees/empApi";
+import {
+  useDeleteEmployeeMutation,
+  useGetEmployeesQuery,
+} from "../../features/admin/employees/empApi";
+import CommonConfirmDialog from "../../components/shared/confirmation-dialog/CommonConfirmDialog";
 
 export default function Employees() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -289,33 +293,14 @@ export default function Employees() {
       />
 
       {/* Delete Confirmation Dialog */}
-      <Dialog
+      <CommonConfirmDialog
         open={isDeleteDialogOpen}
-        onClose={handleCloseDeleteDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this employee? This action cannot be
-            undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteDialog} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirmDelete}
-            color="primary"
-            variant="contained"
-            autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+        title="Delete Employee"
+        message="Are you sure you want to delete this employee?"
+        confirmText="Delete"
+        onCancel={handleCloseDeleteDialog}
+        onConfirm={handleConfirmDelete}
+      />
     </Box>
   );
 }

@@ -9,6 +9,7 @@ import UserDashboard from "./pages/user/UserDashboard";
 import { Department } from "./pages/admin/Department";
 import Register from "./pages/shared/Register";
 import LeaveList from "./pages/admin/LeaveList";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   const routes = useRoutes([

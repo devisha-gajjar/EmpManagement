@@ -1,7 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosClient from "../../../api/axiosClient";
-import type { CreateLeaveRequest } from "../../../interfaces/leave.interface";
-import { leaveHubService } from "../../../services/signalR/leaveHub.service";
 
 export const fetchLeaves = createAsyncThunk(
     'leaves/fetchLeaves',
@@ -10,3 +8,24 @@ export const fetchLeaves = createAsyncThunk(
         return response.data;
     }
 );
+
+export const fetchLeaveToEdit = createAsyncThunk(
+    'leaves/fetchLeaveToEdit',
+    async (id: number) => {
+        const response = await axiosClient.get(`/Leave/${id}`);
+        return response.data;
+    }
+)
+
+export const deleteLeave = createAsyncThunk(
+    'leaves/deleteLeave',
+    async (id: number, { rejectWithValue }) => {
+        try {
+            const response = await axiosClient.delete(`/Leave/${id}`);
+            return response.data;
+        }
+        catch (err: any) {
+            return rejectWithValue(err.response?.data);
+        }
+    }
+)

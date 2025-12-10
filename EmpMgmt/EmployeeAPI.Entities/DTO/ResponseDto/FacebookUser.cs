@@ -1,4 +1,5 @@
-namespace EmployeeAPI.Entities.DTO;
+namespace EmployeeAPI.Entities.DTO.ResponseDto;
+
 public class FacebookUser
 {
     public string Id { get; set; }

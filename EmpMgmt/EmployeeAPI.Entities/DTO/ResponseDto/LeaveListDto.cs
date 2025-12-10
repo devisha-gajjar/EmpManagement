@@ -1,4 +1,4 @@
-namespace EmployeeAPI.Entities.DTO;
+namespace EmployeeAPI.Entities.DTO.ResponseDto;
 
 public class LeaveListDto
 {

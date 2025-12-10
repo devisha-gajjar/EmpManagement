@@ -1,11 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchLeaves } from './leaveApi';
+import { deleteLeave, fetchLeaves, fetchLeaveToEdit } from './leaveApi';
 import type { LeaveSlice } from '../../../interfaces/leave.interface';
 
 const initialState: LeaveSlice = {
     leaves: [],
     loading: false,
     error: null,
+    leaveEdit: null,
+    isDeleted: false
 }
 
 const leaveSlice = createSlice({
@@ -26,7 +28,13 @@ const leaveSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string;
             })
-    },
+            .addCase(fetchLeaveToEdit.fulfilled, (state, action) => {
+                state.leaveEdit = action.payload;
+            })
+            .addCase(deleteLeave.fulfilled, (state, action) => {
+                state.isDeleted = action.payload;
+            })
+    }
 });
 
 export default leaveSlice.reducer;

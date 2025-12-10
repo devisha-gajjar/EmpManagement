@@ -3,32 +3,47 @@ using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
 using EmployeeAPI.Entities.Models;
 using System.Linq.Expressions;
+using EmployeeAPI.Entities.DTO.ResponseDto;
+using EmployeeAPI.Entities.DTO.RequestDto;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeAPI.Services.Implementation
 {
-    public class LeaveService : ILeaveService
+    public class LeaveService(ILeaveRepository _leaveRepo, IMapper mapper) : ILeaveService
     {
-        private readonly ILeaveRepository _leaveRepo;
-
-        public LeaveService(ILeaveRepository leaveRepo)
-        {
-            _leaveRepo = leaveRepo;
-        }
-
         public async Task<LeaveRequest> ApplyLeaveAsync(CreateLeaveRequestDto model)
         {
-            var leave = new LeaveRequest
-            {
-                UserId = model.UserId,
-                LeaveType = model.LeaveType,
-                Reason = model.Reason,
-                StartDate = model.StartDate,
-                EndDate = model.EndDate,
-                Status = "Pending",
-                CreatedOn = DateTime.UtcNow
-            };
+            LeaveRequest leave;
 
-            _leaveRepo.Add(leave);
+            // UPDATE
+            if (model.LeaveRequestId > 0)
+            {
+                leave = _leaveRepo.GetById(model.LeaveRequestId) ?? throw new AppException("Leave request not found"); ;
+
+                leave.LeaveType = model.LeaveType;
+                leave.StartDate = model.StartDate;
+                leave.EndDate = model.EndDate;
+                leave.Reason = model.Reason;
+
+                _leaveRepo.Update(leave);
+            }
+            // CREATE
+            else
+            {
+                leave = new LeaveRequest
+                {
+                    UserId = model.UserId,
+                    LeaveType = model.LeaveType,
+                    Reason = model.Reason,
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    Status = "Pending",
+                    CreatedOn = DateTime.UtcNow
+                };
+
+                _leaveRepo.Add(leave);
+            }
             return leave;
         }
 
@@ -87,5 +102,21 @@ namespace EmployeeAPI.Services.Implementation
                 .ToList();
         }
 
+        public async Task<LeaveListDto?> GetLeaveWithUser(int id)
+        {
+            var leave = await _leaveRepo.GetByInclude(l => l.LeaveRequestId == id, includes: l => l.Include(lu => lu.User));
+
+            return mapper.Map<LeaveListDto>(leave);
+        }
+
+        public async Task<bool> DeleteLeave(int id)
+        {
+            var emp = _leaveRepo.GetById(id);
+            if (emp == null)
+                return false;
+
+            _leaveRepo.Delete(emp);
+            return true;
+        }
     }
 }

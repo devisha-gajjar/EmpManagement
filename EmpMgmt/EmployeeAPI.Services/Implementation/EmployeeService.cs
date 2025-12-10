@@ -1,18 +1,14 @@
 using EmployeeAPI.Entities.DTO;
+using EmployeeAPI.Entities.DTO.ResponseDto;
 using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
 
 namespace EmployeeAPI.Services.Implementation;
 
-public class EmployeeService : IEmployeeService
+public class EmployeeService(IEmployeeRepository empRepository) : IEmployeeService
 {
-    private readonly IEmployeeRepository _empRepository;
-
-    public EmployeeService(IEmployeeRepository empRepository)
-    {
-        _empRepository = empRepository;
-    }
+    private readonly IEmployeeRepository _empRepository = empRepository;
 
     public IEnumerable<EmployeeListDTO> GetEmployees()
     {

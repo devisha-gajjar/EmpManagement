@@ -69,7 +69,10 @@ export default function LeaveList() {
       leaves.leaveType
         .toLowerCase()
         .includes(debouncedSearchTerm.toLowerCase()) ||
-      leaves.status.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      leaves.status.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+      leaves.user.fullName
+        .toLowerCase()
+        .includes(debouncedSearchTerm.toLowerCase())
   );
 
   const paginatedLeaves = filteredLeaves.slice(
@@ -104,6 +107,20 @@ export default function LeaveList() {
       <Typography variant="h5" fontWeight={600} gutterBottom>
         Leave Requests
       </Typography>
+      <Box mb={2} display="flex" justifyContent="flex-end">
+        <input
+          type="text"
+          placeholder="Search Levaes..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{
+            padding: "8px",
+            width: "250px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+          }}
+        />
+      </Box>
 
       <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2 }}>
         <Table>

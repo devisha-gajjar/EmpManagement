@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Google.Apis.Auth;
 using EmployeeAPI.Entities.Data;
 using System.Text.Json;
+using EmployeeAPI.Entities.DTO.RequestDto;
+using EmployeeAPI.Entities.DTO.ResponseDto;
 
 namespace EmployeeAPI.Controllers;
 

@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using EmployeeAPI.Entities.DTO;
+using EmployeeAPI.Entities.DTO.ResponseDto;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

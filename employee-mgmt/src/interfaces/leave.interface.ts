@@ -3,6 +3,8 @@ export interface LeaveSlice {
     leaves: any[];
     loading: boolean;
     error: string | null;
+    leaveEdit: any;
+    isDeleted: boolean;
 }
 
 export interface LeaveRequestResponse {
@@ -17,6 +19,7 @@ export interface LeaveRequestResponse {
 }
 
 export interface CreateLeaveRequest {
+    leaveRequestId: number;
     userId: number;
     leaveType: string;
     startDate: string;

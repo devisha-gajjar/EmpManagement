@@ -1,3 +1,4 @@
+using EmployeeAPI.Entities.Mapper;
 using EmployeeAPI.Repositories.Implementation;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.Implementation;
@@ -17,6 +18,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICustomService, CustomService>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<ILeaveService, LeaveService>();
+
+        //mappers
+        services.AddAutoMapper(typeof(MappingProfile));
 
         // repository
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

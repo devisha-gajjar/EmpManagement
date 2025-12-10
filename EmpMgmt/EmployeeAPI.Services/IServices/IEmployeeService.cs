@@ -1,4 +1,5 @@
 using EmployeeAPI.Entities.DTO;
+using EmployeeAPI.Entities.DTO.ResponseDto;
 using EmployeeAPI.Entities.Models;
 
 namespace EmployeeAPI.Services.IServices;

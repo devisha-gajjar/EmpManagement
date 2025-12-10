@@ -1,6 +1,7 @@
-namespace EmployeeAPI.Entities.DTO;
+namespace EmployeeAPI.Entities.DTO.RequestDto;
 public class CreateLeaveRequestDto
 {
+    public int LeaveRequestId { get; set; }
     public int UserId { get; set; }
     public string LeaveType { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }

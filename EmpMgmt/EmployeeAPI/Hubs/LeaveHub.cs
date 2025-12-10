@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using EmployeeAPI.Services.IServices;
 using EmployeeAPI.Entities.DTO;
+using EmployeeAPI.Entities.DTO.RequestDto;
 
 namespace EmployeeAPI.Hubs;
 public class LeaveHub : Hub
@@ -93,7 +94,7 @@ public class LeaveHub : Hub
 
         await Clients.Group("Admins")
        .SendAsync("LeaveStatusChanged", new
-       {    
+       {
            leaveRequestId = id,
            status = "Denied"
        });

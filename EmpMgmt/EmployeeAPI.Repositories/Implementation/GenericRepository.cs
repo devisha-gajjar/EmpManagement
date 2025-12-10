@@ -80,4 +80,15 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return query;
     }
 
+    public async Task<T?> GetByInclude(Expression<Func<T, bool>> expression, Func<IQueryable<T>, IQueryable<T>>? includes = null)
+    {
+        var query = _db.Set<T>().AsNoTracking().Where(expression);
+
+        if (includes != null)
+        {
+            query = includes(query);
+        }
+
+        return await query.FirstOrDefaultAsync().ConfigureAwait(false);
+    }
 }

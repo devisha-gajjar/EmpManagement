@@ -1,4 +1,5 @@
-using EmployeeAPI.Entities.DTO;
+using EmployeeAPI.Entities.DTO.RequestDto;
+using EmployeeAPI.Entities.DTO.ResponseDto;
 using EmployeeAPI.Entities.Models;
 
 namespace EmployeeAPI.Services.IServices
@@ -10,5 +11,7 @@ namespace EmployeeAPI.Services.IServices
         Task<bool> DenyLeaveAsync(int leaveRequestId);
         IEnumerable<LeaveRequest> GetUserLeaveHistory(int userId);
         IEnumerable<LeaveListDto> GetLeaveList();
+        Task<LeaveListDto?> GetLeaveWithUser(int leaveRequestId);
+        Task<bool> DeleteLeave(int id);
     }
 }

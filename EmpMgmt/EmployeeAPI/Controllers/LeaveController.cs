@@ -1,8 +1,10 @@
-using EmployeeAPI.Entities.DTO;
+
+using EmployeeAPI.Entities.DTO.RequestDto;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace EmployeeAPI.Controllers;
 
@@ -59,6 +61,22 @@ public class LeaveController : ControllerBase
         var result = await _leaveService.DenyLeaveAsync(leaveRequestId);
         if (!result) return NotFound();
         return Ok(new { message = "Leave denied successfully." });
+    }
+
+    [HttpGet("{leaveRequestId}")]
+    public async Task<IActionResult> GetLeave(int leaveRequestId)
+    {
+        var result = await _leaveService.GetLeaveWithUser(leaveRequestId);
+        return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        if (!await _leaveService.DeleteLeave(id))
+            return NotFound();
+
+        return NoContent();
     }
 }
 
