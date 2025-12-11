@@ -59,6 +59,14 @@ class LeaveHubService {
         this.connection.on("NewLeaveRequest", callback);
     }
 
+    onEditLeaveRequest(callback: (data: any) => void) {
+        this.connection.on("LeaveEdited", callback);
+    }
+
+    onDeleteLeaveRequest(callback: (data: { leaveRequestId: number; status: string }) => void) {
+        this.connection.on("LeaveDeleted", callback);
+    }
+
     async joinUser(userId: string) {
         await this.waitForConnection();
         await this.connection.invoke("JoinAsUser", userId);
@@ -88,6 +96,18 @@ class LeaveHubService {
             "DenyLeave",
             leaveId.toString(),
             userId.toString()
+        );
+    }
+
+    async editLeave(payload: CreateLeaveRequest) {
+        await this.connection.invoke("EditLeave", payload);
+    }
+
+    async deleteLeave(leaveId: number, userId: string) {
+        await this.connection.invoke(
+            "DeleteLeave",
+            leaveId.toString(),
+            userId
         );
     }
 }

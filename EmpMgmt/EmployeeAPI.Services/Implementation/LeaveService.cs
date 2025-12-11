@@ -99,6 +99,7 @@ namespace EmployeeAPI.Services.Implementation
                         Email = l.User.Email
                     }
                 })
+                .OrderByDescending(l => l.Status)
                 .ToList();
         }
 

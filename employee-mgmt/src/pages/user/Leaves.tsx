@@ -40,6 +40,7 @@ const Leaves = () => {
   const dispatch = useAppDispatch();
   const snackbar = useSnackbar();
   const { leaves, loading, error } = useAppSelector((state) => state.leaves);
+  const { userId } = useAppSelector((state) => state.auth);
   const [open, setOpen] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState<CreateLeaveRequest | null>(
     null
@@ -84,7 +85,7 @@ const Leaves = () => {
   const handleConfirmDelete = async () => {
     if (leaveToDelete !== null) {
       try {
-        await dispatch(deleteLeave(leaveToDelete)).unwrap();
+        leaveHubService.deleteLeave(leaveToDelete, userId!);
         snackbar.success("Leave deleted successfully");
         dispatch(fetchLeaves());
       } catch (err) {
@@ -156,7 +157,7 @@ const Leaves = () => {
         <Box mb={2} display="flex" justifyContent="flex-end">
           <input
             type="text"
-            placeholder="Search employee..."
+            placeholder="Search Leave Request..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{

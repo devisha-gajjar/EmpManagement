@@ -10,14 +10,9 @@ namespace EmployeeAPI.Controllers
     [ApiController]
     [Route("api/Employee")]
     [Authorize(Roles = "Admin")]
-    public class EmployeeController : ControllerBase
+    public class EmployeeController(IEmployeeService service) : ControllerBase
     {
-        private readonly IEmployeeService _service;
-
-        public EmployeeController(IEmployeeService service)
-        {
-            _service = service;
-        }
+        private readonly IEmployeeService _service = service;
 
         [HttpGet]
         public IActionResult GetEmployeeList()

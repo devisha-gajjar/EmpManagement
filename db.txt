@@ -107,3 +107,193 @@ ALTER TABLE public.employee_departments
 -- For the 'performance_reviews' table:
 ALTER TABLE public.performance_reviews
     ALTER COLUMN review_date TYPE TIMESTAMP USING review_date::TIMESTAMP;
+
+
+ALTER TABLE public.user_task
+    DROP CONSTRAINT tasks_status_check;
+
+ALTER TABLE public.user_task
+    ADD CONSTRAINT tasks_status_check CHECK (
+        status IN (
+            'Pending',
+            'In Progress',
+            'Dev Completed',
+            'Ready for Testing',
+            'Completed'
+        )
+    );
+
+
+ALTER TABLE public.user_task
+    ADD COLUMN estimated_hours numeric(5,2),
+    ADD COLUMN spent_hours numeric(5,2) DEFAULT 0,
+    ADD COLUMN completed_on timestamp,
+    ADD COLUMN updated_on timestamp DEFAULT CURRENT_TIMESTAMP;
+
+
+-- Table: projects
+-- Purpose: stores top-level projects
+CREATE TABLE IF NOT EXISTS public.projects (
+    project_id SERIAL PRIMARY KEY,
+    project_name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_by INTEGER REFERENCES public.users(user_id),
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Table: project_members
+-- Purpose: users assigned to a project
+CREATE TABLE IF NOT EXISTS public.project_members (
+    project_member_id SERIAL PRIMARY KEY,
+    project_id INTEGER NOT NULL REFERENCES public.projects(project_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES public.users(user_id),
+    role VARCHAR(50) DEFAULT 'Member',   -- Owner / Manager / Developer / QA
+    added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Table: user_task
+-- Purpose: main task table with status, hours, priority
+CREATE TABLE IF NOT EXISTS public.user_task (
+    task_id INTEGER NOT NULL DEFAULT nextval('tasks_task_id_seq'::regclass),
+    project_id INTEGER REFERENCES public.projects(project_id),
+    user_id INTEGER,
+    task_name VARCHAR(255) NOT NULL,
+    description TEXT,
+    assigned_by INTEGER,
+    start_date TIMESTAMP NOT NULL,
+    due_date TIMESTAMP NOT NULL,
+    priority VARCHAR(50) DEFAULT 'Medium',
+    status VARCHAR(50) DEFAULT 'Pending',
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estimated_hours NUMERIC(5,2),
+    spent_hours NUMERIC(5,2) DEFAULT 0,
+    completed_on TIMESTAMP,
+    updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT tasks_pkey PRIMARY KEY (task_id),
+
+    CONSTRAINT tasks_assigned_by_fkey FOREIGN KEY (assigned_by)
+        REFERENCES public.users(user_id),
+
+    CONSTRAINT tasks_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public.users(user_id),
+
+    CONSTRAINT tasks_priority_check CHECK (
+        priority IN ('Low', 'Medium', 'High')
+    ),
+
+    CONSTRAINT tasks_status_check CHECK (
+        status IN (
+            'Pending',
+            'In Progress',
+            'Dev Completed',
+            'Ready for Testing',
+            'Completed'
+        )
+    )
+);
+
+
+-- Table: task_work_logs
+-- Purpose: time spent by users on tasks
+CREATE TABLE IF NOT EXISTS public.task_work_logs (
+    work_log_id SERIAL PRIMARY KEY,
+    task_id INTEGER NOT NULL REFERENCES public.user_task(task_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES public.users(user_id),
+
+    log_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    hours_spent NUMERIC(5,2) NOT NULL,
+    description TEXT,
+
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Table: task_comments
+-- Purpose: comments/discussion on tasks
+CREATE TABLE IF NOT EXISTS public.task_comments (
+    comment_id SERIAL PRIMARY KEY,
+    task_id INTEGER REFERENCES public.user_task(task_id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES public.users(user_id),
+
+    comment TEXT NOT NULL,
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Table: task_attachments
+-- Purpose: file attachments for tasks
+CREATE TABLE IF NOT EXISTS public.task_attachments (
+    attachment_id SERIAL PRIMARY KEY,
+    task_id INTEGER REFERENCES public.user_task(task_id) ON DELETE CASCADE,
+    uploaded_by INTEGER REFERENCES public.users(user_id),
+
+    file_url TEXT NOT NULL,
+    uploaded_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Table: task_tags
+-- Purpose: master table of available tags
+CREATE TABLE IF NOT EXISTS public.task_tags (
+    tag_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL
+);
+
+
+-- Table: task_tag_map
+-- Purpose: many-to-many mapping between tasks and tags
+CREATE TABLE IF NOT EXISTS public.task_tag_map (
+    task_id INTEGER REFERENCES public.user_task(task_id) ON DELETE CASCADE,
+    tag_id INTEGER REFERENCES public.task_tags(tag_id) ON DELETE CASCADE,
+
+    PRIMARY KEY (task_id, tag_id)
+);
+
+
+-- Table: task_activity_log
+-- Purpose: history of task actions (status change, assignment, etc.)
+CREATE TABLE IF NOT EXISTS public.task_activity_log (
+    activity_id SERIAL PRIMARY KEY,
+    task_id INTEGER REFERENCES public.user_task(task_id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES public.users(user_id),
+
+    action VARCHAR(255) NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Table: subtasks
+-- Purpose: smaller child tasks under a main task
+CREATE TABLE IF NOT EXISTS public.subtasks (
+    subtask_id SERIAL PRIMARY KEY,
+    task_id INTEGER REFERENCES public.user_task(task_id) ON DELETE CASCADE,
+
+    title VARCHAR(255) NOT NULL,
+    status VARCHAR(50) DEFAULT 'Pending',
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.user_task
+    ADD COLUMN project_id integer REFERENCES public.projects(project_id);
+
+
+ALTER TABLE public.projects
+ADD COLUMN start_date TIMESTAMP;
+
+ALTER TABLE public.projects
+ADD COLUMN end_date TIMESTAMP;
+
+
+ALTER TABLE public.project_members
+    DROP COLUMN role;
+
+ALTER TABLE public.project_members
+    ADD COLUMN role INTEGER NOT NULL DEFAULT 0;

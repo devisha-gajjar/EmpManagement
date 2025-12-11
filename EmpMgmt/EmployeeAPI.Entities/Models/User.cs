@@ -49,7 +49,21 @@ public partial class User
 
     public virtual ICollection<PerformanceReview> PerformanceReviewUsers { get; set; } = new List<PerformanceReview>();
 
+    public virtual ICollection<Project> ProjectCreatedByNavigations { get; set; } = new List<Project>();
+
+    public virtual ICollection<ProjectMember> ProjectMembers { get; set; } = new List<ProjectMember>();
+
+    public virtual ICollection<Project> ProjectModifiedByNavigations { get; set; } = new List<Project>();
+
     public virtual Role Role { get; set; } = null!;
+
+    public virtual ICollection<TaskActivityLog> TaskActivityLogs { get; set; } = new List<TaskActivityLog>();
+
+    public virtual ICollection<TaskAttachment> TaskAttachments { get; set; } = new List<TaskAttachment>();
+
+    public virtual ICollection<TaskComment> TaskComments { get; set; } = new List<TaskComment>();
+
+    public virtual ICollection<TaskWorkLog> TaskWorkLogs { get; set; } = new List<TaskWorkLog>();
 
     public virtual ICollection<UserTask> UserTaskAssignedByNavigations { get; set; } = new List<UserTask>();
 

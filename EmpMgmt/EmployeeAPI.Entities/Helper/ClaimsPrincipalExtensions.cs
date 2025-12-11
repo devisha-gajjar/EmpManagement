@@ -8,7 +8,7 @@ public static class ClaimsPrincipalExtensions
     {
         if (user?.Identity is ClaimsIdentity identity)
         {
-            var userIdClaim = identity.FindFirst(ClaimTypes.UserData);
+            var userIdClaim = identity.FindFirst(ClaimTypes.Name);
             if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
                 return userId;
         }

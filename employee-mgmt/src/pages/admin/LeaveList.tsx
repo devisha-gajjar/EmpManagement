@@ -58,6 +58,22 @@ export default function LeaveList() {
 
     leaveHubService.onLeaveStatusChanged(handleStatusChange);
 
+    const handleEdit = (data: any) => {
+      console.log("Leave edited:", data);
+      dispatch(fetchLeavesList());
+    };
+
+    leaveHubService.onEditLeaveRequest(handleEdit);
+
+    const handleLeaveDelete = (data: {
+      leaveRequestId: number;
+      status: string;
+    }) => {
+      dispatch(fetchLeavesList());
+    };
+
+    leaveHubService.onDeleteLeaveRequest(handleLeaveDelete);
+
     return () => {
       leaveHubService.offLeaveStatusChanged(handleStatusChange);
       leaveHubService.connection.off("NewLeaveRequest", onNewLeave);

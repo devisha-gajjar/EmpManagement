@@ -17,9 +17,10 @@ export default function MainLayout() {
     console.log("role", role);
 
     leaveHubService.startConnection().then(() => {
-      if (role === "admin") {
+      if (role == "admin") {
         leaveHubService.joinAdmin();
       } else {
+        console.log("join ad user in main layout");
         leaveHubService.joinUser(userId!);
       }
     });

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
 using EmployeeAPI.Services.IServices;
-using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.DTO.RequestDto;
 
 namespace EmployeeAPI.Hubs;
@@ -99,4 +98,57 @@ public class LeaveHub : Hub
            status = "Denied"
        });
     }
+
+    public async Task EditLeave(CreateLeaveRequestDto model)
+    {
+        var leave = await _leaveService.ApplyLeaveAsync(model);
+
+        Console.WriteLine("Leave Edited");
+
+        await Clients.Group("Admins")
+            .SendAsync("LeaveEdited", new
+            {
+                leave.LeaveRequestId,
+                leave.UserId,
+                leave.LeaveType,
+                leave.Status,
+                leave.Reason,
+                leave.StartDate,
+                leave.EndDate
+            });
+
+        await Clients.Group($"User_{leave.UserId}")
+            .SendAsync("LeaveEdited", new
+            {
+                leave.LeaveRequestId,
+                status = "Updated"
+            });
+    }
+
+    public async Task DeleteLeave(string leaveRequestId, string userId)
+    {
+        int id = int.Parse(leaveRequestId);
+        int uid = int.Parse(userId);
+
+        var deleted = await _leaveService.DeleteLeave(id);
+        if (!deleted)
+            return;
+
+        Console.WriteLine("Leave Deleted");
+
+        await Clients.Group($"User_{uid}")
+            .SendAsync("LeaveDeleted", new
+            {
+                leaveRequestId = id,
+                status = "Deleted"
+            });
+
+        await Clients.Group("Admins")
+            .SendAsync("LeaveDeleted", new
+            {
+                leaveRequestId = id,
+                status = "Deleted"
+            });
+    }
+
 }

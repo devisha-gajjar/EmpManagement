@@ -14,7 +14,7 @@ interface Props {
 }
 
 const AddLeaveDialog = ({ open, onClose, leaveToEdit }: Props) => {
-  const dispatch = useAppDispatch();  
+  const dispatch = useAppDispatch();
   const { userId } = useAppSelector((state) => state.auth);
 
   const formConfig: DynamicFormField[] = [
@@ -84,13 +84,15 @@ const AddLeaveDialog = ({ open, onClose, leaveToEdit }: Props) => {
 
   const handleSubmit = async (data: CreateLeaveRequest) => {
     data.userId = parseInt(userId!);
-    data.leaveRequestId = leaveToEdit?.leaveRequestId!;
-    leaveHubService.applyLeave(data);
 
-    // if (response?.payload?.leaveRequestId > 0) {
+    if (leaveToEdit?.leaveRequestId) {
+      data.leaveRequestId = leaveToEdit.leaveRequestId; // Valid ID
+    }
+
+    await leaveHubService.applyLeave(data);
+
     onClose();
     dispatch(fetchLeaves());
-    // }
   };
 
   return (

@@ -201,6 +201,8 @@ builder.Services.AddDbContext<EmployeeMgmtContext>(options =>
 // exception handler
 builder.Services.AddScoped<ExceptionHandlingMiddleware>();
 
+builder.Services.AddHttpContextAccessor();
+
 // SignalR  
 builder.Services.AddSignalR();
 
