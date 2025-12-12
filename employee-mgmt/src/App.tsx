@@ -10,6 +10,8 @@ import { Department } from "./pages/admin/Department";
 import Register from "./pages/shared/Register";
 import LeaveList from "./pages/admin/LeaveList";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import NotFound from "./pages/shared/NotFound";
 
 function App() {
   const routes = useRoutes([
@@ -18,6 +20,7 @@ function App() {
     { path: "/register", element: <Register /> },
     { path: "/", element: <Navigate to="/login" /> },
     { path: "/unauthorized", element: <Unauthorized /> },
+    { path: "*", element: <NotFound /> },
 
     // ---------- USER ROUTES ----------
     {

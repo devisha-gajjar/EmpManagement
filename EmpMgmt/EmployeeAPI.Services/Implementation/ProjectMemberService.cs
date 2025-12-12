@@ -13,26 +13,32 @@ namespace EmployeeAPI.Services;
 
 public class ProjectMemberService(IGenericRepository<ProjectMember> projectMemberRepository, IMapper mapper) : IProjectMemberService
 {
-    public async Task<ProjectMemberResponse> AddMember(ProjectMemberRequest request)
+    public async Task<ProjectMemberResponse> AddOrUpdateMember(ProjectMemberRequest request)
     {
-        var entity = new ProjectMember
+        ProjectMember entity;
+
+        if (request.ProjectMemberId > 0)
         {
-            ProjectId = request.ProjectId,
-            UserId = request.UserId,
-            Role = (int)request.Role,
-            AddedOn = DateTime.UtcNow
-        };
+            entity = await projectMemberRepository.GetByInclude(
+                x => x.ProjectMemberId == request.ProjectMemberId
+            ) ?? throw new AppException(Constants.PROJECT_MEM_NOT_FOUND);
 
-        projectMemberRepository.Add(entity);
+            // Update fields
+            entity.Role = (int)request.Role;
+            projectMemberRepository.Update(entity);
+        }
+        else
+        {
+            entity = new ProjectMember
+            {
+                ProjectId = request.ProjectId,
+                UserId = request.UserId,
+                Role = (int)request.Role,
+                AddedOn = DateTime.UtcNow
+            };
 
-        return mapper.Map<ProjectMemberResponse>(entity);
-    }
-
-    public async Task<ProjectMemberResponse> UpdateMember(int projectMemberId, ProjectMemberRequest request)
-    {
-        var entity = await projectMemberRepository.GetByInclude(x => x.ProjectMemberId == projectMemberId) ?? throw new AppException(Constants.PROJECT_MEM_NOT_FOUND);
-
-        entity.Role = (int)request.Role;
+            projectMemberRepository.Add(entity);
+        }
 
         return mapper.Map<ProjectMemberResponse>(entity);
     }

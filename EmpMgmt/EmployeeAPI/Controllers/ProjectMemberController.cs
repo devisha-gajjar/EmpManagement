@@ -12,35 +12,28 @@ namespace EmployeeAPI.Controllers;
 [Authorize(Roles = "Admin")]
 public class ProjectMemberController(IProjectMemberService projectMemberService) : ControllerBase
 {
-    [HttpPost("add")]
-    public async Task<IActionResult> AddMember([FromBody] ProjectMemberRequest request)
+    [HttpPost("add-or-update-member")]
+    public async Task<IActionResult> AddOrUpdateMember([FromBody] ProjectMemberRequest request)
     {
-        var result = await projectMemberService.AddMember(request);
-        return Ok(ApiResponse<ProjectMemberResponse>.Success(result, "Member added"));
+        var result = await projectMemberService.AddOrUpdateMember(request);
+        return Ok(ApiResponse<ProjectMemberResponse>.Success(result, "Member Saved"));
     }
 
-    [HttpPut("update/{projectMemberId}")]
-    public async Task<IActionResult> UpdateMember(int projectMemberId, [FromBody] ProjectMemberRequest request)
-    {
-        var result = await projectMemberService.UpdateMember(projectMemberId, request);
-        return Ok(ApiResponse<ProjectMemberResponse>.Success(result, "Member updated"));
-    }
-
-    [HttpDelete("delete/{projectMemberId}")]
+    [HttpDelete("delete-member/{projectMemberId}")]
     public async Task<IActionResult> DeleteMember(int projectMemberId)
     {
         var result = await projectMemberService.DeleteMember(projectMemberId);
         return Ok(ApiResponse<bool>.Success(result, "Member deleted"));
     }
 
-    [HttpGet("{projectMemberId}")]
+    [HttpGet("get-member/{projectMemberId}")]
     public async Task<IActionResult> GetMember(int projectMemberId)
     {
         var result = await projectMemberService.GetMember(projectMemberId);
         return Ok(ApiResponse<ProjectMemberResponse>.Success(result, "Fetched"));
     }
 
-    [HttpGet("project/{projectId}")]
+    [HttpGet("get-members-by-project/{projectId}")]
     public async Task<IActionResult> GetMembersByProject(int projectId)
     {
         var result = await projectMemberService.GetMembersByProject(projectId);

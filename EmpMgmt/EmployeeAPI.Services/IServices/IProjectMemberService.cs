@@ -5,8 +5,7 @@ namespace EmployeeAPI.Services.IServices;
 
 public interface IProjectMemberService
 {
-    Task<ProjectMemberResponse> AddMember(ProjectMemberRequest request);
-    Task<ProjectMemberResponse> UpdateMember(int projectMemberId, ProjectMemberRequest request);
+    Task<ProjectMemberResponse> AddOrUpdateMember(ProjectMemberRequest request);
     Task<bool> DeleteMember(int projectMemberId);
     Task<ProjectMemberResponse?> GetMember(int projectMemberId);
     Task<List<ProjectMemberResponse>> GetMembersByProject(int projectId);

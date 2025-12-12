@@ -66,14 +66,14 @@ export default function Navbar() {
           ))}
         </Box> */}
 
-        <Button
+        {/* <Button
           color="inherit"
           onClick={handleOpenDialog}
           endIcon={<LogoutIcon />}
           sx={{ textTransform: "none", ml: 2 }}
         >
           Logout
-        </Button>
+        </Button> */}
       </Toolbar>
 
       {/* --- Logout Confirmation Dialog --- */}

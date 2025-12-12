@@ -28,16 +28,14 @@ export default function MainLayout() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      <Navbar />
-
       <div style={{ display: "flex", flex: 1 }}>
-        <Sidebar role={role!} drawerWidth={240} />
+        <Sidebar role={role!} drawerWidth={280} />
+        <Navbar />
         <main
           style={{
             flex: 1,
             padding: "1rem",
             overflowY: "auto",
-            marginTop: "64px",
           }}
         >
           <SnackbarComponent />

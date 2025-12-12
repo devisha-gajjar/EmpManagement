@@ -30,29 +30,82 @@ export const getSideBarLinksByRole = (role: string) => {
     if (role === "admin") {
         return [
             {
+                name: "Dashboard",
+                path: "/admin/dashboard",
+                icon: "bi bi-grid-fill",
+            },
+            {
                 name: "Employees",
-                path: "employees",
+                path: "/admin/employees",
+                icon: "bi bi-people-fill",
                 subMenu: [
-                    { name: "All Employees", path: "employees" },
+                    {
+                        icon: "bi bi-person-lines-fill",
+                        name: "All Employees",
+                        path: "/admin/employees",
+                    }
                 ],
             },
-            { name: "Departments", path: "departments" },
-            { name: "Leaves", path: "leavesList" },
+            {
+                name: "Departments",
+                path: "/admin/departments",
+                icon: "bi bi-building-fill",
+            },
+            {
+                name: "Attendance",
+                path: "/admin/attendance",
+                icon: "bi bi-calendar-check-fill",
+            },
+            {
+                name: "Leaves",
+                path: "/admin/leavesList",
+                icon: "bi bi-calendar-x-fill",
+            },
+            {
+                name: "Projects",
+                path: "/admin/projects",
+                icon: "bi bi-file-earmark-bar-graph-fill",
+            },
+            {
+                name: "Settings",
+                path: "/admin/settings",
+                icon: "bi bi-gear-fill",
+            },
         ];
     }
 
     if (role === "user") {
         return [
-            { name: "Dashboard", path: "dashboard" },
+            {
+                name: "Dashboard",
+                path: "/user/dashboard",
+                icon: "bi bi-grid-fill",
+            },
+            {
+                name: "My Profile",
+                path: "/user/profile",
+                icon: "bi bi-person-circle",
+            },
             {
                 name: "Leaves",
-                path: "leaves",
+                path: "/user/leaves",
+                icon: "bi bi-calendar-x-fill",
                 subMenu: [
-                    { name: "My Leaves", path: "leaves" },
+                    {
+                        name: "My Leaves",
+                        path: "/user/leaves",
+                        icon: "bi bi-list-ul",
+                    }
                 ],
+            },
+            {
+                name: "Attendance",
+                path: "/user/attendance",
+                icon: "bi bi-calendar-check-fill",
             },
         ];
     }
+
     return [];
 };
 
