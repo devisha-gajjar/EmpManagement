@@ -1,0 +1,145 @@
+.bg-black {
+    --bg-color: var(--black-color);
+}
+
+.bg-white {
+    --bg-color: var(--white-color);
+}
+
+.bg-green {
+    --bg-color: var(--green-color);
+}
+
+.bg-light-green {
+    --bg-color: var(--light-green-color);
+}
+
+.bg-brown {
+    --bg-color: var(--brown-color);
+}
+
+.bg-light-brown {
+    --bg-color: var(--light-brown-color);
+}
+
+.bg-purple {
+    --bg-color: var(--purple-color);
+}
+
+.bg-light-purple {
+    --bg-color: var(--light-purple-color);
+}
+
+.bg-red {
+    --bg-color: var(--red-color);
+}
+
+.bg-light-red {
+    --bg-color: var(--light-red-color);
+}
+
+.bg-blue {
+    --bg-color: var(--blue-color);
+}
+
+.bg-light-blue {
+    --bg-color: var(--light-blue-color);
+}
+
+.bg-yellow {
+    --bg-color: var(--yellow-color);
+}
+
+.bg-light-yellow {
+    --bg-color: var(--light-yellow-color);
+}
+
+.bg-orange {
+    --bg-color: var(--orange-color);
+}
+
+.bg-light-orange {
+    --bg-color: var(--light-orange-color);
+}
+
+.bg-light-white {
+    --bg-color: var(--light-white-color);
+}
+
+.text-black {
+    --text-color: var(--black-color);
+}
+
+.text-white {
+    --text-color: var(--white-color);
+}
+
+.text-green {
+    --text-color: var(--green-color);
+}
+
+.text-brown {
+    --text-color: var(--brown-color);
+}
+
+.text-purple {
+    --text-color: var(--purple-color);
+}
+
+.text-red {
+    --text-color: var(--red-color);
+}
+
+.text-blue {
+    --text-color: var(--blue-color);
+}
+
+.text-yellow {
+    --text-color: var(--yellow-color);
+}
+
+/* ===== TAG STYLES ===== */
+
+.tag-container {
+    display: inline-block;
+}
+
+.not-closable {
+    cursor: pointer;
+}
+
+.bordered {
+    box-shadow: 0 0 0 1px var(--text-color);
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 11px;
+    height: 20px;
+    user-select: none;
+    box-sizing: border-box;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: all 0.15s ease-in-out;
+}
+
+.tag.static {
+    pointer-events: none;
+}
+
+.tag-close {
+    cursor: pointer;
+    margin-left: 4px;
+}
+
+@media (max-width: 768px) {
+    .tag {
+        font-size: 8px;
+        padding: 1px 6px;
+    }
+}

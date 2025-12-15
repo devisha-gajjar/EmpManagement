@@ -234,6 +234,7 @@ public partial class EmployeeMgmtContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("project_name");
             entity.Property(e => e.StartDate).HasColumnName("start_date");
+            entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.UpdatedOn)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("updated_on");

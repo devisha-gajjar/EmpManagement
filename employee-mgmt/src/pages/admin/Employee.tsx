@@ -43,6 +43,7 @@ import {
   useGetEmployeesQuery,
 } from "../../features/admin/employees/empApi";
 import CommonConfirmDialog from "../../components/shared/confirmation-dialog/CommonConfirmDialog";
+import PageHeader from "../../components/shared/page-header/PageHeader";
 
 export default function Employees() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -178,23 +179,25 @@ export default function Employees() {
   // }
 
   return (
-    <Box m={2}>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
+    <Box>
+      <div className="mb-3">
+        <PageHeader
+          icon="people"
+          title="Employee Management"
+          subtitle="Manage your workforce and employee information"
+          theme="blue"
+        />
+      </div>
+
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<AddIcon />}
+        onClick={handleAddEmployee}
       >
-        <Typography variant="h4">Employee List</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={handleAddEmployee}
-        >
-          Add Employee
-        </Button>
-      </Box>
+        Add Employee
+      </Button>
+
       <Box mb={2} display="flex" justifyContent="flex-end">
         <input
           type="text"

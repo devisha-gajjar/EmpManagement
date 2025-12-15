@@ -12,6 +12,7 @@ import LeaveList from "./pages/admin/LeaveList";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import NotFound from "./pages/shared/NotFound";
+import ProjectsPage from "./pages/admin/Project-Mgmt/Project";
 
 function App() {
   const routes = useRoutes([
@@ -48,6 +49,7 @@ function App() {
         { path: "employees", element: <Employees /> },
         { path: "departments", element: <Department /> },
         { path: "leavesList", element: <LeaveList /> },
+        { path: "projects", element: <ProjectsPage /> },
       ],
     },
   ]);

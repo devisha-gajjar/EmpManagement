@@ -11,6 +11,7 @@ import {
 import { useEffect } from "react";
 import { useAppSelector, useSnackbar, useAppDispatch } from "../../app/hooks";
 import { fetchDepartments } from "../../features/admin/department/departmentApi";
+import PageHeader from "../../components/shared/page-header/PageHeader";
 
 function Department() {
   const { departments, loading, error } = useAppSelector(
@@ -55,10 +56,15 @@ function Department() {
   }
 
   return (
-    <Box m={4}>
-      <Typography variant="h4" mb={3}>
-        Department List
-      </Typography>
+    <Box>
+      <div className="mb-3">
+        <PageHeader
+          icon="diagram-3"
+          title="Department List"
+          subtitle="Manage departments and organizational structure"
+          theme="purple"
+        />
+      </div>
 
       {departments.length === 0 ? (
         <Typography>No departments found.</Typography>

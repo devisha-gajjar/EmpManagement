@@ -23,6 +23,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 
 import { fetchLeavesList } from "../../features/admin/leave/leaveApi";
 import { leaveHubService } from "../../services/signalR/leaveHub.service";
+import PageHeader from "../../components/shared/page-header/PageHeader";
 
 export default function LeaveList() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -119,10 +120,16 @@ export default function LeaveList() {
   };
 
   return (
-    <Box p={2}>
-      <Typography variant="h5" fontWeight={600} gutterBottom>
-        Leave Requests
-      </Typography>
+    <Box>
+      <div className="mb-3">
+        <PageHeader
+          icon="calendar-check"
+          title="Leave List"
+          subtitle="Review and manage employee leave requests"
+          theme="orange"
+        />
+      </div>
+
       <Box mb={2} display="flex" justifyContent="flex-end">
         <input
           type="text"

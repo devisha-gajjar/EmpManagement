@@ -21,7 +21,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "@mui/icons-material";
-import { getSideBarLinksByRole } from "../../utils/constant";
+import {
+  getSideBarLinksByRole,
+  sidebarCollapseWidth,
+} from "../../utils/constant";
 import { useAppDispatch } from "../../app/hooks";
 import { logout } from "../../features/auth/authSlice";
 
@@ -34,14 +37,17 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
+
   const [openMenu, setOpenMenu] = useState<{ [key: string]: boolean }>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isHoveringPopover, setIsHoveringPopover] = useState(false);
+  const [isHoveringButton, setIsHoveringButton] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState<{
     element: HTMLElement | null;
     link: any;
   }>({ element: null, link: null });
 
-  const collapsedWidth = 70;
+  const collapsedWidth = sidebarCollapseWidth;
   const currentWidth = isCollapsed ? collapsedWidth : drawerWidth;
 
   const navLinks = getSideBarLinksByRole(role);
@@ -90,9 +96,6 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
     }
   };
 
-  const [isHoveringPopover, setIsHoveringPopover] = useState(false);
-  const [isHoveringButton, setIsHoveringButton] = useState(false);
-
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement>,
     link: any
@@ -109,7 +112,7 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
       if (!isHoveringPopover) {
         setPopoverAnchor({ element: null, link: null });
       }
-    }, 100);
+    }, 1000);
   };
 
   const handlePopoverMouseEnter = () => {
@@ -140,12 +143,11 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
           transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           [`& .MuiDrawer-paper`]: {
             width: currentWidth,
-            boxSizing: "border-box",
             height: `100vh`,
-            padding: "16px 12px",
+            padding: "16px 10px",
             backgroundColor: "#0a1929",
             color: "#e3e8ef",
-            borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+
             display: "flex",
             flexDirection: "column",
             transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -473,7 +475,7 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
           onMouseLeave={handlePopoverMouseLeave}
           sx={{
             backgroundColor: "#0f172a",
-            color: "#e3e8ef",
+            color: "#ffffffff",
             border: "1px solid rgba(255, 255, 255, 0.1)",
             borderRadius: "12px",
             boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",

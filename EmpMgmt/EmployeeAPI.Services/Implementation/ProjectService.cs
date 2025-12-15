@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Security.Claims;
 using AutoMapper;
 using EmployeeAPI.Entities.DTO;
@@ -17,8 +18,15 @@ public class ProjectService(IMapper mapper, IGenericRepository<Project> projectR
 
     public async Task<IEnumerable<ProjectResponse>> GetAllProjects()
     {
-        var projects = projectRepository.GetAll()
-                        ?? throw new AppException(Constants.PROJECT_NOT_FOUND);
+        var projects = projectRepository.GetQueryableInclude(
+            includes:
+            [
+                p => p.UserTasks
+            ]
+        );
+
+        if (!projects.Any())
+            throw new AppException(Constants.PROJECT_NOT_FOUND);
 
         return mapper.Map<IEnumerable<ProjectResponse>>(projects.ToList());
     }

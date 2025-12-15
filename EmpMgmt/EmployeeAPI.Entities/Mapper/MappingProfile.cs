@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoMapper;
 using EmployeeAPI.Entities.DTO.RequestDto;
 using EmployeeAPI.Entities.DTO.ResponseDto;
@@ -22,7 +23,20 @@ public class MappingProfile : Profile
         CreateMap<ProjectRequest, Project>()
            .ForMember(dest => dest.ProjectId, opt => opt.Ignore());
 
-        CreateMap<Project, ProjectResponse>();
+        CreateMap<Project, ProjectResponse>()
+            .ForMember(dest => dest.TaskCount,
+                opt => opt.MapFrom(src => src.UserTasks.Count))
+
+            .ForMember(dest => dest.CompletedTaskCount, 
+                opt => opt.MapFrom(src =>
+                    src.UserTasks.Count(t => t.Status == "Completed")))
+
+            .ForMember(dest => dest.ProgressPercentage,
+                opt => opt.MapFrom(src =>
+                    src.UserTasks.Count == 0
+                        ? 0
+                        : src.UserTasks.Count(t => t.Status == "Completed") * 100 / src.UserTasks.Count
+                ));
 
         // project member
         CreateMap<ProjectMemberRequest, ProjectMember>()
@@ -32,7 +46,15 @@ public class MappingProfile : Profile
         CreateMap<ProjectMember, ProjectMemberResponse>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => (ProjectRole)src.Role));
 
-
+        CreateMap<Role, CommonListDropDownDto>()
+                   .ForMember(dest => dest.Name, opt => opt.MapFrom(src => CapitalizeFirst(src.RoleName)));
         #endregion
     }
+
+    private static string ToTitleCase(string input) =>
+ CultureInfo.CurrentCulture.TextInfo.ToTitleCase(input?.ToLower() ?? string.Empty);
+
+    private static string CapitalizeFirst(string input) =>
+        string.IsNullOrWhiteSpace(input) ? string.Empty
+            : char.ToUpper(input[0]) + input[1..];
 }

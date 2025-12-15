@@ -297,3 +297,9 @@ ALTER TABLE public.project_members
 
 ALTER TABLE public.project_members
     ADD COLUMN role INTEGER NOT NULL DEFAULT 0;
+
+
+-- Date : 15/12/2025
+-- '1 = Pending, 2 = Planning, 3 = In Progress, 4 = Completed, 5 = On Hold'
+ALTER TABLE public.projects
+ADD COLUMN status INT;

@@ -1,0 +1,154 @@
+.text-black {
+    color: var(--black-color);
+}
+
+.text-white {
+    color: var(--white-color);
+}
+
+.text-green {
+    color: var(--green-color);
+}
+
+.text-brown {
+    color: var(--brown-color);
+}
+
+.text-purple {
+    color: var(--purple-color);
+}
+
+.text-yellow {
+    color: var(--yellow-color);
+}
+
+.text-red {
+    color: var(--red-color);
+}
+
+.text-blue {
+    color: var(--blue-color);
+}
+
+.stats-card {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background-color: white;
+    min-height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stats-card .card-body {
+    padding: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    min-height: 100%;
+}
+
+@media (max-width: 768px) {
+    .stats-card {
+        padding: 12px;
+        min-height: 90px;
+    }
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: #ffffff !important;
+    border: none !important;
+}
+
+.card-title-section {
+    flex: 1;
+}
+
+.card-title {
+    font-size: 17px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 5px;
+}
+
+.card-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 2px;
+}
+
+.card-subtitle {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+    .card-title {
+        font-size: 12px;
+        margin-bottom: 3.5px;
+    }
+
+    .card-value {
+        font-size: 21px;
+        margin-bottom: 1.5px;
+    }
+
+    .card-subtitle {
+        font-size: 10.5px;
+    }
+}
+
+.card-right-section {
+    display: flex;
+    align-items: center;
+    margin-left: 16px;
+}
+
+.card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+}
+
+.card-icon i {
+    font-size: 35px;
+}
+
+@media (max-width: 768px) {
+    .card-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .card-icon i {
+        font-size: 30px;
+    }
+}
+
+.card-tag {
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+.card-tag span {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .card-tag {
+        padding: 4px 8px;
+        font-size: 10.5px;
+    }
+}

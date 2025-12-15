@@ -7,6 +7,7 @@ import dashboardReducer from "../features/user/dashboard/dashboardSlice";
 import leaveReducer from "../features/user/leave/leaveSlice";
 import leaveListReducer from "../features/admin/leave/leaveSlice";
 import { employeeApi } from "../features/admin/employees/empApi";
+import { projectsApi } from "../features/admin/project-mgmt/projectsMgmtApi";
 
 export const store = configureStore({
     reducer: {
@@ -18,10 +19,14 @@ export const store = configureStore({
         leaves: leaveReducer,
         leaveList: leaveListReducer,
         [employeeApi.reducerPath]: employeeApi.reducer,
+        [projectsApi.reducerPath]: projectsApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
-            .concat(employeeApi.middleware)
+            .concat(
+                employeeApi.middleware,
+                projectsApi.middleware
+            )
 });
 
 export type RootState = ReturnType<typeof store.getState>;

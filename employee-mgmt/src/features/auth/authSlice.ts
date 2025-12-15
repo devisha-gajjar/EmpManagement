@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { login, registerUser } from "./authApi";
-import { roleClaimKey, userIdClaimKey } from "../../utils/constant";
+import { roleClaimKey, userIdClaimKey, userNameClaimKey } from "../../utils/constant";
 
 export interface AuthState {
     token: string | null;
     role: string | null;
     userId: string | null;
+    userName: string | null;
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
@@ -32,12 +33,24 @@ const getUserIdFromToken = (token: string | null): string | null => {
     }
 };
 
+const getUseNameFromToken = (token: string | null): string | null => {
+    try {
+        if (!token) return null;
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        // console.log("username", payload[userNameClaimKey]?.toLowerCase())
+        return payload[userNameClaimKey]?.toLowerCase() || null;
+    } catch {
+        return null;
+    }
+};
+
 const initialToken = localStorage.getItem("token");
 
 const initialState: AuthState = {
     token: initialToken,
     role: getRoleFromToken(initialToken),
     userId: getUserIdFromToken(initialToken),
+    userName: getUseNameFromToken(initialToken),
     isAuthenticated: !!initialToken,
     loading: false,
     error: null,

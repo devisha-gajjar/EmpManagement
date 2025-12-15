@@ -11,4 +11,21 @@ public class Enum
         Member = 5
     }
 
+    public enum DropDownType
+    {
+        QuizCategory = 1,
+        QuizDifficulty = 2,
+        QuizTag = 3,
+        QuestionDifficulty = 4,
+        QuestionType = 5
+    }
+
+    public enum ProjectStatus
+    {
+        Pending = 1,
+        Planning = 2,
+        InProgress = 3,
+        Completed = 4,
+        OnHold = 5,
+    }
 }

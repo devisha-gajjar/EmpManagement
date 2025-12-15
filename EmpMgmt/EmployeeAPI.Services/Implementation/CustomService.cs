@@ -45,7 +45,8 @@ public class CustomService : ICustomService
             {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.RoleName),
-                new Claim(ClaimTypes.Name,user.UserId.ToString())
+                new Claim(ClaimTypes.Name,user.UserId.ToString()),
+                new Claim(ClaimTypes.GivenName, user.Username)
             };
 
         var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);

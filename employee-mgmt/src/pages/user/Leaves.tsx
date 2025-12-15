@@ -35,6 +35,7 @@ import AddLeaveDialog from "./AddLeaveDialog";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CommonConfirmDialog from "../../components/shared/confirmation-dialog/CommonConfirmDialog";
+import PageHeader from "../../components/shared/page-header/PageHeader";
 
 const Leaves = () => {
   const dispatch = useAppDispatch();
@@ -139,21 +140,20 @@ const Leaves = () => {
 
   return (
     <>
-      <Box p={3}>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={3}
-        >
-          <Typography variant="h4" fontWeight="bold">
-            My Leave Requests
-          </Typography>
+      <Box>
+        <div className="mb-3">
+          <PageHeader
+            icon="calendar-range"
+            title="Leave Requests"
+            subtitle="View all your leave applications and their status"
+            theme="blue"
+          />
+        </div>
 
-          <Button variant="contained" onClick={() => setOpen(true)}>
-            Add Leave
-          </Button>
-        </Box>
+        <Button variant="contained" onClick={() => setOpen(true)}>
+          Add Leave
+        </Button>
+
         <Box mb={2} display="flex" justifyContent="flex-end">
           <input
             type="text"

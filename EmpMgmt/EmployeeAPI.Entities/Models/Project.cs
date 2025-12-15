@@ -23,6 +23,8 @@ public partial class Project
 
     public int? ModifiedBy { get; set; }
 
+    public int? Status { get; set; }
+
     public virtual User? CreatedByNavigation { get; set; }
 
     public virtual User? ModifiedByNavigation { get; set; }
