@@ -1,9 +1,9 @@
 import { Row, Col, Input, Button } from "reactstrap";
-import ProjectCard from "./components/ProjectCard";
-import ProjectSummary from "./components/ProjectSummary";
-import PageHeader from "../../../components/shared/page-header/PageHeader";
-import { useGetProjectsQuery } from "../../../features/admin/project-mgmt/projectsMgmtApi";
-import { ProjectStatus } from "../../../enums/enum";
+import ProjectCard from "./ProjectCard";
+import ProjectSummary from "./ProjectSummary";
+import PageHeader from "../../../../components/shared/page-header/PageHeader";
+import { useGetProjectsQuery } from "../../../../features/admin/project-mgmt/projectsMgmtApi";
+import { ProjectStatus } from "../../../../enums/enum";
 
 const ProjectsPage = () => {
   const { data: projects = [], isLoading, isError } = useGetProjectsQuery();
@@ -22,9 +22,9 @@ const ProjectsPage = () => {
   }
 
   const statusOptions = Object.keys(ProjectStatus)
-    .filter((key) => isNaN(Number(key))) 
+    .filter((key) => isNaN(Number(key)))
     .map((key) => ({
-      label: key.replace(/([A-Z])/g, " $1").trim(), 
+      label: key.replace(/([A-Z])/g, " $1").trim(),
       value: ProjectStatus[key as keyof typeof ProjectStatus],
     }));
 

@@ -13,12 +13,11 @@ import {
   Tooltip,
   Paper,
   Popper,
-  ClickAwayListener,
 } from "@mui/material";
 import {
   ExpandLess,
   ExpandMore,
-  ChevronLeft,
+  Close,
   ChevronRight,
 } from "@mui/icons-material";
 import {
@@ -211,9 +210,20 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
               borderRadius: "10px",
             }}
           >
-            {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
+            {isCollapsed ? <ChevronRight /> : <Close />}
           </IconButton>
         </Box>
+
+        {/* <button
+          onClick={toggleSidebar}
+          className="position-absolute top-30 end-0 translate-middle-y w-30 h-30 bg-primary rounded-circle d-flex align-items-center justify-content-center shadow-lg hover:scale-110 transition-all"
+        >
+          {isCollapsed ? (
+            <ChevronRight className="w-4 h-4 text-white" />
+          ) : (
+            <ChevronLeft className="w-4 h-4 text-white" />
+          )}
+        </button> */}
 
         <Box sx={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
           <List sx={{ px: 0.5 }}>

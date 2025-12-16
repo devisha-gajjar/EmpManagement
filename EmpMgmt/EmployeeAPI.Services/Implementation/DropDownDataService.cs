@@ -29,7 +29,7 @@ public class DropDownDataService(
     {
         return dropDownType switch
         {
-            DropDownType.QuizCategory => roleRepository.GetQueryableInclude(),
+            DropDownType.Role => roleRepository.GetQueryableInclude(),
             _ => throw new ArgumentOutOfRangeException(nameof(dropDownType), dropDownType, null)
         };
     }

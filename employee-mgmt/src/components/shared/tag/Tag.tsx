@@ -1,18 +1,9 @@
 import React from "react";
 import classNames from "classnames";
 import "./Tag.css";
+import type { TagInputConfig } from "../../../interfaces/tag.interface";
 
 export type TagType = "static" | "selectable";
-
-export interface TagInputConfig {
-  id: string;
-  label: string;
-  type: TagType;
-  isSelected: boolean;
-  hasBorder: boolean;
-  backgroundColor: string;
-  textColor: string;
-}
 
 interface TagProps {
   tagConfig: TagInputConfig;

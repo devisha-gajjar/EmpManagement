@@ -1,19 +1,29 @@
 import { Card, CardBody, Progress } from "reactstrap";
 import type { Project } from "../../../../interfaces/project.interface";
-import { ProjectStatusUI } from "../project-mgmt.config";
+import { ProjectStatusUI } from "../configs/project-mgmt.config";
 import Tag from "../../../../components/shared/tag/Tag";
+import { useNavigate } from "react-router-dom";
+import "../styles/ProjectCard.css";
 
 interface Props {
   project: Project;
 }
 
 const ProjectCard = ({ project }: Props) => {
+  const navigate = useNavigate();
   const ui = ProjectStatusUI[project.status];
   console.log("ui", project);
 
+  function navigateToProject(id: number) {
+    navigate(`/admin/project-details/${id}`);
+  }
+
   return (
-    <Card className="h-100 shadow-sm">
-      <CardBody>
+    <Card
+      className="h-100 shadow-sm"
+      onClick={() => navigateToProject(project.projectId)}
+    >
+      <CardBody className="card-details">
         {/* Status tag */}
         <div className="d-flex justify-content-between">
           <Tag
@@ -23,8 +33,8 @@ const ProjectCard = ({ project }: Props) => {
               type: "static",
               isSelected: false,
               hasBorder: false,
-              backgroundColor: ui.lightBg,
-              textColor: ui.tagColor,
+              backgroundColor: "light-blue",
+              textColor: "blue",
             }}
           />
           <i className="bi bi-three-dots-vertical cursor-pointer"></i>

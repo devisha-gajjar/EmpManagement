@@ -3,23 +3,14 @@ import { Card, CardBody } from "reactstrap";
 import classNames from "classnames";
 import "./Card.css";
 import Tag from "../tag/Tag";
-
-export interface TagConfig {
-  id: string;
-  label: string;
-  type: "static" | "selectable";
-  isSelected: boolean;
-  hasBorder: boolean;
-  backgroundColor: string;
-  textColor: string;
-}
+import type { TagInputConfig } from "../../../interfaces/tag.interface";
 
 export interface CardInputConfig {
   title: string;
   value: string | number;
   subtitle?: string;
   icon?: string; // bootstrap icon name
-  tag?: TagConfig;
+  tag?: TagInputConfig;
   subtitleColor?: string;
   valueColor?: string;
   iconColor?: string;
@@ -79,7 +70,7 @@ const CardComponent: React.FC<CardProps> = ({ cardConfig }) => {
                 <div className="card-tag">
                   <Tag tagConfig={tag} />
                 </div>
-              )}    
+              )}
             </div>
           )}
         </div>

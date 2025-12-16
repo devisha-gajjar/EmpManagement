@@ -1,6 +1,6 @@
 import { Row, Col } from "reactstrap";
 import { ProjectStatus } from "../../../../enums/enum";
-import { ProjectStatusUI } from "../project-mgmt.config";
+import { ProjectStatusUI } from "../configs/project-mgmt.config";
 import CardComponent from "../../../../components/shared/card/Card";
 
 interface Props {
