@@ -30,7 +30,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     public async Task<IActionResult> GetProjectById(int id)
     {
         var response = await projectService.GetProjectById(id);
-        return Ok(response);
+        return Ok(ApiResponse<ProjectResponse>.Success(response));
     }
 
     [HttpDelete("{id:int}")]

@@ -153,7 +153,6 @@ export default function AppNavbar() {
         fixed="top"
         className="px-3 bg-white border-bottom border-1 border-primary"
       >
-        {/* App Title */}
         <NavbarBrand className="fw-bold">Employee Management</NavbarBrand>
 
         <Nav className="ms-auto" navbar>
@@ -172,7 +171,7 @@ export default function AppNavbar() {
                 {userName?.charAt(0).toUpperCase()}
               </div>
 
-              {/* Name + Role */}
+              {/* Name nd Role */}
               <div className="text-start lh-sm">
                 <div className="fw-semibold">{userName}</div>
                 <small className="text-muted">{role}</small>
@@ -198,7 +197,6 @@ export default function AppNavbar() {
         </Nav>
       </Navbar>
 
-      {/* Logout Confirmation Modal */}
       <Modal
         isOpen={openLogoutDialog}
         toggle={() => setOpenLogoutDialog(false)}

@@ -1,4 +1,4 @@
-import { createApi } from "@reduxjs/toolkit/query/react";import { axiosBaseQuery } from "../../../api/axiosBaseQuery";
+import { createApi } from "@reduxjs/toolkit/query/react"; import { axiosBaseQuery } from "../../../api/axiosBaseQuery";
 import type { Project } from "../../../interfaces/project.interface";
 ;
 
@@ -11,7 +11,7 @@ interface ApiResponse<T> {
 
 export const projectsApi = createApi({
   reducerPath: "projectsApi",
-  baseQuery: axiosBaseQuery(), 
+  baseQuery: axiosBaseQuery(),
   tagTypes: ["Projects"],
   endpoints: (builder) => ({
     getProjects: builder.query<Project[], void>({

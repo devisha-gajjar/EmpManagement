@@ -9,6 +9,7 @@
     padding: 1rem;
     height: 50%;
     overflow-y: auto;
+    border-radius: 10px;
 }
 
 .kanban-column {

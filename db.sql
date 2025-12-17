@@ -295,6 +295,8 @@ ADD COLUMN end_date TIMESTAMP;
 ALTER TABLE public.project_members
     DROP COLUMN role;
 
+
+-- role : 1 = project manager 2 = team leader 3 = develper 4 = tester 5 = designer
 ALTER TABLE public.project_members
     ADD COLUMN role INTEGER NOT NULL DEFAULT 0;
 

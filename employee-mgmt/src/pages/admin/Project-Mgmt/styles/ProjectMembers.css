@@ -1,0 +1,14 @@
+.member-search {
+    max-width: 360px;
+    height: 40px;
+    border-radius: 8px;
+}
+
+.member-container {
+    background: linear-gradient(180deg, #ffffff, rgb(231, 235, 250));
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: 0.3s;
+    border: 0.1px solid #1976d233, ;
+    padding: 1rem;
+    border-radius: 10px;
+}

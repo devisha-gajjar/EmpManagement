@@ -22,7 +22,6 @@ const statusColumns = [
 const ProjectDetails = () => {
   const { id } = useParams();
 
-  // ✅ MUST be state
   const [tasks, setTasks] = useState(tasksMock);
 
   const completedCount = tasks.filter((t) => t.status === "Completed").length;
@@ -37,9 +36,6 @@ const ProjectDetails = () => {
       progressPercent
     );
 
-  /* =======================
-     DRAG END HANDLER
-  ======================= */
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -59,6 +55,7 @@ const ProjectDetails = () => {
     <>
       <div className="mb-3">
         <PageHeader
+          showBackButton
           icon="folder"
           title={projectMock.project_name}
           subtitle={`${projectMock.status} • ${tasks.length} tasks`}
@@ -71,7 +68,10 @@ const ProjectDetails = () => {
           <p className="text-muted mb-0">{projectMock.description}</p>
         </Col>
         <Col className="text-end">
-          <Button color="primary">+ Add Task</Button>
+          <Button color="primary">
+            <i className="bi bi-plus-lg me-2"></i>
+            Add Task
+          </Button>
         </Col>
       </Row>
 
@@ -88,9 +88,6 @@ const ProjectDetails = () => {
         </Col>
       </Row>
 
-      {/* =======================
-         KANBAN BOARD
-      ======================= */}
       <DndContext onDragEnd={handleDragEnd}>
         <div className="kanban-grid">
           {statusColumns.map((status) => (

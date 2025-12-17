@@ -1,5 +1,3 @@
-// src/axiosClient.ts
-// src/axiosClient.ts
 import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import axios from "axios";
 import { hideLoader, showLoader } from "../features/shared/loaderSlice";

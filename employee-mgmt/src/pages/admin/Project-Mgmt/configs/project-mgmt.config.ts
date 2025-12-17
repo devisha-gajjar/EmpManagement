@@ -1,41 +1,47 @@
 import { ProjectStatus } from "../../../../enums/enum";
+import type { TagColor } from "../../../../types/type";
 
-type ProjectStatusUIConfig = {
-    label: string;
-    tagColor: string;
-    lightBg: string;
-    icon: string;
-};
-
-export const ProjectStatusUI: Record<ProjectStatus, ProjectStatusUIConfig> = {
+export const ProjectStatusUI: Record<
+    ProjectStatus,
+    {
+        label: string;
+        backgroundColor: TagColor;
+        textColor: TagColor;
+        icon: string;
+    }
+> = {
     [ProjectStatus.Pending]: {
         label: "Pending",
-        tagColor: "yellow",
-        lightBg: "light-yellow",
+        backgroundColor: "light-yellow",
+        textColor: "yellow",
         icon: "clock",
     },
+
     [ProjectStatus.Planning]: {
         label: "Planning",
-        tagColor: "blue",
-        lightBg: "light-blue",
+        backgroundColor: "light-purple",
+        textColor: "purple",
         icon: "diagram-3",
     },
+
     [ProjectStatus.InProgress]: {
         label: "In Progress",
-        tagColor: "orange",
-        lightBg: "light-orange",
+        backgroundColor: "light-blue",
+        textColor: "blue",
         icon: "arrow-repeat",
     },
+
     [ProjectStatus.Completed]: {
         label: "Completed",
-        tagColor: "green",
-        lightBg: "light-green",
+        backgroundColor: "light-green",
+        textColor: "green",
         icon: "check-circle",
     },
+
     [ProjectStatus.OnHold]: {
         label: "On Hold",
-        tagColor: "red",
-        lightBg: "light-red",
+        backgroundColor: "light-orange",
+        textColor: "orange",
         icon: "pause-circle",
     },
 };

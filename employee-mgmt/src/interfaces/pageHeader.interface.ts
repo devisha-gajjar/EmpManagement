@@ -5,4 +5,7 @@ export interface PageHeaderProps {
     title: string;
     subtitle?: string;
     theme?: PageHeaderTheme;
-}
+    showBackButton?: boolean;
+    backLabel?: string;
+    onBackClick?: () => void;
+}   

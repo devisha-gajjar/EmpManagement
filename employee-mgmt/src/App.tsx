@@ -14,7 +14,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import NotFound from "./pages/shared/NotFound";
 import ProjectsPage from "./pages/admin/Project-Mgmt/components/Project";
 import ProjectDetails from "./pages/admin/Project-Mgmt/components/ProjectDetails";
-import GlobalLoader from "./components/shared/loader/GlobalLoader";
+import ProjectFormPage from "./pages/admin/Project-Mgmt/components/ProjectForm";
+import ProjectMembersPage from "./pages/admin/Project-Mgmt/components/ProjectMember";
 
 function App() {
   const routes = useRoutes([
@@ -53,6 +54,9 @@ function App() {
         { path: "leavesList", element: <LeaveList /> },
         { path: "projects", element: <ProjectsPage /> },
         { path: "project-details/:id", element: <ProjectDetails /> },
+        { path: "projects/new", element: <ProjectFormPage /> },
+        { path: "projects/edit/:id", element: <ProjectFormPage /> },
+        { path: "projects/:id/members", element: <ProjectMembersPage /> },
       ],
     },
   ]);

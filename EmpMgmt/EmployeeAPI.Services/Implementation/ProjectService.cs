@@ -44,8 +44,8 @@ public class ProjectService(IMapper mapper, IGenericRepository<Project> projectR
             mapper.Map(request, project);
 
             project.ModifiedBy = UserId;
-            project.UpdatedOn = DateTime.UtcNow;
-
+            project.UpdatedOn = DateTime.Now;
+    
             projectRepository.Update(project);
         }
         else
@@ -54,8 +54,8 @@ public class ProjectService(IMapper mapper, IGenericRepository<Project> projectR
             project = mapper.Map<Project>(request);
 
             project.CreatedBy = UserId;
-            project.CreatedOn = DateTime.UtcNow;
-            project.UpdatedOn = DateTime.UtcNow;
+            project.CreatedOn = DateTime.Now;
+            project.UpdatedOn = DateTime.Now;
 
             projectRepository.Add(project);
         }

@@ -1,17 +1,17 @@
 import { useForm, Controller } from "react-hook-form";
 import {
-  TextField,
+  Form,
+  Row,
+  Col,
+  Input,
   Button,
-  Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText,
-  Grid,
-} from "@mui/material";
+  FormGroup,
+  Label,
+  FormFeedback,
+} from "reactstrap";
 import { getErrorMessage } from "../../../utils/formUtils";
 import type { FormProp } from "../../../interfaces/form.interface";
+import "./CommonForm.css";
 
 export default function DynamicFormComponent({
   formConfig,
@@ -27,14 +27,10 @@ export default function DynamicFormComponent({
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues, mode: "onTouched" });
+
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit(onSubmit)}
-      noValidate
-      sx={{ mt: 1 }}
-    >
-      <Grid container spacing={2}>
+    <Form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <Row>
         {formConfig.map((field) => {
           const errorMessage = getErrorMessage(
             errors[field.name] as any,
@@ -42,83 +38,65 @@ export default function DynamicFormComponent({
           );
 
           return (
-            <Grid
-              size={{ xs: 12, sm: field.gridClass === "half" ? 6 : 12 }}
-              key={field.name}
-            >
-              <Controller
-                name={field.name}
-                control={control}
-                rules={field.rules}
-                render={({ field: { onChange, value } }) => {
-                  if (field.type === "select") {
-                    return (
-                      <FormControl
-                        fullWidth
-                        error={!!errorMessage}
-                        disabled={field.disabled}
-                      >
-                        <InputLabel>{field.label}</InputLabel>
-                        <Select
-                          value={value || ""}
-                          label={field.label}
-                          onChange={onChange}
-                        >
-                          {field.options?.map((opt) => (
-                            <MenuItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                        <FormHelperText>{errorMessage}</FormHelperText>
-                      </FormControl>
-                    );
-                  }
+            <Col md={field.gridClass === "half" ? 6 : 12} key={field.name}>
+              <FormGroup>
+                <Label className="fw-medium">{field.label}</Label>
 
-                  return (
-                    <TextField
-                      fullWidth
-                      type={field.type}
-                      label={field.label}
-                      InputLabelProps={
-                        field.type === "date" ? { shrink: true } : {}
-                      }
-                      placeholder={field.placeholder}
-                      value={value || ""}
-                      onChange={onChange}
-                      disabled={field.disabled}
-                      error={!!errorMessage}
-                      helperText={errorMessage}
-                    />
-                  );
-                }}
-              />
-            </Grid>
+                <Controller
+                  name={field.name}
+                  control={control}
+                  rules={field.rules}
+                  render={({ field: { onChange, value } }) => {
+                    if (field.type === "select") {
+                      return (
+                        <Input
+                          type="select"
+                          value={value ?? ""}
+                          onChange={onChange}
+                          disabled={field.disabled}
+                          invalid={!!errorMessage}
+                        >
+                          <option value="">Select</option>
+                          {field.options?.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </Input>
+                      );
+                    }
+
+                    return (
+                      <Input
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        value={value ?? ""}
+                        onChange={onChange}
+                        disabled={field.disabled}
+                        invalid={!!errorMessage}
+                        className={`${field.type == "date" ? "pr-3" : ""}`}
+                      />
+                    );
+                  }}
+                />
+
+                {errorMessage && <FormFeedback>{errorMessage}</FormFeedback>}
+              </FormGroup>
+            </Col>
           );
         })}
-      </Grid>
+      </Row>
 
-      <Box
-        sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: "1rem" }}
-      >
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          disabled={loading}
-        >
+      {/* ACTIONS */}
+      <div className="d-flex justify-content-end gap-2 mt-4 form-actions">
+        <Button type="submit" color="primary" disabled={loading}>
           {loading ? "Processing..." : submitLabel ?? "Save"}
         </Button>
 
-        <Button
-          type="button"
-          variant="contained"
-          color="primary"
-          onClick={onCancel}
-        >
-          {cancleLabel ?? "cancle"}
+        <Button type="button" color="secondary" outline onClick={onCancel}>
+          {cancleLabel ?? "Cancel"}
         </Button>
-      </Box>
-    </Box>
+      </div>
+    </Form>
   );
 }

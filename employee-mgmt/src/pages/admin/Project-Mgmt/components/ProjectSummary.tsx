@@ -27,8 +27,6 @@ const ProjectSummary = ({ counts }: Props) => {
                 title: ui.label,
                 value: counts[status] || 0,
                 icon: ui.icon,
-                valueColor: ui.tagColor,
-                iconColor: ui.tagColor,
               }}
             />
           </Col>

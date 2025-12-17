@@ -1,12 +1,17 @@
 // src/components/GlobalLoader.tsx
-import React from 'react';
-import './GlobalLoader.css'; // You can create your custom CSS for the loader
+import React from "react";
+import "./GlobalLoader.css"; // You can create your custom CSS for the loader
+import { useAppSelector } from "../../../app/hooks";
 
 const GlobalLoader = () => {
-  return (
+  const { isLoading } = useAppSelector((state) => state.loader);
+  console.log("loader value", isLoading);
+  return isLoading ? (
     <div className="loader-overlay">
       <div className="loader"></div>
     </div>
+  ) : (
+    <></>
   );
 };
 

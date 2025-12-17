@@ -26,6 +26,7 @@ import {
 } from "../../utils/constant";
 import { useAppDispatch } from "../../app/hooks";
 import { logout } from "../../features/auth/authSlice";
+import CommonConfirmDialog from "../shared/confirmation-dialog/CommonConfirmDialog";
 
 interface SidebarProps {
   role: string;
@@ -37,6 +38,7 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
   const location = useLocation();
   const dispatch = useAppDispatch();
 
+  const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
   const [openMenu, setOpenMenu] = useState<{ [key: string]: boolean }>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHoveringPopover, setIsHoveringPopover] = useState(false);
@@ -85,6 +87,7 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
   };
 
   const handleLogout = () => {
+    setOpenLogoutDialog(false);
     dispatch(logout());
   };
 
@@ -420,7 +423,7 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
           />
           <Tooltip title={isCollapsed ? "Logout" : ""} placement="right" arrow>
             <ListItemButton
-              onClick={handleLogout}
+              onClick={() => setOpenLogoutDialog(true)}
               sx={{
                 borderRadius: "10px",
                 py: 1.3,
@@ -557,6 +560,14 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
           </List>
         </Paper>
       </Popper>
+      <CommonConfirmDialog
+        open={openLogoutDialog}
+        title="Confirm Logout"
+        message="Are you sure you want to log out of your account?"
+        confirmText="Logout"
+        onCancel={() => setOpenLogoutDialog(false)}
+        onConfirm={handleLogout}
+      />
     </>
   );
 };

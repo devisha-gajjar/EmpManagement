@@ -6,3 +6,9 @@
     cursor: pointer;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
 }
+
+.project-menu:hover {
+    background-color: rgb(189, 221, 250);
+    padding: .1rem;
+    border-radius: 10px;
+}

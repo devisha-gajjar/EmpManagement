@@ -18,6 +18,7 @@ const loaderSlice = createSlice({
     reducers: {
         showLoader: (state) => {
             state.requestCount += 1;
+            console.log("show loader req", state.requestCount)
             if (state.requestCount > 0) {
                 state.isLoading = true;  // Show loader if any request is ongoing
             }

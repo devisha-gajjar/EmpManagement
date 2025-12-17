@@ -30,7 +30,6 @@ export default function MainLayout() {
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <div style={{ display: "flex", flex: 1 }}>
         <Sidebar role={role!} drawerWidth={280} />
-        {/* <Navbar /> */}
         <main
           style={{
             flex: 1,
