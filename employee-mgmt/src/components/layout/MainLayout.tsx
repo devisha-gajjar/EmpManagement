@@ -33,7 +33,7 @@ export default function MainLayout() {
         <main
           style={{
             flex: 1,
-            padding: "1rem",
+            padding: "2rem",
             overflowY: "auto",
             background:
               "linear-gradient(to bottom right, #f5f3ff, #eff6ff, #eef2ff)",

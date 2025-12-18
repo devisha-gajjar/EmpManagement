@@ -62,10 +62,6 @@ const ProjectFormPage = () => {
     return <div className="p-4">Loading project...</div>;
   }
 
-  //   useEffect(() => {
-  //     console.log(Number(id));
-  //   }, []);
-
   return (
     <Box sx={{ p: 3 }}>
       <div className="mb-3">

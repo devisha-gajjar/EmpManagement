@@ -13,6 +13,7 @@ import {
   Link,
 } from "@mui/material";
 import { emailRegex } from "../../utils/constant";
+import AuthLayout from "../../components/layout/AuthLayout";
 
 // validation errors
 interface ValidationErrors {
@@ -105,98 +106,91 @@ export default function Login() {
   }, [isAuthenticated, role, navigate]);
 
   return (
-    <Container
-      component="main"
-      maxWidth="xs"
-      sx={{
-        mt: 8,
-        background: "#f7f7f7ff",
-        padding: "2rem",
-        borderRadius: "18px",
-      }}
-    >
+    <AuthLayout>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          width: "100%",
+          maxWidth: 520,
+          background: "#ffffff",
+          p: 6,
+          borderRadius: "18px",
+          boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
         }}
       >
-        <Typography
-          component="h1"
-          variant="h4"
-          color="primary"
-          sx={{ mb: 3, fontWeight: 700 }}
-        >
-          Login
+        <Typography variant="h4" fontWeight={700} mb={1}>
+          Welcome back
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary" mb={3}>
+          Sign in to manage your team
         </Typography>
 
         {error && (
-          <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
 
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <Box component="form" onSubmit={handleSubmit}>
           <TextField
-            margin="normal"
-            required
             fullWidth
-            id="usernameOrEmail"
             label="Email or Username"
+            margin="normal"
             name="usernameOrEmail"
-            autoComplete="email"
-            autoFocus
             onChange={handleChange}
             error={!!validationErrors.usernameOrEmail}
             helperText={validationErrors.usernameOrEmail}
           />
 
           <TextField
-            margin="normal"
-            required
             fullWidth
-            name="password"
             label="Password"
             type="password"
-            id="password"
-            autoComplete="current-password"
+            margin="normal"
+            name="password"
             onChange={handleChange}
             error={!!validationErrors.password}
             helperText={validationErrors.password}
           />
 
           <Button
-            type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 1 }}
+            size="large"
+            sx={{ mt: 3, py: 1.2, borderRadius: 2 }}
             disabled={loading}
+            type="submit"
           >
-            {loading ? "Loading..." : "Login"}
+            {loading ? "Signing in..." : "Login"}
           </Button>
 
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "1rem",
+              mt: 3,
+              pt: 1,
+              borderTop: "1px solid #eee",
+              width: "100%",
+              textAlign: "center",
             }}
           >
-            <Typography variant="body2">
-              Not a user?
+            <Typography align="center" variant="body2">
+              Don’t have an account?
               <Link
                 component="button"
-                variant="body2"
+                sx={{
+                  ml: 1,
+                  textDecoration: "none",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
                 onClick={handleRegisterClick}
-                sx={{ ml: 1, textDecoration: "none", cursor: "pointer" }}
               >
-                Register Now
+                Register
               </Link>
             </Typography>
           </Box>
         </Box>
       </Box>
-    </Container>
+    </AuthLayout>
   );
 }

@@ -14,74 +14,12 @@ import { registerUser } from "../../features/auth/authApi";
 import { clearAuthStatus } from "../../features/auth/authSlice";
 import type { RegisterData } from "../../interfaces/login.interface";
 import { emailRegex, phoneRegex } from "../../utils/constant";
+import { RegisterFormFields } from "./configs/registerForm.config";
+import AuthLayout from "../../components/layout/AuthLayout";
 
 type ValidationErrors = Partial<Record<keyof RegisterData, string>>;
 
-const inputFields = [
-  {
-    label: "First Name",
-    name: "firstName",
-    type: "text",
-    autoComplete: "given-name",
-    width: "50%",
-  },
-  {
-    label: "Last Name",
-    name: "lastName",
-    type: "text",
-    autoComplete: "family-name",
-    width: "50%",
-  },
-  {
-    label: "Username",
-    name: "username",
-    type: "text",
-    autoComplete: "username",
-    width: "100%",
-  },
-  {
-    label: "Email",
-    name: "email",
-    type: "email",
-    autoComplete: "email",
-    width: "100%",
-  },
-  {
-    label: "Password",
-    name: "password",
-    type: "password",
-    autoComplete: "new-password",
-    width: "100%",
-  },
-  {
-    label: "Confirm Password",
-    name: "confirmPassword",
-    type: "password",
-    autoComplete: "new-password",
-    width: "100%",
-  },
-  {
-    label: "Phone",
-    name: "phone",
-    type: "tel",
-    autoComplete: "tel",
-    width: "50%",
-  },
-  {
-    label: "Zipcode",
-    name: "zipcode",
-    type: "text",
-    autoComplete: "postal-code",
-    width: "50%",
-  },
-  {
-    label: "Address",
-    name: "address",
-    type: "text",
-    autoComplete: "street-address",
-    width: "100%",
-  },
-];
+const inputFields = RegisterFormFields;
 
 export default function Register() {
   const dispatch = useAppDispatch();
@@ -224,30 +162,25 @@ export default function Register() {
   );
 
   return (
-    <Container
-      component="main"
-      maxWidth="sm"
-      sx={{
-        mt: 8,
-        background: "#f7f7f7ff",
-        padding: "2rem",
-        borderRadius: "18px",
-      }}
-    >
+    <AuthLayout>
       <Box
+        component="main"
+        maxWidth="sm"
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          width: "100%",
+          maxWidth: 620,
+          background: "#ffffff",
+          borderRadius: "18px",
+          p: 6,
+          boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
         }}
       >
-        <Typography
-          component="h1"
-          variant="h4"
-          color="primary"
-          sx={{ mb: 3, fontWeight: 700 }}
-        >
-          Create Your Account
+        <Typography variant="h4" fontWeight={700} mb={1}>
+          Register an account
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary" mb={4}>
+          Create your workspace to manage teams efficiently
         </Typography>
 
         {/* error state or local validation error */}
@@ -350,6 +283,6 @@ export default function Register() {
           </Typography>
         </Box>
       </Box>
-    </Container>
+    </AuthLayout>
   );
 }

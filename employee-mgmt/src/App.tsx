@@ -56,7 +56,7 @@ function App() {
         { path: "project-details/:id", element: <ProjectDetails /> },
         { path: "projects/new", element: <ProjectFormPage /> },
         { path: "projects/edit/:id", element: <ProjectFormPage /> },
-        { path: "projects/:id/members", element: <ProjectMembersPage /> },
+        { path: "projects/members/:id", element: <ProjectMembersPage /> },
       ],
     },
   ]);

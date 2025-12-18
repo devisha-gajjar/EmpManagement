@@ -9,4 +9,5 @@ public interface IProjectMemberService
     Task<bool> DeleteMember(int projectMemberId);
     Task<ProjectMemberResponse?> GetMember(int projectMemberId);
     Task<List<ProjectMemberResponse>> GetMembersByProject(int projectId);
+    Task<List<CommonListDropDownDto>> SearchUsersAsync(string search);
 }

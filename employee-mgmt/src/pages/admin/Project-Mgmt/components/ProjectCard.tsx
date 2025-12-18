@@ -47,7 +47,7 @@ const ProjectCard = ({ project }: Props) => {
 
   const onAddMember = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/admin/projects/${project.projectId}/members`);
+    navigate(`/admin/projects/members/${project.projectId}`);
   };
 
   const onDelete = (e: React.MouseEvent) => {

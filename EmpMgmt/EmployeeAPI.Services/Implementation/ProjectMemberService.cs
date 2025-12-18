@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.DTO.RequestDto;
@@ -11,7 +12,7 @@ using static EmployeeAPI.Entities.Enums.Enum;
 
 namespace EmployeeAPI.Services;
 
-public class ProjectMemberService(IGenericRepository<ProjectMember> projectMemberRepository, IMapper mapper) : IProjectMemberService
+public class ProjectMemberService(IGenericRepository<ProjectMember> projectMemberRepository, IMapper mapper, IGenericRepository<User> userRepository) : IProjectMemberService
 {
     public async Task<ProjectMemberResponse> AddOrUpdateMember(ProjectMemberRequest request)
     {
@@ -61,12 +62,44 @@ public class ProjectMemberService(IGenericRepository<ProjectMember> projectMembe
 
     public async Task<List<ProjectMemberResponse>> GetMembersByProject(int projectId)
     {
-        var query = projectMemberRepository.GetQueryableInclude();
+        var query = projectMemberRepository.GetQueryableInclude(
+            includes:
+            [
+                pm => pm.User
+            ],
+            deepIncludes:
+            [
+                "User.Role",
+                "User.EmployeeDepartments",
+                "User.EmployeeDepartments.Department"
+            ]
+        );
 
         var members = await query
-            .Where(x => x.ProjectId == projectId)
+            .Where(pm => pm.ProjectId == projectId)
             .ToListAsync();
 
         return mapper.Map<List<ProjectMemberResponse>>(members);
     }
+
+    public async Task<List<CommonListDropDownDto>> SearchUsersAsync(string search)
+    {
+        if (string.IsNullOrWhiteSpace(search))
+            return [];
+
+        IQueryable<User> query = userRepository.GetQueryableInclude();
+
+        query = query.Where(x =>
+            !x.IsDeleted &&
+            (x.FirstName.Contains(search) ||
+             x.LastName.Contains(search) ||
+             x.Email.Contains(search))
+        );
+
+        return await mapper
+            .ProjectTo<CommonListDropDownDto>(query)
+            .Take(20)
+            .ToListAsync();
+    }
+
 }

@@ -9,6 +9,7 @@ import leaveReducer from "../features/user/leave/leaveSlice";
 import leaveListReducer from "../features/admin/leave/leaveSlice";
 import { employeeApi } from "../features/admin/employees/empApi";
 import { projectsApi } from "../features/admin/project-mgmt/projectsMgmtApi";
+import { projectMembersApi } from "../features/admin/project-mgmt/projectMembersApi";
 
 export const store = configureStore({
     reducer: {
@@ -22,12 +23,14 @@ export const store = configureStore({
         leaveList: leaveListReducer,
         [employeeApi.reducerPath]: employeeApi.reducer,
         [projectsApi.reducerPath]: projectsApi.reducer,
+        [projectMembersApi.reducerPath]: projectMembersApi.reducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
             .concat(
                 employeeApi.middleware,
-                projectsApi.middleware
+                projectsApi.middleware,
+                projectMembersApi.middleware,
             )
 });
 

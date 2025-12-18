@@ -3,7 +3,7 @@ import type { RegisterOptions, SubmitHandler } from "react-hook-form";
 export interface DynamicFormField {
     name: string;
     label: string;
-    type: "text" | "password" | "email" | "number" | "select" | "date";
+    type: "text" | "password" | "email" | "number" | "select" | "date" | "search-select";
     placeholder?: string;
     rules?: RegisterOptions; // React Hook Form rules (required, min, pattern, etc.)
     options?: { value: string | number; label: string }[]; // For Select inputs
@@ -20,4 +20,6 @@ export interface FormProp {
     submitLabel?: string;
     cancleLabel?: string;
     loading?: boolean;
+    onSearch?: (value: string) => void;
+    isFetching?: boolean;
 }

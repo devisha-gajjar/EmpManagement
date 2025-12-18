@@ -39,5 +39,13 @@ public class ProjectMemberController(IProjectMemberService projectMemberService)
         var result = await projectMemberService.GetMembersByProject(projectId);
         return Ok(ApiResponse<List<ProjectMemberResponse>>.Success(result, "Fetched"));
     }
+
+    [HttpGet("users/search")]
+    public async Task<IActionResult> SearchUsers([FromQuery] string query)
+    {
+        var result = await projectMemberService.SearchUsersAsync(query);
+        return Ok(ApiResponse<List<CommonListDropDownDto>>.Success(result, "Fetched"));
+    }
+
 }
 

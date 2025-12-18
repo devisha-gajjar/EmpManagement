@@ -12,14 +12,17 @@ import {
 import { getErrorMessage } from "../../../utils/formUtils";
 import type { FormProp } from "../../../interfaces/form.interface";
 import "./CommonForm.css";
+import Select from "react-select";
 
 export default function DynamicFormComponent({
   formConfig,
   onSubmit,
   onCancel,
+  onSearch,
   defaultValues = {},
   submitLabel,
   cancleLabel,
+  isFetching,
   loading = false,
 }: FormProp) {
   const {
@@ -47,6 +50,29 @@ export default function DynamicFormComponent({
                   control={control}
                   rules={field.rules}
                   render={({ field: { onChange, value } }) => {
+                    if (field.type === "search-select") {
+                      return (
+                        <Select
+                          options={field.options}
+                          value={
+                            field.options?.find((opt) => opt.value === value) ||
+                            null
+                          }
+                          onChange={(selected) => onChange(selected?.value)}
+                          onInputChange={(input, meta) => {
+                            if (meta.action === "input-change") {
+                              onSearch?.(input);
+                            }
+                          }}
+                          isLoading={isFetching}
+                          isDisabled={field.disabled}
+                          placeholder={field.placeholder || "Search..."}
+                          noOptionsMessage={() => "Type to search users"}
+                          classNamePrefix="react-select"
+                        />
+                      );
+                    }
+
                     if (field.type === "select") {
                       return (
                         <Input

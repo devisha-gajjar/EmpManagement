@@ -27,7 +27,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.TaskCount,
                 opt => opt.MapFrom(src => src.UserTasks.Count))
 
-            .ForMember(dest => dest.CompletedTaskCount, 
+            .ForMember(dest => dest.CompletedTaskCount,
                 opt => opt.MapFrom(src =>
                     src.UserTasks.Count(t => t.Status == "Completed")))
 
@@ -44,10 +44,17 @@ public class MappingProfile : Profile
            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => (int)src.Role));
 
         CreateMap<ProjectMember, ProjectMemberResponse>()
-            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => (ProjectRole)src.Role));
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => (ProjectRole)src.Role))
+            .ForMember(dest => dest.user, opt => opt.MapFrom(src => src.User));
 
         CreateMap<Role, CommonListDropDownDto>()
                    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => CapitalizeFirst(src.RoleName)));
+
+        CreateMap<User, CommonListDropDownDto>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.UserId))
+            .ForMember(d => d.Name, o => o.MapFrom(s => $"{s.FirstName} {s.LastName} - {s.Email}"));
+
+
         #endregion
     }
 

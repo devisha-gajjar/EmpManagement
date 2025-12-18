@@ -16,7 +16,6 @@ import {
   TablePagination,
 } from "@mui/material";
 import {
-  deleteLeave,
   fetchLeaves,
   fetchLeaveToEdit,
 } from "../../features/user/leave/leaveApi";
