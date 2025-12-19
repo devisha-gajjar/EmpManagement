@@ -30,6 +30,23 @@ public class ProjectMemberService(IGenericRepository<ProjectMember> projectMembe
         }
         else
         {
+            var userAlreadyAssigned = await projectMemberRepository.Exists(x =>
+                      x.ProjectId == request.ProjectId &&
+                      x.UserId == request.UserId
+                  );
+
+            if (userAlreadyAssigned)
+                throw new AppException(Constants.PROJECT_MEM_ALREADY_ASSIGNED_TO_PROJECT);
+
+            var exists = await projectMemberRepository.Exists(x =>
+                x.ProjectId == request.ProjectId &&
+                x.UserId == request.UserId &&
+                x.Role == (int)request.Role
+            );
+
+            if (exists)
+                throw new AppException(Constants.PROJECT_MEM_ALREADY_ASSIGNED);
+
             entity = new ProjectMember
             {
                 ProjectId = request.ProjectId,
@@ -43,7 +60,6 @@ public class ProjectMemberService(IGenericRepository<ProjectMember> projectMembe
 
         return mapper.Map<ProjectMemberResponse>(entity);
     }
-
     public async Task<bool> DeleteMember(int projectMemberId)
     {
         var entity = await projectMemberRepository.GetByInclude(x => x.ProjectMemberId == projectMemberId) ?? throw new AppException(Constants.PROJECT_MEM_NOT_FOUND);
@@ -55,7 +71,7 @@ public class ProjectMemberService(IGenericRepository<ProjectMember> projectMembe
 
     public async Task<ProjectMemberResponse?> GetMember(int projectMemberId)
     {
-        var entity = await projectMemberRepository.GetByInclude(x => x.ProjectMemberId == projectMemberId) ?? throw new AppException(Constants.PROJECT_MEM_NOT_FOUND);
+        var entity = await projectMemberRepository.GetByInclude(x => x.ProjectMemberId == projectMemberId, query => query.Include(x => x.User)) ?? throw new AppException(Constants.PROJECT_MEM_NOT_FOUND);
 
         return mapper.Map<ProjectMemberResponse>(entity);
     }

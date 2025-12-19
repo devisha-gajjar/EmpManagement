@@ -27,5 +27,7 @@ public static class Constants
     #region Project Mgmt
     public const string PROJECT_NOT_FOUND = "Project not found.";
     public const string PROJECT_MEM_NOT_FOUND = "Project member not found.";
+    public const string PROJECT_MEM_ALREADY_ASSIGNED = "Project member is alredy exist with same role";
+    public const string PROJECT_MEM_ALREADY_ASSIGNED_TO_PROJECT = "Project member is assigned already to one role";
     #endregion
 }

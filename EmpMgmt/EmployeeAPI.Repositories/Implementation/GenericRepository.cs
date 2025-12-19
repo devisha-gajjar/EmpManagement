@@ -6,14 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeAPI.Repositories.Implementation;
 
-public class GenericRepository<T> : IGenericRepository<T> where T : class
+public class GenericRepository<T>(EmployeeMgmtContext db) : IGenericRepository<T> where T : class
 {
-    protected readonly EmployeeMgmtContext _db;
-
-    public GenericRepository(EmployeeMgmtContext db)
-    {
-        _db = db;
-    }
+    protected readonly EmployeeMgmtContext _db = db;
 
     public T? GetById(int id)
     {
@@ -90,5 +85,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         }
 
         return await query.FirstOrDefaultAsync().ConfigureAwait(false);
+    }
+
+    public async Task<bool> Exists(Expression<Func<T, bool>> expression)
+    {
+        return await _db.Set<T>().AsNoTracking().Where(expression).AnyAsync();
     }
 }

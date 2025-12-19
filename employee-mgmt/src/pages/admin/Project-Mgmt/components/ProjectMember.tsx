@@ -5,7 +5,6 @@ import MemberCard from "./MemberCard";
 import "../styles/ProjectMembers.css";
 import { useGetMembersByProjectQuery } from "../../../../features/admin/project-mgmt/projectMembersApi";
 import { useParams } from "react-router-dom";
-import { ProjectRoleConfig } from "../configs/project-member.config";
 import { ProjectRole } from "../../../../enums/enum";
 import { useState } from "react";
 import ProjectMemberForm from "./ProjectMemberFrom";

@@ -3,14 +3,9 @@ using EmployeeAPI.Services.IServices;
 using EmployeeAPI.Entities.DTO.RequestDto;
 
 namespace EmployeeAPI.Hubs;
-public class LeaveHub : Hub
+public class LeaveHub(ILeaveService leaveService) : Hub
 {
-    private readonly ILeaveService _leaveService;
-
-    public LeaveHub(ILeaveService leaveService)
-    {
-        _leaveService = leaveService;
-    }
+    private readonly ILeaveService _leaveService = leaveService;
 
     public override async Task OnConnectedAsync()
     {

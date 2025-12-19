@@ -13,7 +13,7 @@
 
 {
   "type": 1,
-  "target": "ApplyLeave",
+  "target": "ApplyLeave", 
   "arguments": [
     {
       "userId": 1,
@@ -26,3 +26,16 @@
 }
 
 {"type":1,"target":"ApproveLeave","arguments":[8,5]}
+
+
+{
+  "type": 1,
+  "target": "AddOrUpdateProjectMember",
+  "arguments": [
+    {
+      "projectId": 1,
+      "userId": 5,
+      "role": 2
+    }
+  ]
+}

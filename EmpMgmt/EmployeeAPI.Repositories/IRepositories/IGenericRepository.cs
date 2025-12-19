@@ -14,4 +14,5 @@ public interface IGenericRepository<T> where T : class
     void Save();
     IQueryable<T> GetQueryableInclude(Expression<Func<T, object>>[] includes = null, string[] deepIncludes = null);
     Task<T?> GetByInclude(Expression<Func<T, bool>> expression, Func<IQueryable<T>, IQueryable<T>>? includes = null);
+    Task<bool> Exists(Expression<Func<T, bool>> expression);
 }
