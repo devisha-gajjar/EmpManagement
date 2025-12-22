@@ -26,6 +26,8 @@ public partial class EmployeeMgmtContext : DbContext
 
     public virtual DbSet<LeaveRequest> LeaveRequests { get; set; }
 
+    public virtual DbSet<Notification> Notifications { get; set; }
+
     public virtual DbSet<PerformanceReview> PerformanceReviews { get; set; }
 
     public virtual DbSet<Project> Projects { get; set; }
@@ -186,6 +188,33 @@ public partial class EmployeeMgmtContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.LeaveRequests)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("leave_requests_user_id_fkey");
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.NotificationId).HasName("notifications_pkey");
+
+            entity.ToTable("notifications");
+
+            entity.Property(e => e.NotificationId).HasColumnName("notification_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnName("created_at");
+            entity.Property(e => e.IsRead).HasColumnName("is_read");
+            entity.Property(e => e.Message).HasColumnName("message");
+            entity.Property(e => e.ReadAt).HasColumnName("read_at");
+            entity.Property(e => e.ReferenceId).HasColumnName("reference_id");
+            entity.Property(e => e.Title)
+                .HasMaxLength(150)
+                .HasColumnName("title");
+            entity.Property(e => e.Type)
+                .HasMaxLength(50)
+                .HasColumnName("type");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("fk_notifications_user");
         });
 
         modelBuilder.Entity<PerformanceReview>(entity =>

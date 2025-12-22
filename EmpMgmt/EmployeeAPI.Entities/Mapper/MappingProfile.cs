@@ -56,6 +56,10 @@ public class MappingProfile : Profile
 
 
         #endregion
+
+        #region notification
+        CreateMap<Notification, NotificationResponseDto>();
+        #endregion
     }
 
     private static string ToTitleCase(string input) =>

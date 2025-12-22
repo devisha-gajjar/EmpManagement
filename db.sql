@@ -305,3 +305,30 @@ ALTER TABLE public.project_members
 -- '1 = Pending, 2 = Planning, 3 = In Progress, 4 = Completed, 5 = On Hold'
 ALTER TABLE public.projects
 ADD COLUMN status INT;
+
+
+-- Date : 22/12/2025
+
+-- Table: notifications
+
+CREATE TABLE IF NOT EXISTS public.notifications (
+    notification_id SERIAL PRIMARY KEY,
+
+    user_id INTEGER NOT NULL,
+
+    title VARCHAR(150) NOT NULL,
+    message TEXT NOT NULL,
+
+    type VARCHAR(50) NOT NULL,          -- ProjectAssigned, RoleUpdated, etc.
+    reference_id INTEGER NULL,          -- projectId, leaveId, etc.
+
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    read_at TIMESTAMP NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_notifications_user
+        FOREIGN KEY (user_id)
+        REFERENCES public.users(user_id)
+        ON DELETE CASCADE
+);

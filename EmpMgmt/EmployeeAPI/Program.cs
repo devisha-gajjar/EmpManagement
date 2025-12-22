@@ -307,6 +307,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<LeaveHub>("/leaveHub");
-app.MapHub<NotificationHub>("/hubs/notification");
+app.MapHub<NotificationHub>("/notification");
 
 app.Run();

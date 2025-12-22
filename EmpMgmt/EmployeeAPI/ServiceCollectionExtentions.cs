@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProjectMemberService, ProjectMemberService>();
         services.AddScoped<IDropDownDataService, DropDownDataService>();
         services.AddScoped<IMemoryCacheService, MemoryCacheService>();
+        services.AddScoped<INotificationService, NotificationService>();
 
         //mappers
         services.AddAutoMapper(typeof(MappingProfile));

@@ -16,6 +16,7 @@ import ProjectsPage from "./pages/admin/Project-Mgmt/components/Project";
 import ProjectDetails from "./pages/admin/Project-Mgmt/components/ProjectDetails";
 import ProjectFormPage from "./pages/admin/Project-Mgmt/components/ProjectForm";
 import ProjectMembersPage from "./pages/admin/Project-Mgmt/components/ProjectMember";
+import NotificationList from "./pages/user/notification/notification-list";
 
 function App() {
   const routes = useRoutes([
@@ -37,6 +38,7 @@ function App() {
       children: [
         { path: "dashboard", element: <UserDashboard /> },
         { path: "leaves", element: <Leaves /> },
+        { path: "notification", element: <NotificationList /> },
       ],
     },
 

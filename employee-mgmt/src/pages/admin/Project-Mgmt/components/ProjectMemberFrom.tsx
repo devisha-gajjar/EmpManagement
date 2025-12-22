@@ -10,6 +10,7 @@ import type { DynamicFormField } from "../../../../interfaces/form.interface";
 import { useMemo, useState } from "react";
 import { debounce } from "@mui/material";
 import { useSnackbar } from "../../../../app/hooks";
+import { notificationHubService } from "../../../../services/signalR/notificationHub.service";
 
 interface Props {
   isOpen: boolean;
@@ -92,15 +93,15 @@ const ProjectMemberForm = ({
       ],
     },
   ];
-  console.log("member", memberData);
+
   const handleSubmit = async (data: any) => {
     try {
-      await addOrUpdateMember({
-        projectMemberId: isEditMode ? projectMemberId : undefined,
-        projectId,
+      await notificationHubService.addOrUpdateProjectMember({
+        projectMemberId: isEditMode ? projectMemberId : 0,
+        projectId: projectId,
         userId: Number(data.userId),
         role: Number(data.role),
-      }).unwrap();
+      });
 
       snackbar.success(
         isEditMode ? "Member updated successfully" : "Member added successfully"
@@ -108,6 +109,7 @@ const ProjectMemberForm = ({
 
       onClose();
     } catch (err: any) {
+      console.log(err);
       const message = err?.data?.Message || "Operation failed";
       snackbar.error(message);
     }

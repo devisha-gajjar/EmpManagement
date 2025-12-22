@@ -10,7 +10,7 @@ export const injectStore = (_store: Store) => {
     store = _store;
 };
 
-// Create axios instance
+// axios instance
 const axiosClient: AxiosInstance = axios.create({
     baseURL: environment.baseUrl,
     timeout: 30000,
@@ -58,9 +58,9 @@ axiosClient.interceptors.response.use(
         if (store) {
             store.dispatch(hideLoader());
         }
-
+        console.log("interceptor", error);
         // Handle 401 Unauthorized (redirect to login)
-        if (error.response?.status === 401) {
+        if (error.response?.status == 401) {
             localStorage.removeItem("token");
             window.location.href = '/login';
         }

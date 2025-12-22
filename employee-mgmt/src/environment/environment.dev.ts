@@ -1,5 +1,6 @@
 export const environment = {
     production: false,
     baseUrl: 'http://localhost:5119/api',
-    signalRUrl: 'http://localhost:5119/leaveHub',
+    signalRLeaveUrl: 'http://localhost:5119/leaveHub',
+    signalRNotificationUrl: 'http://localhost:5119/notification',
 };

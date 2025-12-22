@@ -10,7 +10,7 @@ class LeaveHubService {
 
     constructor() {
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(environment.signalRUrl)
+            .withUrl(environment.signalRLeaveUrl)
             .withAutomaticReconnect()
             .build();
     }

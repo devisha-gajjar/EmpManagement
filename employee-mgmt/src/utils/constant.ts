@@ -103,6 +103,11 @@ export const getSideBarLinksByRole = (role: string) => {
                 path: "/user/attendance",
                 icon: "bi bi-calendar-check-fill",
             },
+            {
+                name: "Notifications",
+                path: "/user/notification",
+                icon: "bi bi-bell-fill",
+            },
         ];
     }
 

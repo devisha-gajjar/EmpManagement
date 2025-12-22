@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using AutoMapper;
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.DTO.RequestDto;
@@ -8,44 +7,36 @@ using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
 using Microsoft.EntityFrameworkCore;
-using static EmployeeAPI.Entities.Enums.Enum;
 
-namespace EmployeeAPI.Services;
+namespace EmployeeAPI.Services.Implementation;
 
-public class ProjectMemberService(IGenericRepository<ProjectMember> projectMemberRepository, IMapper mapper, IGenericRepository<User> userRepository) : IProjectMemberService
+public class ProjectMemberService(IGenericRepository<ProjectMember> projectMemberRepository, IMapper mapper, IGenericRepository<User> userRepository, INotificationService notificationService) : IProjectMemberService
 {
     public async Task<ProjectMemberResponse> AddOrUpdateMember(ProjectMemberRequest request)
     {
         ProjectMember entity;
+        bool isNewMember = false;
 
         if (request.ProjectMemberId > 0)
         {
+            // Update existing member
             entity = await projectMemberRepository.GetByInclude(
                 x => x.ProjectMemberId == request.ProjectMemberId
             ) ?? throw new AppException(Constants.PROJECT_MEM_NOT_FOUND);
 
-            // Update fields
             entity.Role = (int)request.Role;
             projectMemberRepository.Update(entity);
         }
         else
         {
+            // Check if user already assigned
             var userAlreadyAssigned = await projectMemberRepository.Exists(x =>
-                      x.ProjectId == request.ProjectId &&
-                      x.UserId == request.UserId
-                  );
+                x.ProjectId == request.ProjectId &&
+                x.UserId == request.UserId
+            );
 
             if (userAlreadyAssigned)
                 throw new AppException(Constants.PROJECT_MEM_ALREADY_ASSIGNED_TO_PROJECT);
-
-            var exists = await projectMemberRepository.Exists(x =>
-                x.ProjectId == request.ProjectId &&
-                x.UserId == request.UserId &&
-                x.Role == (int)request.Role
-            );
-
-            if (exists)
-                throw new AppException(Constants.PROJECT_MEM_ALREADY_ASSIGNED);
 
             entity = new ProjectMember
             {
@@ -56,10 +47,33 @@ public class ProjectMemberService(IGenericRepository<ProjectMember> projectMembe
             };
 
             projectMemberRepository.Add(entity);
+            isNewMember = true;
+        }
+
+        // Send notification
+        var user = await userRepository.GetByInclude(u => u.UserId == entity.UserId);
+
+        Console.WriteLine("Request role" + request.Role);
+        if (user != null)
+        {
+            string title = isNewMember ? "Added to Project" : "Project Role Updated";
+            string message = isNewMember
+                ? $"You have been added to Project ID {entity.ProjectId} with role {request.Role}"
+                : $"Your role for Project ID {entity.ProjectId} has been updated to {request.Role}";
+
+            await notificationService.AddNotificationAsync(new NotificationRequestDto
+            {
+                UserId = entity.UserId,
+                Title = title,
+                Message = message,
+                Type = isNewMember ? "ProjectAssigned" : "RoleUpdated",
+                ReferenceId = entity.ProjectId
+            });
         }
 
         return mapper.Map<ProjectMemberResponse>(entity);
     }
+
     public async Task<bool> DeleteMember(int projectMemberId)
     {
         var entity = await projectMemberRepository.GetByInclude(x => x.ProjectMemberId == projectMemberId) ?? throw new AppException(Constants.PROJECT_MEM_NOT_FOUND);

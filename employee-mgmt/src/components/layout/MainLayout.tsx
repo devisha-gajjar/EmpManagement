@@ -5,6 +5,7 @@ import { SnackbarComponent } from "../shared/snackbar/Snackbar";
 import { useAppSelector } from "../../app/hooks";
 import { useEffect } from "react";
 import { leaveHubService } from "../../services/signalR/leaveHub.service";
+import { notificationHubService } from "../../services/signalR/notificationHub.service";
 
 export default function MainLayout() {
   const { userId, role } = useAppSelector((state) => state.auth);
@@ -22,6 +23,15 @@ export default function MainLayout() {
       } else {
         console.log("join ad user in main layout");
         leaveHubService.joinUser(userId!);
+      }
+    });
+
+    notificationHubService.startConnection().then(() => {
+      if (role == "admin") {
+        notificationHubService.joinAdmin();
+      } else {
+        console.log("join ad user in main layout");
+        notificationHubService.joinUser(userId!);
       }
     });
   }, [userId, role]);

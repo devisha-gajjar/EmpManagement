@@ -45,6 +45,8 @@ public partial class User
 
     public virtual ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();
 
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
     public virtual ICollection<PerformanceReview> PerformanceReviewReviewedByNavigations { get; set; } = new List<PerformanceReview>();
 
     public virtual ICollection<PerformanceReview> PerformanceReviewUsers { get; set; } = new List<PerformanceReview>();

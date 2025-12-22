@@ -1,3 +1,6 @@
+ws://localhost:5119/hubs/notification?access_token=YOUR_JWT_TOKEN
+
+
 {"protocol":"json","version":1}
 
 

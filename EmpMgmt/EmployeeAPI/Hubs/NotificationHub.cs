@@ -1,10 +1,14 @@
+using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.DTO.RequestDto;
+using EmployeeAPI.Entities.Helper;
+using EmployeeAPI.Entities.Models;
+using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.SignalR;
 
 namespace EmployeeAPI.Hubs;
 
-public class NotificationHub(IProjectMemberService projectMemberService) : Hub
+public class NotificationHub(IProjectMemberService projectMemberService, IGenericRepository<ProjectMember> projectMemberRepository) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -29,9 +33,35 @@ public class NotificationHub(IProjectMemberService projectMemberService) : Hub
 
     public async Task AddOrUpdateProjectMember(ProjectMemberRequest request)
     {
-        var result = await projectMemberService.AddOrUpdateMember(request);
+        Console.WriteLine($"Hub AddOrUpdateProjectMember called with ProjectId={request.ProjectId}");
 
         bool isEdit = request.ProjectMemberId > 0;
+
+        if (isEdit && await projectMemberRepository.Exists(x => x.ProjectMemberId == request.ProjectMemberId))
+        {
+            throw new AppException(Constants.PROJECT_MEM_NOT_FOUND);
+        }
+        else
+        {
+            if (await projectMemberRepository.Exists(x =>
+                      x.ProjectId == request.ProjectId &&
+                      x.UserId == request.UserId
+                  ))
+            {
+                throw new AppException(Constants.PROJECT_MEM_ALREADY_ASSIGNED_TO_PROJECT);
+            }
+
+            if (await projectMemberRepository.Exists(x =>
+                x.ProjectId == request.ProjectId &&
+                x.UserId == request.UserId &&
+                x.Role == (int)request.Role
+            ))
+            {
+                throw new AppException(Constants.PROJECT_MEM_ALREADY_ASSIGNED);
+            }
+        }
+
+        var result = await projectMemberService.AddOrUpdateMember(request);
 
         await Clients.Group("Admins")
             .SendAsync("ProjectMemberChanged", new
