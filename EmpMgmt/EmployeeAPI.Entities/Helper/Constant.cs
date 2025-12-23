@@ -30,4 +30,8 @@ public static class Constants
     public const string PROJECT_MEM_ALREADY_ASSIGNED = "Project member is alredy exist with same role";
     public const string PROJECT_MEM_ALREADY_ASSIGNED_TO_PROJECT = "Project member is assigned already to one role";
     #endregion
+
+    #region Notifications
+    public const string NOTIFICATION_NOT_FOUND = "No notifications found for the specified user.";
+    #endregion
 }

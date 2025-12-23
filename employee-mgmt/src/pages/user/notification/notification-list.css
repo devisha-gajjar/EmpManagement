@@ -1,0 +1,50 @@
+.notification-card {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.notification-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.notification-unread {
+    background: linear-gradient(90deg, #ffffff, rgb(229, 242, 253));
+    border: 1px solid #1976d233;
+}
+
+.notification-read {
+    background-color: #ffffff;
+    border: none
+}
+
+.notification-card .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.notification-card .rounded-circle {
+    transition: all 0.3s ease;
+}
+
+.notification-card .notification-card-body {
+    padding: 20px;
+}
+
+.notification-card .text-muted {
+    font-size: 0.875rem;
+}
+
+.text-muted.text-center {
+    text-align: center;
+    font-size: 1.25rem;
+    color: #6c757d;
+}
+
+.mark-as-read-btn {
+    background-color: #01234e;
+}
+
+.mark-as-read-btn:hover {
+    background-color: #024597;
+}

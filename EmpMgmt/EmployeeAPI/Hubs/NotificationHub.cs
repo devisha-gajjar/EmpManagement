@@ -37,11 +37,12 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
 
         bool isEdit = request.ProjectMemberId > 0;
 
-        if (isEdit && await projectMemberRepository.Exists(x => x.ProjectMemberId == request.ProjectMemberId))
+        if (isEdit && !await projectMemberRepository.Exists(x => x.ProjectMemberId == request.ProjectMemberId))
         {
             throw new AppException(Constants.PROJECT_MEM_NOT_FOUND);
         }
-        else
+
+        if (!isEdit)
         {
             if (await projectMemberRepository.Exists(x =>
                       x.ProjectId == request.ProjectId &&
@@ -80,5 +81,4 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
                 action = isEdit ? "Updated" : "Assigned"
             });
     }
-
 }

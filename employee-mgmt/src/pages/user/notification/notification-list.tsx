@@ -1,72 +1,129 @@
-import { useEffect, useState } from "react";
-import { Card, CardBody, Badge } from "reactstrap";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { fetchNotificationsByUser } from "../../../features/user/notifications/notificationApi";
 import { notificationHubService } from "../../../services/signalR/notificationHub.service";
+import type { NotificationList } from "../../../interfaces/notification.interface";
+import { Card, CardBody, Badge, Button } from "reactstrap";
+import "./notification-list.css";
+import { getNotificationTag } from "./notification.config";
+import Tag from "../../../components/shared/tag/Tag";
+import PageHeader from "../../../components/shared/page-header/PageHeader";
 
-interface ProjectNotification {
-  projectId: number;
-  role: number;
-  action: "Assigned" | "Updated";
-}
+function NotificationsList() {
+  const dispatch = useAppDispatch();
+  const { list, loading } = useAppSelector((state) => state.notification);
+  const { userId } = useAppSelector((state) => state.auth);
 
-function NotificationList() {
-  const [notifications, setNotifications] = useState<ProjectNotification[]>([]);
-
+  // Initial fetch
   useEffect(() => {
-    const projectMemberAssign = (data: ProjectNotification) => {
-      setNotifications((prev) => [data, ...prev]);
+    if (userId) {
+      dispatch(fetchNotificationsByUser(Number(userId)));
+    }
+  }, [dispatch, userId]);
+
+  // SignalR live updates
+  useEffect(() => {
+    const onProjectMemberAssign = () => {
+      if (userId) {
+        dispatch(fetchNotificationsByUser(Number(userId)));
+      }
     };
 
-    notificationHubService.onAssignedToProject(projectMemberAssign);
+    notificationHubService.onAssignedToProject(onProjectMemberAssign);
+    return () =>
+      notificationHubService.offAssignedToProject(onProjectMemberAssign);
+  }, [dispatch, userId]);
 
-    return () => {
-      notificationHubService.offAssignedToProject(projectMemberAssign);
-    };
-  }, []);
+  // Mark individual notification as read
+  const handleMarkAsRead = (notificationId: number) => {
+    // dispatch(markNotificationAsRead(notificationId));
+  };
 
-  const roleMap: Record<number, string> = {
-    1: "Project Manager",
-    2: "Team Leader",
-    3: "Developer",
-    4: "Tester",
-    5: "Designer",
+  // Mark all notifications as read
+  const handleMarkAllAsRead = () => {
+    // dispatch(markAllNotificationsAsRead());
   };
 
   return (
-    <div className="p-3">
-      <h5 className="mb-3">Notifications</h5>
+    <div>
+      <div className="mb-3">
+        <PageHeader
+          icon="bi bi-bell"
+          title="Notification List"
+          subtitle="View and manage your notifications"
+          theme="orange"
+        />
+      </div>
 
-      {notifications.length === 0 && (
-        <div className="text-muted">No notifications yet</div>
+      <Button
+        color="primary"
+        className="mb-3"
+        onClick={handleMarkAllAsRead}
+        disabled={loading || list.every((n) => n.isRead)}
+      >
+        Mark All as Read
+      </Button>
+
+      {loading && <div className="text-muted text-center">Loading...</div>}
+
+      {!loading && list.length === 0 && (
+        <div className="text-muted text-center">No notifications yet</div>
       )}
 
-      {notifications.map((n, index) => (
-        <Card key={index} className="mb-2 shadow-sm">
-          <CardBody className="d-flex justify-content-between align-items-start">
-            <div>
-              <div className="fw-semibold">
-                {n.action === "Assigned"
-                  ? "You were assigned to a project"
-                  : "Your project role was updated"}
+      {!loading &&
+        list.map((n: NotificationList) => (
+          <Card
+            key={n.notificationId}
+            className={`mb-3 shadow-sm notification-card ${
+              !n.isRead ? "notification-unread" : "notification-read"
+            }`}
+            style={{
+              transition: "all 0.3s ease",
+            }}
+          >
+            <CardBody className="p-4 d-flex gap-3">
+              <div className="flex-grow-1 d-flex gap-4">
+                <div
+                  className={`rounded-circle ${!n.isRead ? "bg-primary" : ""}`}
+                  style={{
+                    width: 8,
+                    height: 8,
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+
+                <div className="flex-grow-1">
+                  <div className="d-flex justify-content-between mb-2 align-items-center">
+                    <div className="d-flex align-items-center gap-2">
+                      <h6 className="mb-0 fw-semibold">{n.title}</h6>
+                      <Tag tagConfig={getNotificationTag(n.type)} />
+                    </div>
+                  </div>
+
+                  <p className="mb-2 text-muted small">{n.message}</p>
+
+                  <small className="text-muted">
+                    {new Date(n.createdAt).toLocaleString()}
+                  </small>
+                </div>
               </div>
 
-              <div className="text-muted small">Project ID: {n.projectId}</div>
-
-              <div className="small">
-                Role:{" "}
-                <span className="fw-medium">
-                  {roleMap[n.role] ?? "Unknown"}
-                </span>
-              </div>
-            </div>
-
-            <Badge color={n.action === "Assigned" ? "success" : "warning"}>
-              {n.action}
-            </Badge>
-          </CardBody>
-        </Card>
-      ))}
+              {/* Mark individual notification as read */}
+              {!n.isRead && (
+                <div className="d-flex align-items-center">
+                  <Button
+                    className="btn mark-as-read-btn"
+                    onClick={() => handleMarkAsRead(n.notificationId)}
+                  >
+                    <i className="bi bi-check2-all fs-5"></i>
+                  </Button>
+                </div>
+              )}
+            </CardBody>
+          </Card>
+        ))}
     </div>
   );
 }
 
-export default NotificationList;
+export default NotificationsList;

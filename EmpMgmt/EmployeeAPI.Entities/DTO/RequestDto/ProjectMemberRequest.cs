@@ -7,5 +7,5 @@ public class ProjectMemberRequest
     public int ProjectMemberId { get; set; }
     public int ProjectId { get; set; }
     public int UserId { get; set; }
-    public ProjectRole Role { get; set; } = ProjectRole.Member;
+    public ProjectRole Role { get; set; } = ProjectRole.Developer;
 }

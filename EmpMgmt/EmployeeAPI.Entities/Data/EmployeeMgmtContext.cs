@@ -199,10 +199,13 @@ public partial class EmployeeMgmtContext : DbContext
             entity.Property(e => e.NotificationId).HasColumnName("notification_id");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
             entity.Property(e => e.IsRead).HasColumnName("is_read");
             entity.Property(e => e.Message).HasColumnName("message");
-            entity.Property(e => e.ReadAt).HasColumnName("read_at");
+            entity.Property(e => e.ReadAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("read_at");
             entity.Property(e => e.ReferenceId).HasColumnName("reference_id");
             entity.Property(e => e.Title)
                 .HasMaxLength(150)

@@ -4,11 +4,11 @@ public class Enum
 {
     public enum ProjectRole
     {
-        Owner = 1,
-        Manager = 2,
+        ProjectManager = 1,
+        TeamLeader = 2,
         Developer = 3,
-        QA = 4,
-        Member = 5
+        Tester = 4,
+        Designer = 5,
     }
 
     public enum DropDownType
