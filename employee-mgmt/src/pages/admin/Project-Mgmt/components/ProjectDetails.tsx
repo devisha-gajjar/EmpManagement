@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Row } from "reactstrap";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 
@@ -10,6 +10,15 @@ import CardComponent from "../../../../components/shared/card/Card";
 
 import "../styles/ProjectDetails.css";
 import TaskDetails from "./TaskDetails";
+import type { RootState } from "@reduxjs/toolkit/query";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch } from "../../../../app/store";
+import {
+  fetchProjectById,
+  fetchProjectTasks,
+  updateTaskStatus,
+} from "../../../../features/admin/project-mgmt/projectDetailsApi";
+import { useAppSelector } from "../../../../app/hooks";
 
 const statusColumns = [
   "Pending",
@@ -21,35 +30,47 @@ const statusColumns = [
 
 const ProjectDetails = () => {
   const { id } = useParams();
+  const projectId = Number(id);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const [tasks, setTasks] = useState(tasksMock);
+  const { project, tasks, loading } = useAppSelector(
+    (state) => state.projectDetails
+  );
+
+  useEffect(() => {
+    dispatch(fetchProjectById(projectId));
+    dispatch(fetchProjectTasks(projectId));
+  }, [projectId, dispatch]);
+
+  if (loading || !project) {
+    return <div className="text-center py-5">Loading project…</div>;
+  }
 
   const completedCount = tasks.filter((t) => t.status === "Completed").length;
 
-  const progressPercent = Math.round((completedCount / tasks.length) * 100);
+  const progressPercent = tasks.length
+    ? Math.round((completedCount / tasks.length) * 100)
+    : 0;
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    dispatch(
+      updateTaskStatus({
+        taskId: Number(active.id),
+        status: String(over.id),
+      })
+    );
+  };
 
   const { timelineCardConfig, tasksCardConfig, progressCardConfig } =
     getProjectDetailsCardConfigs(
-      projectMock,
+      project,
       completedCount,
       tasks.length,
       progressPercent
     );
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (!over) return;
-
-    const taskId = Number(active.id);
-    const newStatus = String(over.id);
-
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.task_id === taskId ? { ...task, status: newStatus } : task
-      )
-    );
-  };
 
   return (
     <>
@@ -57,15 +78,15 @@ const ProjectDetails = () => {
         <PageHeader
           showBackButton
           icon="folder"
-          title={projectMock.project_name}
-          subtitle={`${projectMock.status} • ${tasks.length} tasks`}
+          title={project.projectName}
+          subtitle={`${project.status} • ${tasks.length} tasks`}
           theme="blue"
         />
       </div>
       {/* Header */}
       <Row className="mb-4 align-items-center bg-white m-1 rounded border p-3">
         <Col>
-          <p className="text-muted mb-0">{projectMock.description}</p>
+          <p className="text-muted mb-0">{project.description}</p>
         </Col>
         <Col className="text-end">
           <Button color="primary">

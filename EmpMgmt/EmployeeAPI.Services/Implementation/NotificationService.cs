@@ -6,13 +6,16 @@ using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
+using Microsoft.AspNetCore.Http;
 
 namespace EmployeeAPI.Services.Implementation;
 
 public class NotificationService(
     IGenericRepository<Notification> notificationRepository,
-    IMapper mapper) : INotificationService
+    IMapper mapper, IHttpContextAccessor httpContextAccessor) : INotificationService
 {
+    public int UserId => httpContextAccessor.HttpContext?.User?.GetUserId() ?? throw new UnauthorizedAccessException(Constants.UNAUTHORIZED_USER);
+
     public async Task<NotificationResponseDto> AddNotificationAsync(NotificationRequestDto request)
     {
         var entity = new Notification
@@ -32,7 +35,7 @@ public class NotificationService(
     }
 
     // Mark notification as read
-    public async Task<NotificationResponseDto?> MarkAsReadAsync(int notificationId)
+    public async Task<NotificationResponseDto?> MarkAsRead(int notificationId)
     {
         var entity = await notificationRepository.GetByInclude(x => x.NotificationId == notificationId);
 
@@ -40,7 +43,7 @@ public class NotificationService(
             return null;
 
         entity.IsRead = true;
-        entity.ReadAt = DateTime.UtcNow;
+        entity.ReadAt = DateTime.Now;
 
         notificationRepository.Update(entity);
 
@@ -64,29 +67,30 @@ public class NotificationService(
     }
 
     // mark as all read
-    public async Task<int> MarkAsReadAsync(int userId, List<int>? notificationIds = null)
+    public async Task<int> MarkAllAsRead(List<int>? notificationIds = null)
     {
         var query = notificationRepository
             .GetQueryableInclude()
-            .Where(x => x.UserId == userId && !x.IsRead);
+            .Where(x => x.UserId == UserId && !x.IsRead);
 
         // If notification IDs are passed → select only those
-        if (notificationIds != null && notificationIds.Any())
+        if (notificationIds != null && notificationIds.Count != 0)
         {
             query = query.Where(x => notificationIds.Contains(x.NotificationId));
         }
 
         var notifications = query.ToList();
 
-        if (!notifications.Any())
+        if (notifications.Count == 0)
             return 0;
 
         foreach (var notification in notifications)
         {
             notification.IsRead = true;
-            notification.ReadAt = DateTime.UtcNow;
-            notificationRepository.Update(notification);
+            notification.ReadAt = DateTime.Now;
         }
+
+        notificationRepository.UpdateRange(notifications);
 
         return notifications.Count;
     }

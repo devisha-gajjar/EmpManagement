@@ -60,6 +60,16 @@ public class MappingProfile : Profile
         #region notification
         CreateMap<Notification, NotificationResponseDto>();
         #endregion
+
+        #region Project Details
+        CreateMap<Project, ProjectDetailsDto>();
+
+        CreateMap<UserTask, ProjectTaskDto>()
+            .ForMember(
+                dest => dest.AssignedTo,
+                opt => opt.MapFrom(src => src.User.Username)
+            );
+        #endregion
     }
 
     private static string ToTitleCase(string input) =>

@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace EmployeeAPI.Services.Implementation;
 
-public class ProjectService(IMapper mapper, IGenericRepository<Project> projectRepository, IHttpContextAccessor httpContextAccessor) : IProjectService
+public class ProjectService(IMapper mapper, IGenericRepository<Project> projectRepository, IHttpContextAccessor httpContextAccessor, IGenericRepository<UserTask> taskRepository) : IProjectService
 {
     public int UserId => httpContextAccessor.HttpContext?.User?.GetUserId() ?? throw new UnauthorizedAccessException(Constants.UNAUTHORIZED_USER);
 
@@ -45,7 +45,7 @@ public class ProjectService(IMapper mapper, IGenericRepository<Project> projectR
 
             project.ModifiedBy = UserId;
             project.UpdatedOn = DateTime.Now;
-    
+
             projectRepository.Update(project);
         }
         else
@@ -81,4 +81,29 @@ public class ProjectService(IMapper mapper, IGenericRepository<Project> projectR
         return true;
     }
 
+    public async Task<ProjectDetailsResponseDto?> GetProjectDetails(int projectId)
+    {
+        var projectEntity = await projectRepository
+            .GetByInclude(p => p.ProjectId == projectId);
+
+        if (projectEntity == null)
+            return null;
+
+        var taskEntities = taskRepository
+            .GetQueryableInclude(
+                includes:
+                [
+                    t => t.User
+                ]
+            )
+            .Where(t => t.ProjectId == projectId)
+            .ToList();
+
+
+        return new ProjectDetailsResponseDto
+        {
+            Project = mapper.Map<ProjectDetailsDto>(projectEntity),
+            Tasks = mapper.Map<List<ProjectTaskDto>>(taskEntities)
+        };
+    }
 }

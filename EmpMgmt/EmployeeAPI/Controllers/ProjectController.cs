@@ -39,4 +39,15 @@ public class ProjectController(IProjectService projectService) : ControllerBase
         await projectService.DeleteProject(id);
         return Ok(ApiResponse<string>.Success("Deleted", "Project deleted"));
     }
+
+    [HttpGet("{projectId}/details")]
+    public async Task<IActionResult> GetProjectDetails(int projectId)
+    {
+        var result = await projectService.GetProjectDetails(projectId);
+
+        if (result == null)
+            return NotFound(new { message = "Project not found" });
+
+        return Ok(result);
+    }
 }

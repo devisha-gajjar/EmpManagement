@@ -6,6 +6,7 @@ namespace EmployeeAPI.Services.IServices;
 public interface INotificationService
 {
     Task<NotificationResponseDto> AddNotificationAsync(NotificationRequestDto request);
-    Task<NotificationResponseDto?> MarkAsReadAsync(int notificationId);
+    Task<NotificationResponseDto?> MarkAsRead(int notificationId);
     Task<List<NotificationResponseDto>> GetNotificationsByUserAsync(int userId);
+    Task<int> MarkAllAsRead(List<int>? notificationIds = null);
 }

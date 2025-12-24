@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { fetchNotificationsByUser } from "../../../features/user/notifications/notificationApi";
+import { fetchNotificationsByUser, markAllNotificationsAsRead, markNotificationAsRead } from "../../../features/user/notifications/notificationApi";
 import { notificationHubService } from "../../../services/signalR/notificationHub.service";
 import type { NotificationList } from "../../../interfaces/notification.interface";
 import { Card, CardBody, Badge, Button } from "reactstrap";
@@ -10,6 +10,8 @@ import Tag from "../../../components/shared/tag/Tag";
 import PageHeader from "../../../components/shared/page-header/PageHeader";
 
 function NotificationsList() {
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
   const dispatch = useAppDispatch();
   const { list, loading } = useAppSelector((state) => state.notification);
   const { userId } = useAppSelector((state) => state.auth);
@@ -36,12 +38,36 @@ function NotificationsList() {
 
   // Mark individual notification as read
   const handleMarkAsRead = (notificationId: number) => {
-    // dispatch(markNotificationAsRead(notificationId));
+    dispatch(markNotificationAsRead(notificationId));
   };
 
   // Mark all notifications as read
   const handleMarkAllAsRead = () => {
-    // dispatch(markAllNotificationsAsRead());
+    if (selectedIds.length > 0) {
+      dispatch(markAllNotificationsAsRead(selectedIds));
+    } else {
+      dispatch(markAllNotificationsAsRead(null));
+    }
+
+    setSelectedIds([]);
+  };
+
+  const handleCheckboxChange = (id: number) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const unreadIds = list
+        .filter((n) => !n.isRead)
+        .map((n) => n.notificationId);
+
+      setSelectedIds(unreadIds);
+    } else {
+      setSelectedIds([]);
+    }
   };
 
   return (
@@ -54,15 +80,39 @@ function NotificationsList() {
           theme="orange"
         />
       </div>
+      <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-between mb-3 p-2 rounded bg-light border gap-2">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id="selectAllUnread"
+            checked={
+              list.some((n) => !n.isRead) &&
+              selectedIds.length === list.filter((n) => !n.isRead).length
+            }
+            onChange={(e) => handleSelectAll(e.target.checked)}
+          />
+          <label
+            className="form-check-label small fw-medium mb-0"
+            htmlFor="selectAllUnread"
+          >
+            Select all unread
+          </label>
+        </div>
 
-      <Button
-        color="primary"
-        className="mb-3"
-        onClick={handleMarkAllAsRead}
-        disabled={loading || list.every((n) => n.isRead)}
-      >
-        Mark All as Read
-      </Button>
+        <Button
+          color="primary"
+          className="mb-3"
+          onClick={handleMarkAllAsRead}
+          disabled={
+            loading || (selectedIds.length === 0 && list.every((n) => n.isRead))
+          }
+        >
+          {selectedIds.length > 0
+            ? `Mark Selected (${selectedIds.length}) as Read`
+            : "Mark All as Read"}
+        </Button>
+      </div>
 
       {loading && <div className="text-muted text-center">Loading...</div>}
 
@@ -83,13 +133,12 @@ function NotificationsList() {
           >
             <CardBody className="p-4 d-flex gap-3">
               <div className="flex-grow-1 d-flex gap-4">
-                <div
-                  className={`rounded-circle ${!n.isRead ? "bg-primary" : ""}`}
-                  style={{
-                    width: 8,
-                    height: 8,
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  }}
+                <input
+                  type="checkbox"
+                  disabled={n.isRead}
+                  checked={selectedIds.includes(n.notificationId)}
+                  onChange={() => handleCheckboxChange(n.notificationId)}
+                  className="form-check-input mt-1"
                 />
 
                 <div className="flex-grow-1">
@@ -117,6 +166,16 @@ function NotificationsList() {
                   >
                     <i className="bi bi-check2-all fs-5"></i>
                   </Button>
+                  {/* <div
+                    className={`rounded-circle ${
+                      !n.isRead ? "bg-primary " : ""
+                    }`}
+                    style={{
+                      width: 8,
+                      height: 8,
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    }}
+                  /> */}
                 </div>
               )}
             </CardBody>

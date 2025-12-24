@@ -9,4 +9,5 @@ public interface IProjectService
     Task<ProjectResponse> SaveProject(ProjectRequest request);
     Task<ProjectResponse> GetProjectById(int projectId);
     Task<bool> DeleteProject(int projectId);
+    Task<ProjectDetailsResponseDto?> GetProjectDetails(int projectId);
 }

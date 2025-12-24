@@ -8,6 +8,7 @@ import dashboardReducer from "../features/user/dashboard/dashboardSlice";
 import leaveReducer from "../features/user/leave/leaveSlice";
 import leaveListReducer from "../features/admin/leave/leaveSlice";
 import notificationReducer from "../features/user/notifications/notificationSlice";
+import projectDetailsReducer from "../features/admin/project-mgmt/projectDetailSlice";
 import { employeeApi } from "../features/admin/employees/empApi";
 import { projectsApi } from "../features/admin/project-mgmt/projectsMgmtApi";
 import { projectMembersApi } from "../features/admin/project-mgmt/projectMembersApi";
@@ -23,6 +24,7 @@ export const store = configureStore({
         leaves: leaveReducer,
         leaveList: leaveListReducer,
         notification: notificationReducer,
+        projectDetails: projectDetailsReducer,
         [employeeApi.reducerPath]: employeeApi.reducer,
         [projectsApi.reducerPath]: projectsApi.reducer,
         [projectMembersApi.reducerPath]: projectMembersApi.reducer
