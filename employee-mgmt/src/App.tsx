@@ -17,6 +17,7 @@ import ProjectDetails from "./pages/admin/Project-Mgmt/components/ProjectDetails
 import ProjectFormPage from "./pages/admin/Project-Mgmt/components/ProjectForm";
 import ProjectMembersPage from "./pages/admin/Project-Mgmt/components/ProjectMember";
 import NotificationList from "./pages/user/notification/notification-list";
+import UserTask from "./pages/user/user-task/user-task";
 
 function App() {
   const routes = useRoutes([
@@ -39,6 +40,7 @@ function App() {
         { path: "dashboard", element: <UserDashboard /> },
         { path: "leaves", element: <Leaves /> },
         { path: "notification", element: <NotificationList /> },
+        { path: "tasks", element: <UserTask/> },
       ],
     },
 

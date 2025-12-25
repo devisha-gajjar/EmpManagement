@@ -1,17 +1,15 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button, Col, Row } from "reactstrap";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 
-import { tasksMock, projectMock } from "../configs/project-mgmt.config";
 import { getProjectDetailsCardConfigs } from "../configs/project-details.config";
 import PageHeader from "../../../../components/shared/page-header/PageHeader";
 import CardComponent from "../../../../components/shared/card/Card";
 
 import "../styles/ProjectDetails.css";
 import TaskDetails from "./TaskDetails";
-import type { RootState } from "@reduxjs/toolkit/query";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../../../app/store";
 import {
   fetchProjectById,
@@ -83,7 +81,7 @@ const ProjectDetails = () => {
           theme="blue"
         />
       </div>
-      {/* Header */}
+
       <Row className="mb-4 align-items-center bg-white m-1 rounded border p-3">
         <Col>
           <p className="text-muted mb-0">{project.description}</p>
@@ -96,7 +94,6 @@ const ProjectDetails = () => {
         </Col>
       </Row>
 
-      {/* Stats */}
       <Row className="mb-4">
         <Col md={4}>
           <CardComponent cardConfig={timelineCardConfig} />

@@ -76,38 +76,43 @@ export const getSideBarLinksByRole = (role: string) => {
 
     if (role === "user") {
         return [
-            {
-                name: "Dashboard",
-                path: "/user/dashboard",
-                icon: "bi bi-grid-fill",
-            },
-            {
-                name: "My Profile",
-                path: "/user/profile",
-                icon: "bi bi-person-circle",
-            },
-            {
-                name: "Leaves",
+          {
+            name: "Dashboard",
+            path: "/user/dashboard",
+            icon: "bi bi-grid-fill",
+          },
+          {
+            name: "My Profile",
+            path: "/user/profile",
+            icon: "bi bi-person-circle",
+          },
+          {
+            name: "Leaves",
+            path: "/user/leaves",
+            icon: "bi bi-calendar-x-fill",
+            subMenu: [
+              {
+                name: "My Leaves",
                 path: "/user/leaves",
-                icon: "bi bi-calendar-x-fill",
-                subMenu: [
-                    {
-                        name: "My Leaves",
-                        path: "/user/leaves",
-                        icon: "bi bi-list-ul",
-                    }
-                ],
-            },
-            {
-                name: "Attendance",
-                path: "/user/attendance",
-                icon: "bi bi-calendar-check-fill",
-            },
-            {
-                name: "Notifications",
-                path: "/user/notification",
-                icon: "bi bi-bell-fill",
-            },
+                icon: "bi bi-list-ul",
+              },
+            ],
+          },
+          {
+            name: "Attendance",
+            path: "/user/attendance",
+            icon: "bi bi-calendar-check-fill",
+          },
+          {
+            name: "Notifications",
+            path: "/user/notification",
+            icon: "bi bi-bell-fill",
+          },
+          {
+            name: "Tasks",
+            path: "/user/tasks",
+            icon: "bi bi-check2-square",
+          },
         ];
     }
 

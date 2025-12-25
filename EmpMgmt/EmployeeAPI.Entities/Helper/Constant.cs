@@ -34,4 +34,11 @@ public static class Constants
     #region Notifications
     public const string NOTIFICATION_NOT_FOUND = "No notifications found for the specified user.";
     #endregion
+
+    #region Task Mgmt
+    public const string TASK_NOT_FOUND = "Task not found.";
+    public const string TASK_CREATED = "Task created successfully.";
+    public const string TASK_UPDATED = "Task updated successfully.";
+    public const string TASK_DELETED = "Task deleted successfully.";
+    #endregion
 }
