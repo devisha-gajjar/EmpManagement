@@ -97,6 +97,12 @@ export default function LeaveList() {
     page * rowsPerPage + rowsPerPage
   );
 
+  const getLeaveColor = (status: string) => {
+    if (status === "Approved") return "success";
+    if (status === "Denied") return "error";
+    return "primary";
+  };
+
   if (loading)
     return (
       <Box display="flex" justifyContent="center" mt={5}>
@@ -179,13 +185,7 @@ export default function LeaveList() {
                 <TableCell>
                   <Chip
                     label={leave.status}
-                    color={
-                      leave.status === "Approved"
-                        ? "success"
-                        : leave.status === "Denied"
-                        ? "error"
-                        : "primary"
-                    }
+                    color={getLeaveColor(leave.status)}
                     variant="outlined"
                     size="small"
                   />
@@ -243,7 +243,7 @@ export default function LeaveList() {
         onPageChange={(event, newPage) => setPage(newPage)}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 10));
+          setRowsPerPage(Number.parseInt(e.target.value, 10));
           setPage(0);
         }}
       />

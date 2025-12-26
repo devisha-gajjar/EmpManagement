@@ -3,17 +3,11 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../features/auth/authApi";
 
-import {
-  Container,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  Alert,
-  Link,
-} from "@mui/material";
+import { TextField, Button, Typography, Box, Alert, Link } from "@mui/material";
 import { emailRegex } from "../../utils/constant";
 import AuthLayout from "../../components/layout/AuthLayout";
+import PasswordField from "../../components/shared/password-field/PasswordField";
+import { clearReturnUrl } from "../../features/auth/authSlice";
 
 // validation errors
 interface ValidationErrors {
@@ -24,7 +18,7 @@ interface ValidationErrors {
 export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated, role } = useAppSelector(
+  const { loading, error, isAuthenticated, role, returnUrl } = useAppSelector(
     (state) => state.auth
   );
 
@@ -91,6 +85,12 @@ export default function Login() {
 
   useEffect(() => {
     if (isAuthenticated && role) {
+      if (returnUrl) {
+        navigate(returnUrl);
+        dispatch(clearReturnUrl());
+        return;
+      }
+
       console.log("Role", role);
       switch (role) {
         case "admin":
@@ -142,11 +142,19 @@ export default function Login() {
             helperText={validationErrors.usernameOrEmail}
           />
 
-          <TextField
+          {/* <TextField
             fullWidth
             label="Password"
             type="password"
             margin="normal"
+            name="password"
+            onChange={handleChange}
+            error={!!validationErrors.password}
+            helperText={validationErrors.password}
+          /> */}
+          <PasswordField
+            fullWidth
+            label="Password"
             name="password"
             onChange={handleChange}
             error={!!validationErrors.password}
@@ -174,7 +182,7 @@ export default function Login() {
             }}
           >
             <Typography align="center" variant="body2">
-              Don’t have an account?
+              Don't have an account?
               <Link
                 component="button"
                 sx={{

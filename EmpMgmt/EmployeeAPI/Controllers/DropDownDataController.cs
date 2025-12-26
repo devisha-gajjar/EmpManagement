@@ -9,6 +9,18 @@ namespace QuizVerse.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[ProducesResponseType(
+    typeof(ApiResponse<List<CommonListDropDownDto>>),
+    StatusCodes.Status200OK
+)]
+[ProducesResponseType(
+    typeof(ApiResponse<object>),
+    StatusCodes.Status400BadRequest
+)]
+[ProducesResponseType(
+    typeof(ApiResponse<object>),
+    StatusCodes.Status500InternalServerError
+)]
 public class DropDownDataController(IDropDownDataService _dropDownService) : ControllerBase
 {
     [HttpGet("get-dropdown-data")]

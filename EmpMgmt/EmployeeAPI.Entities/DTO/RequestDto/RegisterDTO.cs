@@ -1,6 +1,6 @@
 namespace EmployeeAPI.Entities.DTO.RequestDto;
 
-public class RegisterDTO
+public class RegisterDto
 {
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;

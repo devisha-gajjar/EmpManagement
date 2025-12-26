@@ -1,6 +1,6 @@
 namespace EmployeeAPI.Entities.DTO.ResponseDto;
 
-public class EmployeeListDTO
+public class EmployeeListDto
 {
     public int Id { get; set; }
     public string Name { get; set; }

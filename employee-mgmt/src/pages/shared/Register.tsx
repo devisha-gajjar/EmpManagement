@@ -73,7 +73,7 @@ export default function Register() {
 
     requiredFields.forEach((field) => {
       if (!form[field].trim()) {
-        const displayFieldName = field.replace(/([A-Z])/g, " $1").trim();
+        const displayFieldName = field.replaceAll(/([A-Z])/g, " $1").trim();
         errors[field] = `${displayFieldName} is required.`;
         isValid = false;
       }

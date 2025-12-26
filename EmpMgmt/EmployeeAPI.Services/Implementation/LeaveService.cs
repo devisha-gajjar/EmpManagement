@@ -19,7 +19,7 @@ namespace EmployeeAPI.Services.Implementation
             // UPDATE
             if (model.LeaveRequestId > 0)
             {
-                leave = _leaveRepo.GetById(model.LeaveRequestId) ?? throw new AppException("Leave request not found"); ;
+                leave = _leaveRepo.GetById(model.LeaveRequestId) ?? throw new AppException("Leave request not found");
 
                 leave.LeaveType = model.LeaveType;
                 leave.StartDate = model.StartDate;
@@ -103,9 +103,9 @@ namespace EmployeeAPI.Services.Implementation
                 .ToList();
         }
 
-        public async Task<LeaveListDto?> GetLeaveWithUser(int id)
+        public async Task<LeaveListDto?> GetLeaveWithUser(int leaveRequestId)
         {
-            var leave = await _leaveRepo.GetByInclude(l => l.LeaveRequestId == id, includes: l => l.Include(lu => lu.User));
+            var leave = await _leaveRepo.GetByInclude(l => l.LeaveRequestId == leaveRequestId, includes: l => l.Include(lu => lu.User));
 
             return mapper.Map<LeaveListDto>(leave);
         }

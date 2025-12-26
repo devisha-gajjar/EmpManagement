@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
 using EmployeeAPI.Services.IServices;
 using EmployeeAPI.Entities.DTO.RequestDto;
+using EmployeeAPI.Entities.Helper;
+
 
 namespace EmployeeAPI.Hubs;
 public class LeaveHub(ILeaveService leaveService) : Hub
@@ -20,7 +22,7 @@ public class LeaveHub(ILeaveService leaveService) : Hub
     public async Task JoinAsAdmin()
     {
         Console.WriteLine("Admin joined hub!");
-        await Groups.AddToGroupAsync(Context.ConnectionId, "Admins");
+        await Groups.AddToGroupAsync(Context.ConnectionId, Constants.ADMIN_GROUP);
     }
 
     public async Task JoinAsUser(string userId)
@@ -36,7 +38,7 @@ public class LeaveHub(ILeaveService leaveService) : Hub
         Console.WriteLine("NewLeaveRequest");
 
         // Notify all admins
-        await Clients.Group("Admins")
+        await Clients.Group(Constants.ADMIN_GROUP)
             .SendAsync("NewLeaveRequest", new
             {
                 leave.LeaveRequestId,
@@ -63,7 +65,7 @@ public class LeaveHub(ILeaveService leaveService) : Hub
                 leaveRequestId = id,
                 status = "Approved"
             });
-        await Clients.Group("Admins")
+        await Clients.Group(Constants.ADMIN_GROUP)
             .SendAsync("LeaveStatusChanged", new
             {
                 leaveRequestId = id,
@@ -86,7 +88,7 @@ public class LeaveHub(ILeaveService leaveService) : Hub
                 status = "Denied"
             });
 
-        await Clients.Group("Admins")
+        await Clients.Group(Constants.ADMIN_GROUP)
        .SendAsync("LeaveStatusChanged", new
        {
            leaveRequestId = id,
@@ -138,7 +140,7 @@ public class LeaveHub(ILeaveService leaveService) : Hub
                 status = "Deleted"
             });
 
-        await Clients.Group("Admins")
+        await Clients.Group(Constants.ADMIN_GROUP)
             .SendAsync("LeaveDeleted", new
             {
                 leaveRequestId = id,

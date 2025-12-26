@@ -27,32 +27,54 @@ const AddLeaveDialog = ({ open, onClose, leaveToEdit }: Props) => {
         { value: "Sick", label: "Sick" },
         { value: "Casual", label: "Casual" },
       ],
-      rules: { required: true },
-      validationMessages: { required: "Leave type is required" },
+      rules: { required: "Leave type is required" },
     },
     {
       name: "startDate",
       type: "date",
       label: "Start Date",
-      rules: { required: true },
-      validationMessages: { required: "Start date required" },
+      rules: {
+        required: "Start date is required",
+        validate: (value: string) => {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          if (new Date(value) < today) {
+            return "Start date cannot be in the past";
+          }
+          return true;
+        },
+      },
       gridClass: "half",
     },
     {
       name: "endDate",
       type: "date",
       label: "End Date",
-      rules: { required: true },
-      validationMessages: { required: "End date required" },
+      rules: {
+        required: "End date is required",
+        validate: (value: string, formValues: any) => {
+          if (!formValues?.startDate) {
+            return "Please select start date first";
+          }
+
+          const startDate = new Date(formValues.startDate);
+          const endDate = new Date(value);
+
+          if (endDate < startDate) {
+            return "End date cannot be before start date";
+          }
+
+          return true;
+        },
+      },
       gridClass: "half",
     },
     {
       name: "reason",
       type: "text",
       label: "Reason",
-      placeholder: "Enter reason",
-      rules: { required: true },
-      validationMessages: { required: "Reason is required" },
+      rules: { required: "Reason is required" },
     },
   ];
 

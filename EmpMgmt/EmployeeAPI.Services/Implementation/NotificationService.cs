@@ -58,7 +58,7 @@ public class NotificationService(
             .Where(x => x.UserId == userId)
             .OrderByDescending(x => x.CreatedAt);
 
-        if (notifications == null || !notifications.Any())
+        if (!notifications.Any())
         {
             throw new AppException(Constants.NOTIFICATION_NOT_FOUND);
         }

@@ -1,6 +1,6 @@
 namespace EmployeeAPI.Entities.DTO.RequestDto;
 
-public class FacebookLoginDTO
+public class FacebookLoginDto
 {
     public string AccessToken { get; set; }
 }

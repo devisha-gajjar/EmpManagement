@@ -171,6 +171,7 @@ using System.Security.Claims;
 using System.Text;
 using EmployeeAPI;
 using EmployeeAPI.Entities.Data;
+using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Hubs;
 using EmployeeAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -212,13 +213,13 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Employee API", Version = "v1" });
 
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    c.AddSecurityDefinition(Constants.BEARER, new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Scheme = Constants.BEARER
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement()
@@ -226,9 +227,9 @@ builder.Services.AddSwaggerGen(c =>
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = Constants.BEARER },
                 Scheme = "oauth2",
-                Name = "Bearer",
+                Name = Constants.BEARER,
                 In = ParameterLocation.Header,
             },
             new List<string>()
@@ -309,4 +310,4 @@ app.MapControllers();
 app.MapHub<LeaveHub>("/leaveHub");
 app.MapHub<NotificationHub>("/notification");
 
-app.Run();
+await app.RunAsync();

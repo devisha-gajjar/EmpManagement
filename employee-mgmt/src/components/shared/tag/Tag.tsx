@@ -24,7 +24,7 @@ const Tag: React.FC<TagProps> = ({ tagConfig, onTagSelected, onTagClosed }) => {
   const isStatic = type === "static";
 
   const formatColor = (color: string) =>
-    color.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+    color.replaceAll(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
 
   const bgColor = isSelected
     ? formatColor(textColor)

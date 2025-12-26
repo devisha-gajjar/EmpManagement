@@ -80,9 +80,10 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
 
   const isParentActive = (link: any) => {
     const directMatch = location.pathname === link.path;
+
     const childMatch =
-      link.subMenu &&
-      link.subMenu.some((sub: any) => sub.path === location.pathname);
+      link.subMenu?.some((sub: any) => sub.path === location.pathname) ?? false;
+
     return directMatch || childMatch;
   };
 

@@ -29,7 +29,7 @@ const ProjectCard = ({ project }: Props) => {
 
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const [deleteProject, { isLoading: isDeleting }] = useDeleteProjectMutation();
+  const [deleteProject] = useDeleteProjectMutation();
 
   const toggleMenu = (e: React.MouseEvent) => {
     e.stopPropagation(); // prevent card click

@@ -1,6 +1,6 @@
 namespace EmployeeAPI.Entities.DTO.RequestDto;
 
-public class GoogleLoginDTO
+public class GoogleLoginDto
 {
     public string IdToken { get; set; } = null!;
 }

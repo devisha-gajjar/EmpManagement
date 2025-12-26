@@ -40,9 +40,9 @@ const ProjectsPage = () => {
   }, [projects, debouncedSearch, statusFilter]);
 
   const statusOptions = Object.keys(ProjectStatus)
-    .filter((key) => isNaN(Number(key)))
+    .filter((key) => Number.isNaN(Number(key)))
     .map((key) => ({
-      label: key.replace(/([A-Z])/g, " $1").trim(),
+      label: key.replaceAll(/([A-Z])/g, " $1").trim(),
       value: ProjectStatus[key as keyof typeof ProjectStatus],
     }));
 

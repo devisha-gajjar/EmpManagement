@@ -4,6 +4,8 @@ public static class Constants
 {
     #region Common Msg
     public const string UNAUTHORIZED_USER = "User is not authorized.";
+    public const string ADMIN_GROUP = "Admins";
+    public const string BEARER = "Bearer";
 
     #region Entity Field Names
     public const string IS_DELETED = "IsDeleted";

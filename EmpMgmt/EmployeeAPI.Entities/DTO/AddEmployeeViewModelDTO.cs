@@ -1,6 +1,6 @@
 namespace EmployeeAPI.Entities.DTO;
 
-public class AddEmployeeViewModelDTO
+public class AddEmployeeViewModelDto
 {
     public int Id { get; set; }
     public string Name { get; set; }

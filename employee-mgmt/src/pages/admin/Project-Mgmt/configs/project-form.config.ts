@@ -60,9 +60,9 @@ export const projectFormConfig: DynamicFormField[] = [
             required: true,
         },
         options: Object.keys(ProjectStatus)
-            .filter((k) => isNaN(Number(k)))
+            .filter((k) => Number.isNaN(Number(k)))
             .map((key) => ({
-                label: key.replace(/([A-Z])/g, " $1").trim(),
+                label: key.replaceAll(/([A-Z])/g, " $1").trim(),
                 value: ProjectStatus[key as keyof typeof ProjectStatus],
             })),
         validationMessages: {

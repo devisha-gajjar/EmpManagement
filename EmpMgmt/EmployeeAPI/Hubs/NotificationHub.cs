@@ -22,7 +22,7 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
     public async Task JoinAsAdmin()
     {
         Console.WriteLine("Admin joined hub!");
-        await Groups.AddToGroupAsync(Context.ConnectionId, "Admins");
+        await Groups.AddToGroupAsync(Context.ConnectionId, Constants.ADMIN_GROUP);
     }
 
     public async Task JoinAsUser(string userId)
@@ -64,7 +64,7 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
 
         var result = await projectMemberService.AddOrUpdateMember(request);
 
-        await Clients.Group("Admins")
+        await Clients.Group(Constants.ADMIN_GROUP)
             .SendAsync("ProjectMemberChanged", new
             {
                 action = isEdit ? "Updated" : "Added",

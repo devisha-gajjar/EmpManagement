@@ -11,6 +11,7 @@ export interface AuthState {
     loading: boolean;
     error: string | null;
     registerSuccess: string | null;
+    returnUrl: string | null;
 }
 
 const getRoleFromToken = (token: string | null): string | null => {
@@ -33,7 +34,7 @@ const getUserIdFromToken = (token: string | null): string | null => {
     }
 };
 
-const getUseNameFromToken = (token: string | null): string | null => {
+const getUserNameFromToken = (token: string | null): string | null => {
     try {
         if (!token) return null;
         const payload = JSON.parse(atob(token.split(".")[1]));
@@ -50,8 +51,9 @@ const initialState: AuthState = {
     token: initialToken,
     role: getRoleFromToken(initialToken),
     userId: getUserIdFromToken(initialToken),
-    userName: getUseNameFromToken(initialToken),
+    userName: getUserNameFromToken(initialToken),
     isAuthenticated: !!initialToken,
+    returnUrl: null,
     loading: false,
     error: null,
     registerSuccess: null,
@@ -73,7 +75,14 @@ const authSlice = createSlice({
         clearAuthStatus(state) {
             state.error = null;
             state.registerSuccess = null;
-        }
+        },
+        setReturnUrl(state, action) {
+            state.returnUrl = action.payload;
+        },
+
+        clearReturnUrl(state) {
+            state.returnUrl = null;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -115,6 +124,11 @@ const authSlice = createSlice({
     },
 });
 
-export const { logout, clearAuthStatus } = authSlice.actions;
+export const {
+    logout,
+    clearAuthStatus,
+    setReturnUrl,
+    clearReturnUrl
+} = authSlice.actions;
 
 export default authSlice.reducer;

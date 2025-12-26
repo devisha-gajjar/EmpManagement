@@ -28,10 +28,14 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       <CardBody className="header-content">
         <div className="d-flex align-items-center gap-3">
           {showBackButton && (
-            <i
-              className="bi bi-chevron-left me-2 fs-4 cursor-pointer"
+            <button
+              type="button"
               onClick={handleBack}
-            />
+              className="btn p-0 border-0 bg-transparent"
+              aria-label="Go back"
+            >
+              <i className="bi bi-chevron-left me-2 fs-4" />
+            </button>
           )}
 
           <i className={`bi bi-${icon} icon`} />

@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using EmployeeAPI.Entities.DTO;
+using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
@@ -10,16 +12,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace EmployeeAPI.Services.Implementation;
 
-public class CustomService : ICustomService
+public class CustomService(IUserRepository userRepository, IConfiguration config) : ICustomService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IConfiguration _config;
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IConfiguration _config = config;
 
-    public CustomService(IUserRepository userRepository, IConfiguration config)
-    {
-        _userRepository = userRepository;
-        _config = config;
-    }
 
     #region PasswordHash
     public string Hash(string password)
@@ -36,7 +33,7 @@ public class CustomService : ICustomService
     #region Token
     public string GenerateJwtToken(string name)
     {
-        User? user = _userRepository.GetAll().Include(u => u.Role).FirstOrDefault(u => u.Username == name);
+        User user = _userRepository.GetAll().Include(u => u.Role).FirstOrDefault(u => u.Username == name) ?? throw new AppException(Constants.UNAUTHORIZED_USER);
 
         JwtSecurityTokenHandler tokenHandler = new();
         byte[] key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]!);
