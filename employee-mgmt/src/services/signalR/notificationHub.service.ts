@@ -66,6 +66,23 @@ class NotificationHubService {
         this.connection.off("AssignedToProject", callback as any);
     }
 
+    onTaskAssigned(
+        callback: (data: {
+            taskId: number;
+            taskName: string;
+            projectId: number;
+            status: string;
+            priority: string;
+            action: "Assigned" | "Updated";
+        }) => void
+    ) {
+        this.connection.on("TaskAssigned", callback);
+    }
+
+    offTaskAssigned(callback: Function) {
+        this.connection.off("TaskAssigned", callback as any);
+    }
+
     async joinUser(userId: string) {
         await this.waitForConnection();
         await this.connection.invoke("JoinAsUser", userId);
@@ -87,6 +104,23 @@ class NotificationHubService {
         await this.waitForConnection();
         await this.connection.invoke("AddOrUpdateProjectMember", payload);
     }
+
+    async addOrUpdateTask(payload: {
+        taskId?: number;
+        projectId: number;
+        userId?: number;
+        taskName: string;
+        description?: string;
+        startDate: string;
+        dueDate: string;
+        priority?: string;
+        status?: string;
+        estimatedHours?: number;
+    }) {
+        await this.waitForConnection();
+        await this.connection.invoke("AddOrUpdateTask", payload);
+    }
+
 }
 
 export const notificationHubService = new NotificationHubService();

@@ -84,26 +84,25 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (isAuthenticated && role) {
-      if (returnUrl) {
-        navigate(returnUrl);
-        dispatch(clearReturnUrl());
-        return;
-      }
+    if (!isAuthenticated || !role) return;
 
-      console.log("Role", role);
-      switch (role) {
-        case "admin":
-          navigate("/admin/employees");
-          break;
-        case "user":
-          navigate("/user/dashboard");
-          break;
-        default:
-          navigate("/login");
-      }
+    if (returnUrl) {
+      navigate(returnUrl, { replace: true });
+      dispatch(clearReturnUrl());
+      return;
     }
-  }, [isAuthenticated, role, navigate]);
+
+    switch (role) {
+      case "admin":
+        navigate("/admin/employees", { replace: true });
+        break;
+      case "user":
+        navigate("/user/dashboard", { replace: true });
+        break;
+      default:
+        navigate("/login", { replace: true });
+    }
+  }, [isAuthenticated, role, returnUrl, navigate, dispatch]);
 
   return (
     <AuthLayout>

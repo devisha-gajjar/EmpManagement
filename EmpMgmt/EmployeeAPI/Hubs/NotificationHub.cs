@@ -1,5 +1,6 @@
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.DTO.RequestDto;
+using EmployeeAPI.Entities.DTO.ResponseDto;
 using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace EmployeeAPI.Hubs;
 
-public class NotificationHub(IProjectMemberService projectMemberService, IGenericRepository<ProjectMember> projectMemberRepository) : Hub
+public class NotificationHub(IProjectMemberService projectMemberService, IGenericRepository<ProjectMember> projectMemberRepository, IUserTaskService userTaskService) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -79,6 +80,35 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
                 projectId = result.ProjectId,
                 role = result.Role,
                 action = isEdit ? "Updated" : "Assigned"
+            });
+    }
+
+    public async Task AddOrUpdateTask(TaskDto dto)
+    {
+        bool isEdit = dto.TaskId != null && dto.TaskId > 0;
+
+        var result = await userTaskService.UpsertAsync(dto);
+
+        if (dto.UserId.HasValue)
+        {
+            await Clients.Group($"User_{dto.UserId}")
+                .SendAsync("TaskAssigned", new
+                {
+                    taskId = result.TaskId,
+                    taskName = result.TaskName,
+                    projectId = result.ProjectId,
+                    status = result.Status,
+                    priority = result.Priority,
+                    action = isEdit ? "Updated" : "Assigned"
+                });
+        }
+
+        await Clients.Group(Constants.ADMIN_GROUP)
+            .SendAsync("TaskChanged", new
+            {
+                taskId = result.TaskId,
+                projectId = result.ProjectId,
+                action = isEdit ? "Updated" : "Created"
             });
     }
 }

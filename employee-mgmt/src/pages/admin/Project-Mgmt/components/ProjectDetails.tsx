@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Row } from "reactstrap";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 
@@ -17,6 +17,7 @@ import {
   updateTaskStatus,
 } from "../../../../features/admin/project-mgmt/projectDetailsApi";
 import { useAppSelector } from "../../../../app/hooks";
+import AddTaskForm from "./AddTaskForm";
 
 const statusColumns = [
   "Pending",
@@ -27,6 +28,8 @@ const statusColumns = [
 ];
 
 const ProjectDetails = () => {
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+
   const { id } = useParams();
   const projectId = Number(id);
   const dispatch = useDispatch<AppDispatch>();
@@ -87,7 +90,7 @@ const ProjectDetails = () => {
           <p className="text-muted mb-0">{project.description}</p>
         </Col>
         <Col className="text-end">
-          <Button color="primary">
+          <Button color="primary" onClick={() => setIsTaskModalOpen(true)}>
             <i className="bi bi-plus-lg me-2"></i>
             Add Task
           </Button>
@@ -117,6 +120,12 @@ const ProjectDetails = () => {
           ))}
         </div>
       </DndContext>
+
+      <AddTaskForm
+        isOpen={isTaskModalOpen}
+        onClose={() => setIsTaskModalOpen(false)}
+        projectId={projectId}
+      />
     </>
   );
 };

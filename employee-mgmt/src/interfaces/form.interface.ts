@@ -3,13 +3,13 @@ import type { RegisterOptions, SubmitHandler } from "react-hook-form";
 export interface DynamicFormField {
     name: string;
     label: string;
-    type: "text" | "password" | "email" | "number" | "select" | "date" | "search-select";
+    type: "text" | "password" | "email" | "number" | "select" | "date" | "search-select" | "textarea";
     placeholder?: string;
     rules?: RegisterOptions; // React Hook Form rules (required, min, pattern, etc.)
     options?: { value: string | number; label: string }[]; // For Select inputs
     validationMessages?: Record<string, string>; // Custom error messages
     gridClass?: string; // e.g., 'half' or 'full'
-    disabled?: boolean;
+    disabled?: boolean; 
 }
 
 export interface FormProp {

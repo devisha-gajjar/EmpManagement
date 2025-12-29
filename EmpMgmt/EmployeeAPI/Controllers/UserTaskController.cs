@@ -32,9 +32,15 @@ public class UserTaskController(IUserTaskService taskService) : ControllerBase
     {
         var deleted = await taskService.DeleteAsync(taskId);
 
-        return Ok(ApiResponse<string>.Success(
-            "Deleted",
-            Constants.TASK_DELETED
-        ));
+        if (deleted)
+            return Ok(ApiResponse<string>.Success(
+                "Deleted",
+                Constants.TASK_DELETED
+            ));
+        else
+            return Ok(ApiResponse<string>.Fail(
+                    "Deleted",
+                    401
+                ));
     }
 }

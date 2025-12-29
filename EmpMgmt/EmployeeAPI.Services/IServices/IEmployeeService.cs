@@ -6,10 +6,10 @@ namespace EmployeeAPI.Services.IServices;
 
 public interface IEmployeeService
 {
-    IEnumerable<EmployeeListDTO> GetEmployees();
-    AddEmployeeViewModelDTO GetEmployeeById(int id);
-    Employee? AddEmployee(AddEmployeeViewModelDTO employeeDto);
-    bool UpdateEmployee(int id, AddEmployeeViewModelDTO employeeDto);
+    IEnumerable<EmployeeListDto> GetEmployees();
+    AddEmployeeViewModelDto GetEmployeeById(int id);
+    Employee? AddEmployee(AddEmployeeViewModelDto employeeDto);
+    bool UpdateEmployee(int id, AddEmployeeViewModelDto employeeDto);
     bool DeleteEmployee(int id);
 }
 

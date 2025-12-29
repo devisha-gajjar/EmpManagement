@@ -10,10 +10,10 @@ public class EmployeeService(IEmployeeRepository empRepository) : IEmployeeServi
 {
     private readonly IEmployeeRepository _empRepository = empRepository;
 
-    public IEnumerable<EmployeeListDTO> GetEmployees()
+    public IEnumerable<EmployeeListDto> GetEmployees()
     {
         var employees = _empRepository.GetEmployeesWithDepartments();
-        return employees.OrderBy(e => e.Id).Select(e => new EmployeeListDTO
+        return employees.OrderBy(e => e.Id).Select(e => new EmployeeListDto
         {
             Id = e.Id,
             Name = e.Name,
@@ -25,13 +25,13 @@ public class EmployeeService(IEmployeeRepository empRepository) : IEmployeeServi
         });
     }
 
-    public AddEmployeeViewModelDTO GetEmployeeById(int id)
+    public AddEmployeeViewModelDto GetEmployeeById(int id)
     {
         var emp = _empRepository.GetEmployeeWithDepartmentById(id);
         if (emp == null)
             return null;
 
-        return new AddEmployeeViewModelDTO
+        return new AddEmployeeViewModelDto
         {
             Id = emp.Id,
             Name = emp.Name,
@@ -41,7 +41,7 @@ public class EmployeeService(IEmployeeRepository empRepository) : IEmployeeServi
         };
     }
 
-    public Employee? AddEmployee(AddEmployeeViewModelDTO employeeDto)
+    public Employee? AddEmployee(AddEmployeeViewModelDto employeeDto)
     {
         if (_empRepository.EmployeeExistsByEmail(employeeDto.Email))
             return null;
@@ -59,7 +59,7 @@ public class EmployeeService(IEmployeeRepository empRepository) : IEmployeeServi
         return _empRepository.GetById(emp.Id);
     }
 
-    public bool UpdateEmployee(int id, AddEmployeeViewModelDTO employeeDto)
+    public bool UpdateEmployee(int id, AddEmployeeViewModelDto employeeDto)
     {
         if (id != employeeDto.Id)
             return false;

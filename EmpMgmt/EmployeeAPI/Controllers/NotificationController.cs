@@ -1,10 +1,12 @@
 using EmployeeAPI.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "User")]
 public class NotificationController(INotificationService notificationService) : ControllerBase
 {
     [HttpGet("user/{userId}")]

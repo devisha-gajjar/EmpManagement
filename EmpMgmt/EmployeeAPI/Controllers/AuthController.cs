@@ -14,22 +14,15 @@ namespace EmployeeAPI.Controllers;
 [EnableCors("AllowAll")]
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(IAuthService authService, EmployeeMgmtContext db, ICustomService customService) : ControllerBase
 {
-    private readonly IAuthService _authService;
+    private readonly IAuthService _authService = authService;
 
-    private readonly EmployeeMgmtContext _db;
-    private readonly ICustomService _customService;
-
-    public AuthController(IAuthService authService, EmployeeMgmtContext db, ICustomService customService)
-    {
-        _authService = authService;
-        _db = db;
-        _customService = customService;
-    }
+    private readonly EmployeeMgmtContext _db = db;
+    private readonly ICustomService _customService = customService;
 
     [HttpPost("register")]
-    public IActionResult Register([FromBody] RegisterDTO dto)
+    public IActionResult Register([FromBody] RegisterDto dto)
     {
         var user = new User
         {
@@ -52,7 +45,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginDTO dto)
+    public IActionResult Login([FromBody] LoginDto dto)
     {
         var token = _authService.Login(dto.UsernameOrEmail, dto.Password);
         if (token == null)
@@ -64,7 +57,7 @@ public class AuthController : ControllerBase
 
 
     [HttpPost("google-login")]
-    public IActionResult GoogleLogin([FromBody] GoogleLoginDTO dto)
+    public IActionResult GoogleLogin([FromBody] GoogleLoginDto dto)
     {
         GoogleJsonWebSignature.Payload payload;
 
@@ -104,7 +97,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("facebook-login")]
-    public IActionResult FacebookLogin([FromBody] FacebookLoginDTO dto)
+    public IActionResult FacebookLogin([FromBody] FacebookLoginDto dto)
     {
         var handler = new HttpClientHandler
         {

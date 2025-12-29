@@ -1,10 +1,11 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 import { useAppDispatch } from "../../app/hooks";
 import { setReturnUrl } from "./authSlice";
 
 interface Props {
-  children: any;
+  children: React.ReactNode;
   allowedRoles?: string[];
 }
 
@@ -13,16 +14,21 @@ export default function AuthGuard({ children, allowedRoles }: Props) {
   const location = useLocation();
   const dispatch = useAppDispatch();
 
-  // Not logged in -> redirect
+  useEffect(() => {
+    if (!isAuthenticated && location.pathname !== "/login") {
+      dispatch(setReturnUrl(location.pathname));
+    }
+  }, [isAuthenticated, location.pathname, dispatch]);
+
+  // Not logged in
   if (!isAuthenticated) {
-    dispatch(setReturnUrl(location.pathname));
     return <Navigate to="/login" replace />;
   }
 
-  // Role-based check -> if allowedRoles provided
+  // Role-based authorization
   if (allowedRoles && !allowedRoles.includes(role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  return children;
+  return <>{children}</>;
 }

@@ -29,7 +29,7 @@ namespace EmployeeAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddEmployee([FromBody] AddEmployeeViewModelDTO employeeDto)
+        public IActionResult AddEmployee([FromBody] AddEmployeeViewModelDto employeeDto)
         {
             var createdEmployee = _service.AddEmployee(employeeDto) ?? throw new AppException("Employee Already Exists!!");
 
@@ -38,7 +38,7 @@ namespace EmployeeAPI.Controllers
 
 
         [HttpPut("{id}")]
-        public IActionResult EditEmployee(int id, AddEmployeeViewModelDTO employeeDto)
+        public IActionResult EditEmployee(int id, AddEmployeeViewModelDto employeeDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
