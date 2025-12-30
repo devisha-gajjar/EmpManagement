@@ -8,16 +8,16 @@ import PageHeader from "../../../../components/shared/page-header/PageHeader";
 import CardComponent from "../../../../components/shared/card/Card";
 
 import "../styles/ProjectDetails.css";
-import TaskDetails from "./TaskDetails";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../../../app/store";
 import {
   fetchProjectById,
-  fetchProjectTasks,
+  // fetchProjectTasks,
   updateTaskStatus,
 } from "../../../../features/admin/project-mgmt/projectDetailsApi";
 import { useAppSelector } from "../../../../app/hooks";
 import AddTaskForm from "./AddTaskForm";
+import TaskDetails from "./TaskDetails";
 
 const statusColumns = [
   "Pending",
@@ -38,9 +38,10 @@ const ProjectDetails = () => {
     (state) => state.projectDetails
   );
 
+  console.log("project", project);
   useEffect(() => {
     dispatch(fetchProjectById(projectId));
-    dispatch(fetchProjectTasks(projectId));
+    // dispatch(fetchProjectTasks(projectId));
   }, [projectId, dispatch]);
 
   if (loading || !project) {

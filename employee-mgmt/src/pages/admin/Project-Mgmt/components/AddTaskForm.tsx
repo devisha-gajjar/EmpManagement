@@ -6,15 +6,17 @@ import { useSnackbar } from "../../../../app/hooks";
 import { notificationHubService } from "../../../../services/signalR/notificationHub.service";
 import { useLazySearchUsersQuery } from "../../../../features/admin/project-mgmt/projectMembersApi";
 import { debounce } from "@mui/material";
+import type { ProjectTask } from "../../../../interfaces/project.interface";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   projectId: number;
   taskId?: number;
+  task?: ProjectTask;
 }
 
-const AddTaskForm = ({ isOpen, onClose, projectId, taskId }: Props) => {
+const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
   const isEditMode = Boolean(taskId);
   const snackbar = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
@@ -44,13 +46,22 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId }: Props) => {
         name: "description",
         label: "Description",
         type: "textarea",
+        placeholder: "Enter Task description",
       },
       {
         name: "userId",
         label: "Assign To",
         type: "search-select",
         rules: { required: true },
-        options: userOptions,
+        options: isEditMode
+          ? [
+              {
+                label: task?.assignedTo,
+                value: task?.assignedTo,
+              },
+            ]
+          : userOptions,
+        disabled: isEditMode,
         placeholder: "Search employee...",
       },
       {
@@ -79,6 +90,7 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId }: Props) => {
         name: "estimatedHours",
         label: "Estimated Hours",
         type: "number",
+        placeholder: "0",
       },
     ],
     [userOptions]
@@ -95,11 +107,6 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId }: Props) => {
     [triggerSearch]
   );
 
-  const parseDMY = (value: string) => {
-    const [day, month, year] = value.split("-");
-    return new Date(`${year}-${month}-${day}`).toISOString();
-  };
-
   const handleSubmit = async (data: any) => {
     try {
       setIsLoading(true);
@@ -110,15 +117,15 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId }: Props) => {
       });
 
       await notificationHubService.addOrUpdateTask({
-        taskId: isEditMode ? taskId : 0, // backend expects number
-        projectId, // required
-        userId: Number(data.userId), // required
-        taskName: data.taskName, // required
-        description: data.description || "", // backend expects string
-        startDate: new Date(data.startDate).toISOString(),
-        dueDate: new Date(data.dueDate).toISOString(),
-        priority: data.priority || "Medium", // must NOT be null
-        status: "Pending", // must NOT be null
+        taskId: isEditMode ? taskId : 0,
+        projectId,
+        userId: Number(data.userId),
+        taskName: data.taskName,
+        description: data.description || "",
+        startDate: data.startDate,
+        dueDate: data.dueDate,
+        priority: data.priority || "Medium",
+        status: "Pending",
         estimatedHours: Number(data.estimatedHours) || 0,
       });
 

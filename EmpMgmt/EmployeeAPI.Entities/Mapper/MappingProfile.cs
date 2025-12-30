@@ -70,10 +70,28 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.User.Username)
             );
         #endregion
+
+        #region Task Management
+
+        CreateMap<TaskDto, UserTask>()
+            .ForMember(dest => dest.TaskId, opt => opt.Ignore())
+            .ForMember(dest => dest.Project, opt => opt.Ignore())
+            .ForMember(dest => dest.AssignedByNavigation, opt => opt.Ignore())
+            .ForMember(dest => dest.Subtasks, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskActivityLogs, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskAttachments, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskComments, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskWorkLogs, opt => opt.Ignore())
+            .ForMember(dest => dest.Tags, opt => opt.Ignore());
+
+        CreateMap<UserTask, TaskResponseDto>();
+
+        #endregion
+
     }
 
     private static string ToTitleCase(string input) =>
- CultureInfo.CurrentCulture.TextInfo.ToTitleCase(input?.ToLower() ?? string.Empty);
+        CultureInfo.CurrentCulture.TextInfo.ToTitleCase(input?.ToLower() ?? string.Empty);
 
     private static string CapitalizeFirst(string input) =>
         string.IsNullOrWhiteSpace(input) ? string.Empty

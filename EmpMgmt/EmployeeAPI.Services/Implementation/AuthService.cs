@@ -5,16 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeAPI.Services.Implementation
 {
-    public class AuthService : IAuthService
+    public class AuthService(EmployeeMgmtContext db, ICustomService customService) : IAuthService
     {
-        private readonly EmployeeMgmtContext _db;
-        private readonly ICustomService _customService;
-
-        public AuthService(EmployeeMgmtContext db, ICustomService customService)
-        {
-            _db = db;
-            _customService = customService;
-        }
+        private readonly EmployeeMgmtContext _db = db;
+        private readonly ICustomService _customService = customService;
 
         public User? Register(User user, string password)
         {

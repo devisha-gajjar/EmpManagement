@@ -6,6 +6,7 @@ public static class Constants
     public const string UNAUTHORIZED_USER = "User is not authorized.";
     public const string ADMIN_GROUP = "Admins";
     public const string BEARER = "Bearer";
+    #endregion
 
     #region Entity Field Names
     public const string IS_DELETED = "IsDeleted";
@@ -15,8 +16,6 @@ public static class Constants
     #region Linq Function Names
     public const string WHERE = "Where";
     public const string ORDER_BY = "OrderBy";
-    #endregion
-
     #endregion
 
     #region CRUD Messages

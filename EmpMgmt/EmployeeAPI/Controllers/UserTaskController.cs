@@ -26,6 +26,26 @@ public class UserTaskController(IUserTaskService taskService) : ControllerBase
         ));
     }
 
+    // GET: api/tasks/{taskId}
+    [HttpGet("{taskId:int}")]
+    public async Task<IActionResult> GetTaskForEdit(int taskId)
+    {
+        var task = await taskService.GetById(taskId);
+
+        if (task == null)
+        {
+            return Ok(ApiResponse<TaskResponseDto>.Fail(
+                Constants.TASK_NOT_FOUND,
+                404
+            ));
+        }
+
+        return Ok(ApiResponse<TaskResponseDto>.Success(
+            task,
+            Constants.FETCH_SUCCESS
+        ));
+    }
+
     // DELETE
     [HttpDelete("{taskId:int}")]
     public async Task<IActionResult> DeleteTask(int taskId)

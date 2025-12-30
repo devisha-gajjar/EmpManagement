@@ -82,7 +82,7 @@ const ProjectMembersPage = () => {
               <CardComponent
                 cardConfig={{
                   title: stat.title,
-                  value: roleCounts[stat.role] || 0,
+                  value: roleCounts[stat.icon] || 0,
                   icon: stat.icon,
                 }}
               />

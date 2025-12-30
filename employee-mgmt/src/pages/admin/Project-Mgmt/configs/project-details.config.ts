@@ -1,5 +1,5 @@
 import type { CardInputConfig } from "../../../../components/shared/card/Card";
-import type { Project } from "../../../../interfaces/project.interface";
+import type { ProjectDetails } from "../../../../interfaces/project.interface";
 import type { TagInputConfig } from "../../../../interfaces/tag.interface";
 import { formatDate } from "../../../../utils/dateUtil";
 
@@ -49,7 +49,7 @@ export const statusTagConfig = (status: string): TagInputConfig => ({
 });
 
 export const getProjectDetailsCardConfigs = (
-    project: Project,
+    project: ProjectDetails,
     completedCount: number,
     totalTasks: number,
     progressPercent: number
@@ -67,7 +67,7 @@ export const getProjectDetailsCardConfigs = (
         value: `${completedCount}/${totalTasks}`,
         subtitle: "Completed",
         icon: "check-circle",
-    };  
+    };
 
     const progressCardConfig: CardInputConfig = {
         title: "Progress",

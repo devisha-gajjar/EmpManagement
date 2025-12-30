@@ -20,8 +20,8 @@ public class UserTaskService(
         if (dto.TaskId == null || dto.TaskId == 0)
         {
             task = mapper.Map<UserTask>(dto);
-            task.CreatedOn = DateTime.UtcNow;
-            task.UpdatedOn = DateTime.UtcNow;
+            task.CreatedOn = DateTime.Now;
+            task.UpdatedOn = DateTime.Now;
 
             taskRepository.Add(task);
         }
@@ -31,13 +31,20 @@ public class UserTaskService(
                 ?? throw new AppException(Constants.TASK_NOT_FOUND);
 
             mapper.Map(dto, task);
-            task.UpdatedOn = DateTime.UtcNow;
+            task.UpdatedOn = DateTime.Now;
 
             if (dto.Status == "Completed")
-                task.CompletedOn = DateTime.UtcNow;
+                task.CompletedOn = DateTime.Now;
 
             taskRepository.Update(task);
         }
+
+        return mapper.Map<TaskResponseDto>(task);
+    }
+
+    public async Task<TaskResponseDto?> GetById(int taskId)
+    {
+        var task = taskRepository.GetById(taskId) ?? throw new AppException("Task not found");
 
         return mapper.Map<TaskResponseDto>(task);
     }

@@ -13,21 +13,47 @@ export interface Project {
     progressPercentage: number;
 }
 
+// project-details-state.interface.ts
+
 export interface ProjectDetailsState {
-    project: Project | null;
-    tasks: Task[];
+    project: ProjectDetails | null;
+    tasks: ProjectTask[];
     loading: boolean;
     error: string | null;
 }
 
-export interface Task {
-    task_id: number;
-    task_name: string;
+// project-details-response.interface.ts
+
+export interface ProjectDetailsResponse {
+    project: ProjectDetails;
+    tasks: ProjectTask[];
+}
+
+
+// project-details.interface.ts
+
+export interface ProjectDetails {
+    projectId: number;
+    projectName: string;
     description: string;
-    priority: "Low" | "Medium" | "High";
+    startDate: string;
+    endDate: string;
     status: string;
-    assigned_to: string;
-    estimated_hours: number;
-    spent_hours: number;
-    due_date: string;
+}
+
+
+// project-task.interface.ts
+
+export interface ProjectTask {
+    taskId: number;
+    taskName: string;
+    userId: number;
+    projectId: number;
+    description: string;
+    priority: string;
+    status: string;
+    assignedTo: string;
+    estimatedHours: number;
+    spentHours: number;
+    dueDate: string;
 }

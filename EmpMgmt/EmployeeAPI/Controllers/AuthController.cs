@@ -56,94 +56,13 @@ public class AuthController(IAuthService authService, EmployeeMgmtContext db, IC
 
 
 
-    [HttpPost("google-login")]
-    public IActionResult GoogleLogin([FromBody] GoogleLoginDto dto)
-    {
-        GoogleJsonWebSignature.Payload payload;
+   namespace EmployeeAPI.Entities.DTO.RequestDto;
 
-        try
-        {
-            // Blocking call instead of async/await
-            payload = GoogleJsonWebSignature.ValidateAsync(dto.IdToken).Result;
-        }
-        catch
-        {
-            return BadRequest("Invalid Google token.");
-        }
+public class GoogleLoginDto
+{
+    public string IdToken { get; set; } = null!;
+}
 
-        var user = _db.Users.FirstOrDefault(u => u.Email == payload.Email && !u.IsDeleted);
-        if (user == null)
-        {
-            user = new User
-            {
-                Email = payload.Email,
-                FirstName = payload.GivenName,
-                LastName = payload.FamilyName,
-                Username = payload.Email, // or generate unique username
-                Password = "", // no password for Google login
-                RoleId = 2, // default role id
-                CreatedOn = DateTime.Now,
-                IsDeleted = false,
-                ProfilePicture = payload.Picture
-            };
-
-            _db.Users.Add(user);
-            _db.SaveChanges();
-        }
-
-        var token = _customService.GenerateJwtToken(user.Username);
-
-        return Ok(new { Token = token });
-    }
-
-    [HttpPost("facebook-login")]
-    public IActionResult FacebookLogin([FromBody] FacebookLoginDto dto)
-    {
-        var handler = new HttpClientHandler
-        {
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-        };
-        using var httpClient = new HttpClient(handler);
-
-
-        // Synchronous call to Facebook Graph API
-        var result = httpClient.GetAsync(
-            $"https://graph.facebook.com/me?access_token={dto.AccessToken}&fields=id,email,first_name,last_name,picture"
-        ).GetAwaiter().GetResult();
-
-        if (!result.IsSuccessStatusCode)
-            return BadRequest("Invalid Facebook token.");
-
-        var content = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-        var fbUser = JsonSerializer.Deserialize<FacebookUser>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-        if (fbUser == null || string.IsNullOrWhiteSpace(fbUser.Email))
-            return BadRequest("Facebook account email is required.");
-
-        var user = _db.Users.FirstOrDefault(u => u.Email == fbUser.Email && !u.IsDeleted);
-        if (user == null)
-        {
-            user = new User
-            {
-                Email = fbUser.Email,
-                FirstName = fbUser.FirstName,
-                LastName = fbUser.LastName,
-                Username = fbUser.Email,
-                Password = "", // No password
-                RoleId = 2,
-                CreatedOn = DateTime.Now,
-                IsDeleted = false,
-                ProfilePicture = fbUser.Picture?.Data?.Url
-            };
-
-            _db.Users.Add(user);
-            _db.SaveChanges();
-        }
-
-        var token = _customService.GenerateJwtToken(user.Username);
-
-        return Ok(new { Token = token });
-    }
 
 
 }

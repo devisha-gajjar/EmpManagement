@@ -40,7 +40,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
         return Ok(ApiResponse<string>.Success("Deleted", "Project deleted"));
     }
 
-    [HttpGet("{projectId}/details")]
+    [HttpGet("details/{projectId}")]
     public async Task<IActionResult> GetProjectDetails(int projectId)
     {
         var result = await projectService.GetProjectDetails(projectId);
@@ -48,6 +48,6 @@ public class ProjectController(IProjectService projectService) : ControllerBase
         if (result == null)
             return NotFound(new { message = "Project not found" });
 
-        return Ok(result);
+        return Ok(ApiResponse<ProjectDetailsResponseDto>.Success(result, "Fetched"));
     }
 }

@@ -6,14 +6,17 @@ import { store } from "./app/store.ts";
 import { Provider } from "react-redux";
 import GlobalLoader from "./components/shared/loader/GlobalLoader.tsx";
 import { injectStore } from "./api/axiosClient.ts";
+import ErrorBoundary from "./components/shared/error-boundry/ErrorBoundary.tsx";
 
 injectStore(store);
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
-    <GlobalLoader />
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ErrorBoundary>
+      <GlobalLoader />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ErrorBoundary>
   </Provider>
 );
