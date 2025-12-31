@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../features/auth/authApi";
+import { googleLogin, login } from "../../features/auth/authApi";
 
 import { TextField, Button, Typography, Box, Alert, Link } from "@mui/material";
 import { emailRegex } from "../../utils/constant";
 import AuthLayout from "../../components/layout/AuthLayout";
 import PasswordField from "../../components/shared/password-field/PasswordField";
 import { clearReturnUrl } from "../../features/auth/authSlice";
+import { environment } from "../../environment/environment.dev";
 
 // validation errors
 interface ValidationErrors {
@@ -82,6 +83,36 @@ export default function Login() {
   const handleRegisterClick = () => {
     navigate("/register");
   };
+
+  const handleGoogleResponse = (response: any) => {
+    const idToken = response.credential;
+
+    if (!idToken) {
+      console.error("Google ID Token not received");
+      return;
+    }
+
+    dispatch(googleLogin(idToken));
+  };
+
+  useEffect(() => {
+    if (!window.google) return;
+
+    window.google.accounts.id.initialize({
+      client_id: environment.REACT_APP_GOOGLE_CLIENT_ID,
+      callback: handleGoogleResponse,
+      ux_mode: "popup",
+    });
+
+    window.google.accounts.id.renderButton(
+      document.getElementById("googleSignInDiv"),
+      {
+        theme: "outline",
+        size: "large",
+        width: 350,
+      }
+    );
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated || !role) return;
@@ -170,6 +201,9 @@ export default function Login() {
           >
             {loading ? "Signing in..." : "Login"}
           </Button>
+          <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
+            <div id="googleSignInDiv"></div>
+          </Box>
 
           <Box
             sx={{

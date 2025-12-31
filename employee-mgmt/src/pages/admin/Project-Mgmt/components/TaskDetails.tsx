@@ -15,6 +15,11 @@ import type { ProjectTask } from "../../../../interfaces/project.interface";
 import AddTaskForm from "./AddTaskForm";
 import { formatDate } from "../../../../utils/dateUtil";
 import { truncateText } from "../../../../utils/text.util";
+import { useAppDispatch } from "../../../../app/hooks";
+import {
+  fetchTaskById,
+  deleteTask,
+} from "../../../../features/admin/project-mgmt/projectDetailsApi";
 
 interface DraggableTaskProps {
   task: ProjectTask;
@@ -22,7 +27,7 @@ interface DraggableTaskProps {
   onDelete: (taskId: number) => void;
 }
 
-const DraggableTask = ({ task }: DraggableTaskProps) => {
+const DraggableTask = ({ task, onEdit, onDelete }: DraggableTaskProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: task.taskId,
@@ -38,13 +43,13 @@ const DraggableTask = ({ task }: DraggableTaskProps) => {
   const onEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setMenuOpen(false);
-    // onEdit(task);
+    onEdit(task);
   };
 
   const onDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setMenuOpen(false);
-    // onDelete(task.taskId);
+    onDelete(task.taskId);
   };
 
   const style = {
@@ -103,6 +108,16 @@ interface Props {
 const TaskDetails = ({ status, tasks }: Props) => {
   const { setNodeRef } = useDroppable({ id: status });
   const [editTask, setEditTask] = useState<ProjectTask | null>(null);
+  const dispatch = useAppDispatch();
+
+  const handleEdit = async (task: ProjectTask) => {
+    const result = await dispatch(fetchTaskById(task.taskId)).unwrap();
+    setEditTask(result);
+  };
+
+  const handleDelete = async (taskId: number) => {
+    await dispatch(deleteTask(taskId));
+  };
 
   return (
     <>
@@ -126,8 +141,8 @@ const TaskDetails = ({ status, tasks }: Props) => {
           <DraggableTask
             key={task.taskId}
             task={task}
-            onEdit={setEditTask}
-            onDelete={(id) => console.log("Delete task", id)}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         ))}
       </div>

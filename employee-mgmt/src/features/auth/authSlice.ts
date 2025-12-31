@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login, registerUser } from "./authApi";
+import { googleLogin, login, registerUser } from "./authApi";
 import { roleClaimKey, userIdClaimKey, userNameClaimKey } from "../../utils/constant";
 
 export interface AuthState {
@@ -120,7 +120,25 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string;
                 state.registerSuccess = null;
-            });
+            })
+
+            // ---- sign in with google case ----
+            .addCase(googleLogin.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(googleLogin.fulfilled, (state, action) => {
+                state.loading = false;
+                state.token = action.payload;
+                state.isAuthenticated = true;
+                state.role = getRoleFromToken(action.payload);
+                localStorage.setItem("token", action.payload as string);
+            })
+            .addCase(googleLogin.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            ;
     },
 });
 

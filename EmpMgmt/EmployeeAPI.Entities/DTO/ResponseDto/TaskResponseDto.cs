@@ -16,4 +16,5 @@ public class TaskResponseDto
     public DateTime DueDate { get; set; }
 
     public decimal? EstimatedHours { get; set; }
+    public UserBasicDto User { get; set; }
 }

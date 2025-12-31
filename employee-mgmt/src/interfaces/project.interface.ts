@@ -55,5 +55,7 @@ export interface ProjectTask {
     assignedTo: string;
     estimatedHours: number;
     spentHours: number;
+    startDate: string;
     dueDate: string;
+    user: any;
 }

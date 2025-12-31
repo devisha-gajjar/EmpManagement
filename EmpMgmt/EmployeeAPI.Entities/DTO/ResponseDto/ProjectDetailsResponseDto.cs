@@ -19,6 +19,7 @@ public class ProjectDetailsDto
 public class ProjectTaskDto
 {
     public int TaskId { get; set; }
+    public int ProjectId { get; set; }
     public string TaskName { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string Priority { get; set; } = null!;

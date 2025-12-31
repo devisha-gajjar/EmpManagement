@@ -33,68 +33,65 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
   //         ]
   //       : userOptions;
 
-  const formConfig: DynamicFormField[] = useMemo(
-    () => [
-      {
-        name: "taskName",
-        label: "Task Name",
-        type: "text",
-        rules: { required: true },
-        placeholder: "Enter Task name",
-      },
-      {
-        name: "description",
-        label: "Description",
-        type: "textarea",
-        placeholder: "Enter Task description",
-      },
-      {
-        name: "userId",
-        label: "Assign To",
-        type: "search-select",
-        rules: { required: true },
-        options: isEditMode
-          ? [
-              {
-                label: task?.assignedTo,
-                value: task?.assignedTo,
-              },
-            ]
-          : userOptions,
-        disabled: isEditMode,
-        placeholder: "Search employee...",
-      },
-      {
-        name: "priority",
-        label: "Priority",
-        type: "select",
-        options: [
-          { label: "Low", value: "Low" },
-          { label: "Medium", value: "Medium" },
-          { label: "High", value: "High" },
-        ],
-      },
-      {
-        name: "startDate",
-        label: "Start Date",
-        type: "date",
-        rules: { required: true },
-      },
-      {
-        name: "dueDate",
-        label: "Due Date",
-        type: "date",
-        rules: { required: true },
-      },
-      {
-        name: "estimatedHours",
-        label: "Estimated Hours",
-        type: "number",
-        placeholder: "0",
-      },
-    ],
-    [userOptions]
-  );
+  const formConfig: DynamicFormField[] = [
+    {
+      name: "taskName",
+      label: "Task Name",
+      type: "text",
+      rules: { required: true },
+      placeholder: "Enter Task name",
+    },
+    {
+      name: "description",
+      label: "Description",
+      type: "textarea",
+      placeholder: "Enter Task description",
+    },
+    {
+      name: "userId",
+      label: "Assign To",
+      type: "search-select",
+      rules: { required: true },
+      options: isEditMode
+        ? [
+            {
+              label: task?.user.fullName,
+              value: task?.userId,
+            },
+          ]
+        : userOptions,
+      disabled: isEditMode,
+      placeholder: "Search employee...",
+    },
+    {
+      name: "priority",
+      label: "Priority",
+      type: "select",
+      options: [
+        { label: "Low", value: "Low" },
+        { label: "Medium", value: "Medium" },
+        { label: "High", value: "High" },
+      ],
+    },
+    {
+      name: "startDate",
+      label: "Start Date",
+      type: "date",
+      rules: { required: true },
+    },
+    {
+      name: "dueDate",
+      label: "Due Date",
+      type: "date",
+      rules: { required: true },
+    },
+    {
+      name: "estimatedHours",
+      label: "Estimated Hours",
+      type: "number",
+      placeholder: "0",
+    },
+  ];
 
   const debouncedSearch = useMemo(
     () =>
@@ -106,6 +103,20 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
       }, 400),
     [triggerSearch]
   );
+
+  const defaultValues = useMemo(() => {
+    if (!isEditMode || !task) return undefined;
+
+    return {
+      taskName: task.taskName,
+      description: task.description,
+      userId: task.userId,
+      priority: task.priority ?? "Medium",
+      startDate: task.startDate?.split("T")[0],
+      dueDate: task.dueDate?.split("T")[0],
+      estimatedHours: task.estimatedHours ?? 0,
+    };
+  }, [isEditMode, task]);
 
   const handleSubmit = async (data: any) => {
     try {
@@ -155,6 +166,7 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
           submitLabel={isEditMode ? "Update Task" : "Add Task"}
           loading={isLoading}
           isFetching={isFetching}
+          defaultValues={defaultValues}
           onSearch={debouncedSearch}
         />
       </ModalBody>

@@ -6,6 +6,7 @@ using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeAPI.Services.Implementation;
 
@@ -44,7 +45,7 @@ public class UserTaskService(
 
     public async Task<TaskResponseDto?> GetById(int taskId)
     {
-        var task = taskRepository.GetById(taskId) ?? throw new AppException("Task not found");
+        var task = await taskRepository.GetByInclude(u => u.TaskId == taskId, query => query.Include(x => x.User)) ?? throw new AppException("Task not found");
 
         return mapper.Map<TaskResponseDto>(task);
     }

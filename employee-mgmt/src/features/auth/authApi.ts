@@ -30,3 +30,21 @@ export const registerUser = createAsyncThunk(
         }
     }
 );
+
+export const googleLogin = createAsyncThunk(
+    "auth/googleLogin",
+    async (idToken: string, { rejectWithValue }) => {
+        try {
+            const response = await axiosClient.post(
+                "/auth/google-login",
+                { idToken }
+            );
+
+            return response.data.token as string;;
+        } catch (error: any) {
+            return rejectWithValue(
+                error.response?.data || "Google login failed"
+            );
+        }
+    }
+);

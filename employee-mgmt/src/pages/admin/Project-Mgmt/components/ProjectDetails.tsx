@@ -56,14 +56,13 @@ const ProjectDetails = () => {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+
     if (!over) return;
 
-    dispatch(
-      updateTaskStatus({
-        taskId: Number(active.id),
-        status: String(over.id),
-      })
-    );
+    const taskId = active.id as number;
+    const newStatus = over.id as string;
+
+    dispatch(updateTaskStatus({ taskId, status: newStatus }));
   };
 
   const { timelineCardConfig, tasksCardConfig, progressCardConfig } =
