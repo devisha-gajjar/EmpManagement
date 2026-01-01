@@ -1,5 +1,3 @@
-using System.Linq.Expressions;
-using System.Security.Claims;
 using AutoMapper;
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.DTO.RequestDto;

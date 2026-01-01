@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS public.user_task (
 );
 
 
--- Table: task_work_logs
+-- Table: task_work_logs    
 -- Purpose: time spent by users on tasks
 CREATE TABLE IF NOT EXISTS public.task_work_logs (
     work_log_id SERIAL PRIMARY KEY,
@@ -331,4 +331,36 @@ CREATE TABLE IF NOT EXISTS public.notifications (
         FOREIGN KEY (user_id)
         REFERENCES public.users(user_id)
         ON DELETE CASCADE
+);
+
+CREATE TABLE public.user_documents
+(
+    document_id SERIAL PRIMARY KEY,
+
+    user_id INTEGER NOT NULL,
+
+    document_name VARCHAR(255) NOT NULL,         -- original file name
+    document_type VARCHAR(100) NOT NULL,         -- Aadhaar, Resume, Passport, etc.
+
+    file_path VARCHAR(500) NOT NULL,             -- server path
+    content_type VARCHAR(100) NOT NULL,          -- application/pdf, image/png
+    file_size BIGINT NOT NULL,                   -- bytes
+
+    status VARCHAR(20) NOT NULL DEFAULT 'Pending',
+    rejection_reason TEXT,
+
+    uploaded_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    approved_on TIMESTAMP,
+    approved_by INTEGER,
+
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+
+    CONSTRAINT fk_user_documents_user
+        FOREIGN KEY (user_id)
+        REFERENCES public.users (user_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_user_documents_approved_by
+        FOREIGN KEY (approved_by)
+        REFERENCES public.users (user_id)
 );

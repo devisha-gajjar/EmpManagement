@@ -50,6 +50,8 @@ public partial class EmployeeMgmtContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserDocument> UserDocuments { get; set; }
+
     public virtual DbSet<UserTask> UserTasks { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -458,6 +460,7 @@ public partial class EmployeeMgmtContext : DbContext
                 .HasColumnName("hours_spent");
             entity.Property(e => e.LogDate)
                 .HasDefaultValueSql("CURRENT_DATE")
+                .HasColumnType("timestamp without time zone")
                 .HasColumnName("log_date");
             entity.Property(e => e.TaskId).HasColumnName("task_id");
             entity.Property(e => e.UpdatedOn)
@@ -531,6 +534,51 @@ public partial class EmployeeMgmtContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_role");
+        });
+
+        modelBuilder.Entity<UserDocument>(entity =>
+        {
+            entity.HasKey(e => e.DocumentId).HasName("user_documents_pkey");
+
+            entity.ToTable("user_documents");
+
+            entity.Property(e => e.DocumentId).HasColumnName("document_id");
+            entity.Property(e => e.ApprovedBy).HasColumnName("approved_by");
+            entity.Property(e => e.ApprovedOn)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("approved_on");
+            entity.Property(e => e.ContentType)
+                .HasMaxLength(100)
+                .HasColumnName("content_type");
+            entity.Property(e => e.DocumentName)
+                .HasMaxLength(255)
+                .HasColumnName("document_name");
+            entity.Property(e => e.DocumentType)
+                .HasMaxLength(100)
+                .HasColumnName("document_type");
+            entity.Property(e => e.FilePath)
+                .HasMaxLength(500)
+                .HasColumnName("file_path");
+            entity.Property(e => e.FileSize).HasColumnName("file_size");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
+            entity.Property(e => e.RejectionReason).HasColumnName("rejection_reason");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasDefaultValueSql("'Pending'::character varying")
+                .HasColumnName("status");
+            entity.Property(e => e.UploadedOn)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("uploaded_on");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.ApprovedByNavigation).WithMany(p => p.UserDocumentApprovedByNavigations)
+                .HasForeignKey(d => d.ApprovedBy)
+                .HasConstraintName("fk_user_documents_approved_by");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserDocumentUsers)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("fk_user_documents_user");
         });
 
         modelBuilder.Entity<UserTask>(entity =>

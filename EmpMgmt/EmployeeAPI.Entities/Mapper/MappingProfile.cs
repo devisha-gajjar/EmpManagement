@@ -88,6 +88,12 @@ public class MappingProfile : Profile
 
         #endregion
 
+        #region User Document
+
+        CreateMap<UserDocument, UserDocumentResponseDto>();
+
+        #endregion
+
     }
 
     private static string ToTitleCase(string input) =>

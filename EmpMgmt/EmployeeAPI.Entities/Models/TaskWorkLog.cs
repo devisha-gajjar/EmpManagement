@@ -11,7 +11,7 @@ public partial class TaskWorkLog
 
     public int UserId { get; set; }
 
-    public DateOnly LogDate { get; set; }
+    public DateTime LogDate { get; set; }
 
     public decimal HoursSpent { get; set; }
 

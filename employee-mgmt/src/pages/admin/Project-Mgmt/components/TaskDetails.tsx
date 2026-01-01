@@ -15,11 +15,13 @@ import type { ProjectTask } from "../../../../interfaces/project.interface";
 import AddTaskForm from "./AddTaskForm";
 import { formatDate } from "../../../../utils/dateUtil";
 import { truncateText } from "../../../../utils/text.util";
-import { useAppDispatch } from "../../../../app/hooks";
+import { useAppDispatch, useSnackbar } from "../../../../app/hooks";
 import {
   fetchTaskById,
   deleteTask,
+  fetchProjectById,
 } from "../../../../features/admin/project-mgmt/projectDetailsApi";
+import { useNavigate } from "react-router-dom";
 
 interface DraggableTaskProps {
   task: ProjectTask;
@@ -28,6 +30,8 @@ interface DraggableTaskProps {
 }
 
 const DraggableTask = ({ task, onEdit, onDelete }: DraggableTaskProps) => {
+  const navigate = useNavigate();
+
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: task.taskId,
@@ -52,6 +56,12 @@ const DraggableTask = ({ task, onEdit, onDelete }: DraggableTaskProps) => {
     onDelete(task.taskId);
   };
 
+  const handleOpenLogs = () => {
+    navigate(
+      `/admin/projects/${task.projectId}/tasks/${task.taskId}/work-logs`
+    );
+  };
+
   const style = {
     transform: transform
       ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
@@ -64,13 +74,20 @@ const DraggableTask = ({ task, onEdit, onDelete }: DraggableTaskProps) => {
     <div ref={setNodeRef} style={style} {...attributes}>
       <Card className="mb-3 card-container">
         <CardHeader className="d-flex justify-content-between align-items-center">
-          <Tag tagConfig={priorityTagConfig(task.priority)} />
+          <div
+            {...listeners}
+            className="d-flex align-items-center gap-2 cursor-grab"
+          >
+            <i className="bi bi-grip-vertical"></i>
+            <Tag tagConfig={priorityTagConfig(task.priority)} />
+          </div>
 
           <Dropdown isOpen={menuOpen} toggle={toggleMenu}>
             <DropdownToggle
               tag="span"
               className="cursor-pointer"
-              aria-expanded={menuOpen}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <i className="bi bi-three-dots-vertical"></i>
             </DropdownToggle>
@@ -87,7 +104,7 @@ const DraggableTask = ({ task, onEdit, onDelete }: DraggableTaskProps) => {
           </Dropdown>
         </CardHeader>
 
-        <CardBody {...listeners}>
+        <CardBody onClick={handleOpenLogs} className="cursor-pointer">
           <h6>{task.taskName}</h6>
           <p className="text-muted small">{task.description}</p>
 
@@ -103,12 +120,14 @@ const DraggableTask = ({ task, onEdit, onDelete }: DraggableTaskProps) => {
 interface Props {
   status: string;
   tasks: ProjectTask[];
+  projectId: number;
 }
 
-const TaskDetails = ({ status, tasks }: Props) => {
+const TaskDetails = ({ status, tasks, projectId }: Props) => {
   const { setNodeRef } = useDroppable({ id: status });
   const [editTask, setEditTask] = useState<ProjectTask | null>(null);
   const dispatch = useAppDispatch();
+  const snackbar = useSnackbar();
 
   const handleEdit = async (task: ProjectTask) => {
     const result = await dispatch(fetchTaskById(task.taskId)).unwrap();
@@ -116,7 +135,14 @@ const TaskDetails = ({ status, tasks }: Props) => {
   };
 
   const handleDelete = async (taskId: number) => {
-    await dispatch(deleteTask(taskId));
+    try {
+      await dispatch(deleteTask(taskId)).unwrap();
+      await dispatch(fetchProjectById(projectId)).unwrap();
+
+      snackbar.success("Task deleted successfully!");
+    } catch (error) {
+      snackbar.error("Failed to delete task");
+    }
   };
 
   return (

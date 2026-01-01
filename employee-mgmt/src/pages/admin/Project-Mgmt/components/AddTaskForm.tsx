@@ -1,12 +1,14 @@
 import { Modal, ModalHeader, ModalBody } from "reactstrap";
-import { useMemo, useState } from "react";
+import { use, useMemo, useState } from "react";
 import DynamicFormComponent from "../../../../components/shared/form/CommonForm";
 import type { DynamicFormField } from "../../../../interfaces/form.interface";
-import { useSnackbar } from "../../../../app/hooks";
+import { useAppDispatch, useSnackbar } from "../../../../app/hooks";
 import { notificationHubService } from "../../../../services/signalR/notificationHub.service";
 import { useLazySearchUsersQuery } from "../../../../features/admin/project-mgmt/projectMembersApi";
 import { debounce } from "@mui/material";
 import type { ProjectTask } from "../../../../interfaces/project.interface";
+import { taskStatusOptions } from "../../../../utils/constant";
+import { fetchProjectById } from "../../../../features/admin/project-mgmt/projectDetailsApi";
 
 interface Props {
   isOpen: boolean;
@@ -19,19 +21,11 @@ interface Props {
 const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
   const isEditMode = Boolean(taskId);
   const snackbar = useSnackbar();
+  const dispatch = useAppDispatch();
+
   const [isLoading, setIsLoading] = useState(false);
   const [triggerSearch, { isFetching }] = useLazySearchUsersQuery();
   const [userOptions, setUserOptions] = useState<any[]>([]);
-
-  //   const userSelectOptions: { value: number; label: string }[] =
-  //     isEditMode && memberData
-  //       ? [
-  //           {
-  //             value: memberData.user.userId,
-  //             label: memberData.user.fullName,
-  //           },
-  //         ]
-  //       : userOptions;
 
   const formConfig: DynamicFormField[] = [
     {
@@ -91,6 +85,17 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
       type: "number",
       placeholder: "0",
     },
+    ...(isEditMode
+      ? [
+          {
+            name: "status",
+            label: "Status",
+            type: "select",
+            rules: { required: true },
+            options: taskStatusOptions,
+          } as DynamicFormField,
+        ]
+      : []),
   ];
 
   const debouncedSearch = useMemo(
@@ -112,6 +117,7 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
       description: task.description,
       userId: task.userId,
       priority: task.priority ?? "Medium",
+      status: task.status ?? "Pending",
       startDate: task.startDate?.split("T")[0],
       dueDate: task.dueDate?.split("T")[0],
       estimatedHours: task.estimatedHours ?? 0,
@@ -136,13 +142,15 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
         startDate: data.startDate,
         dueDate: data.dueDate,
         priority: data.priority || "Medium",
-        status: "Pending",
+        status: isEditMode ? data.status : "Pending",
         estimatedHours: Number(data.estimatedHours) || 0,
       });
 
       snackbar.success(
         isEditMode ? "Task updated successfully" : "Task added successfully"
       );
+
+      dispatch(fetchProjectById(projectId));
 
       onClose();
     } catch (err: any) {

@@ -67,6 +67,10 @@ public partial class User
 
     public virtual ICollection<TaskWorkLog> TaskWorkLogs { get; set; } = new List<TaskWorkLog>();
 
+    public virtual ICollection<UserDocument> UserDocumentApprovedByNavigations { get; set; } = new List<UserDocument>();
+
+    public virtual ICollection<UserDocument> UserDocumentUsers { get; set; } = new List<UserDocument>();
+
     public virtual ICollection<UserTask> UserTaskAssignedByNavigations { get; set; } = new List<UserTask>();
 
     public virtual ICollection<UserTask> UserTaskUsers { get; set; } = new List<UserTask>();

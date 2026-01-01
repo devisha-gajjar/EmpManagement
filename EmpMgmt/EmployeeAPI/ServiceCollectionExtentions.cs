@@ -25,6 +25,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMemoryCacheService, MemoryCacheService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IUserTaskService, UserTaskService>();
+        services.AddScoped<ITaskWorkLogService, TaskWorkLogService>();
+        services.AddScoped<IUserDocumentService, UserDocumentService>();
 
         //mappers
         services.AddAutoMapper(typeof(MappingProfile));

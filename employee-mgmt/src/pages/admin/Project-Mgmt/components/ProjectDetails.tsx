@@ -41,7 +41,6 @@ const ProjectDetails = () => {
   console.log("project", project);
   useEffect(() => {
     dispatch(fetchProjectById(projectId));
-    // dispatch(fetchProjectTasks(projectId));
   }, [projectId, dispatch]);
 
   if (loading || !project) {
@@ -116,6 +115,7 @@ const ProjectDetails = () => {
               key={status}
               status={status}
               tasks={tasks.filter((t) => t.status === status)}
+              projectId={projectId}
             />
           ))}
         </div>
