@@ -2,6 +2,7 @@ using EmployeeAPI.Entities.DTO.RequestDto;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static EmployeeAPI.Entities.Enums.Enum;
 
 namespace EmployeeAPI.Controllers;
 
@@ -32,6 +33,34 @@ public class UserDocumentsController(IUserDocumentService userDocumentService) :
         {
             result = true,
             message = "Documents uploaded successfully",
+            data = documents
+        });
+    }
+
+    [HttpGet("admin")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAllDocuments(
+       [FromQuery] DocumentStatus? status)
+    {
+        var documents = await _userDocumentService.GetAllAsync(status);
+
+        return Ok(new
+        {
+            result = true,
+            message = "Documents fetched successfully",
+            data = documents
+        });
+    }
+
+    [HttpGet("my-documents")]
+    public async Task<IActionResult> GetMyDocuments()
+    {
+        var documents = await _userDocumentService.GetByUserAsync();
+
+        return Ok(new
+        {
+            result = true,
+            message = "Documents fetched successfully",
             data = documents
         });
     }

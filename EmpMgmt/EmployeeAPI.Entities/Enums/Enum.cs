@@ -24,4 +24,11 @@ public class Enum
         Completed = 4,
         OnHold = 5,
     }
+
+    public enum DocumentStatus
+    {
+        Pending = 1,
+        Approved = 2,
+        Denied = 3
+    }
 }

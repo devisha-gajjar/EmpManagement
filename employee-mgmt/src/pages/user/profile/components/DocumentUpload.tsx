@@ -1,0 +1,179 @@
+import { useState, useEffect } from "react";
+import "../styles/DocumentUpload.css";
+
+interface PreviewFile {
+  file: File;
+  previewUrl: string;
+  type: "image" | "pdf" | "other";
+}
+
+export default function DocumentUpload() {
+  const [files, setFiles] = useState<PreviewFile[]>([]);
+  const [documentType, setDocumentType] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [previewFile, setPreviewFile] = useState<PreviewFile | null>(null);
+
+  const handleFiles = (fileList: FileList) => {
+    if (!documentType.trim()) {
+      alert("Please enter document type first.");
+      return;
+    }
+
+    const mapped: PreviewFile[] = Array.from(fileList).map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+      type: file.type.startsWith("image/")
+        ? "image"
+        : file.type === "application/pdf"
+        ? "pdf"
+        : "other",
+    }));
+
+    setFiles((prev) => [...prev, ...mapped]);
+  };
+
+  const handleSubmit = async () => {
+    if (!documentType || files.length === 0) return;
+
+    setSubmitting(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("DocumentType", documentType);
+      files.forEach((f) => formData.append("Files", f.file));
+
+      // TODO: API CALL
+      // await uploadDocuments(formData);
+
+      alert("Documents submitted successfully");
+
+      setFiles([]);
+      setDocumentType("");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      files.forEach((f) => URL.revokeObjectURL(f.previewUrl));
+    };
+  }, [files]);
+
+  return (
+    <div className="upload-box">
+      {/* Document Type */}
+      <div className="doc-type-wrapper">
+        <label className="doc-label">Document Type</label>
+        <input
+          type="text"
+          placeholder="PAN Card, Aadhaar, Resume"
+          className="doc-input"
+          value={documentType}
+          onChange={(e) => setDocumentType(e.target.value)}
+        />
+      </div>
+
+      {/* Upload Area */}
+      <div
+        className="drop-zone"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          e.dataTransfer.files && handleFiles(e.dataTransfer.files);
+        }}
+      >
+        <div className="upload-content">
+          <span className="upload-icon">⬆</span>
+          <p className="upload-text">Drop your file here, or click to browse</p>
+
+          <input
+            type="file"
+            hidden
+            multiple
+            id="fileInput"
+            onChange={(e) => e.target.files && handleFiles(e.target.files)}
+          />
+
+          <label htmlFor="fileInput" className="choose-btn">
+            Choose File
+          </label>
+        </div>
+      </div>
+
+      {/* Preview */}
+      {files.length > 0 && (
+        <div className="preview-grid">
+          {files.map((f, i) => (
+            <div key={i} className="preview-card">
+              <div className="file-preview-wrapper">
+                {/* File Type Icon */}
+                <div className={`file-icon ${f.type}`}>
+                  {f.type === "image" && "🖼️"}
+                  {f.type === "pdf" && "📄"}
+                  {f.type === "other" && "📁"}
+                </div>
+
+                {/* Preview overlay */}
+                <button
+                  className="preview-overlay-btn"
+                  onClick={() => window.open(f.previewUrl, "_blank")}
+                >
+                  👁
+                </button>
+              </div>
+
+              <div className="file-name">{f.file.name}</div>
+
+              <span className="doc-type-tag">{documentType}</span>
+
+              <button
+                className="remove-btn"
+                onClick={() => {
+                  URL.revokeObjectURL(f.previewUrl);
+                  setFiles(files.filter((_, idx) => idx !== i));
+                }}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Submit */}
+      <div className="submit-wrapper">
+        <button
+          className="submit-btn"
+          disabled={!documentType || files.length === 0 || submitting}
+          onClick={handleSubmit}
+        >
+          {submitting ? "Submitting..." : "Submit Documents"}
+        </button>
+      </div>
+
+      {previewFile && (
+        <div className="preview-modal-overlay">
+          <div className="preview-modal">
+            <div className="preview-header">
+              <span>{previewFile.file.name}</span>
+              <button onClick={() => setPreviewFile(null)}>✕</button>
+            </div>
+
+            <div className="preview-body">
+              {previewFile.type === "pdf" && (
+                <iframe src={previewFile.previewUrl} title="pdf-preview" />
+              )}
+
+              {previewFile.type === "other" && (
+                <p className="no-preview">
+                  Preview not available. Please download the file.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

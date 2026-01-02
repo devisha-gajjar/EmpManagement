@@ -11,11 +11,11 @@ public class TaskWorkLogService(IGenericRepository<TaskWorkLog> taskWorkLogRepos
 {
     public async Task<TaskWorkLogListResponseDto> GetWorkLogsByTaskIdAsync(int taskId)
     {
-        // 1️⃣ Fetch task
+        // Fetch task
         var task = taskRepository.GetById(taskId)
             ?? throw new AppException("Task not found");
 
-        // 2️⃣ Fetch work logs WITH User include
+        // Fetch work logs WITH User include
         var logs = await taskWorkLogRepository
             .GetQueryableInclude(
                 includes:
@@ -27,7 +27,7 @@ public class TaskWorkLogService(IGenericRepository<TaskWorkLog> taskWorkLogRepos
             .OrderByDescending(wl => wl.LogDate)
             .ToListAsync();
 
-        // 3️⃣ Map response
+        // Map response
         return new TaskWorkLogListResponseDto
         {
             TaskId = task.TaskId,

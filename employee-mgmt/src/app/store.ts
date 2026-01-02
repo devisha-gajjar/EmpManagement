@@ -10,6 +10,7 @@ import leaveListReducer from "../features/admin/leave/leaveSlice";
 import notificationReducer from "../features/user/notifications/notificationSlice";
 import projectDetailsReducer from "../features/admin/project-mgmt/projectDetailSlice";
 import taskWorkLogReducer from "../features/admin/project-mgmt/taskWorklogSlice";
+import documentReducer from "../features/user/profile/documentSlice";
 import { employeeApi } from "../features/admin/employees/empApi";
 import { projectsApi } from "../features/admin/project-mgmt/projectsMgmtApi";
 import { projectMembersApi } from "../features/admin/project-mgmt/projectMembersApi";
@@ -27,6 +28,7 @@ export const store = configureStore({
         notification: notificationReducer,
         projectDetails: projectDetailsReducer,
         taskWorkLogs: taskWorkLogReducer,
+        documents: documentReducer,
         [employeeApi.reducerPath]: employeeApi.reducer,
         [projectsApi.reducerPath]: projectsApi.reducer,
         [projectMembersApi.reducerPath]: projectMembersApi.reducer

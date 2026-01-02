@@ -19,6 +19,7 @@ import ProjectMembersPage from "./pages/admin/Project-Mgmt/components/ProjectMem
 import NotificationList from "./pages/user/notification/notification-list";
 import UserTask from "./pages/user/user-task/user-task";
 import TaskWorkLogsPage from "./pages/admin/Project-Mgmt/components/TaskWorkLogsPage";
+import MyProfilePage from "./pages/user/profile/components/MyProfielPage";
 
 function App() {
   const routes = useRoutes([
@@ -42,6 +43,7 @@ function App() {
         { path: "leaves", element: <Leaves /> },
         { path: "notification", element: <NotificationList /> },
         { path: "tasks", element: <UserTask /> },
+        { path: "profile", element: <MyProfilePage /> },
       ],
     },
 
@@ -62,7 +64,10 @@ function App() {
         { path: "projects/new", element: <ProjectFormPage /> },
         { path: "projects/edit/:id", element: <ProjectFormPage /> },
         { path: "projects/members/:id", element: <ProjectMembersPage /> },
-        { path: "projects/:projectId/tasks/:taskId/work-logs", element: <TaskWorkLogsPage/> },
+        {
+          path: "projects/:projectId/tasks/:taskId/work-logs",
+          element: <TaskWorkLogsPage />,
+        },
       ],
     },
   ]);
