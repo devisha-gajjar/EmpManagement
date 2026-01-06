@@ -26,3 +26,7 @@ export type TagColor =
     | "orange"
     | "light-orange"
     | "light-white";
+
+
+export type ThemeMode = "light" | "dark";
+

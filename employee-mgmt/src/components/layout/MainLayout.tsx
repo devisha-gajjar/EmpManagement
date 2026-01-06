@@ -9,6 +9,7 @@ import { notificationHubService } from "../../services/signalR/notificationHub.s
 
 export default function MainLayout() {
   const { userId, role } = useAppSelector((state) => state.auth);
+  const mode = useAppSelector((state) => state.theme.mode);
 
   useEffect(() => {
     console.log("Auth state:", userId, role);

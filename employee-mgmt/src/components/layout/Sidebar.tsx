@@ -13,6 +13,7 @@ import {
   Tooltip,
   Paper,
   Popper,
+  Button,
 } from "@mui/material";
 import {
   ExpandLess,
@@ -24,9 +25,10 @@ import {
   getSideBarLinksByRole,
   sidebarCollapseWidth,
 } from "../../utils/constant";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { logout } from "../../features/auth/authSlice";
 import CommonConfirmDialog from "../shared/confirmation-dialog/CommonConfirmDialog";
+import { toggleTheme } from "../../features/shared/themeSlice";
 
 interface SidebarProps {
   role: string;
@@ -50,6 +52,7 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
 
   const collapsedWidth = sidebarCollapseWidth;
   const currentWidth = isCollapsed ? collapsedWidth : drawerWidth;
+  const mode = useAppSelector((state) => state.theme.mode);
 
   const navLinks = getSideBarLinksByRole(role);
 
@@ -140,23 +143,22 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
     <>
       <Drawer
         variant="permanent"
-        sx={{
+        sx={(theme) => ({
           width: currentWidth,
           flexShrink: 0,
-          transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           [`& .MuiDrawer-paper`]: {
             width: currentWidth,
-            height: `100vh`,
+            height: "100vh",
             padding: "16px 10px",
-            backgroundColor: "#0a1929",
-            color: "#e3e8ef",
-
+            backgroundColor: theme.palette.background.default,
+            color: theme.palette.text.primary,
             display: "flex",
             flexDirection: "column",
             transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             overflowX: "hidden",
+            borderRight: `1px solid ${theme.palette.divider}`,
           },
-        }}
+        })}
       >
         <Box
           sx={{
@@ -167,7 +169,10 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
             py: 2,
             mb: 2,
             borderRadius: "12px",
-            background: "linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)",
+            background: (theme) =>
+              theme.palette.mode === "dark"
+                ? "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)"
+                : "linear-gradient(135deg, #232d38ff 0%, #04378aff 100%)",
             boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
             justifyContent: isCollapsed ? "center" : "flex-start",
           }}
@@ -256,22 +261,28 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
                             navigate(link.path);
                           }
                         }}
-                        sx={{
+                        sx={(theme) => ({
                           borderRadius: "10px",
                           py: 1.3,
                           px: isCollapsed ? 1 : 2,
                           gap: 1.8,
+
                           backgroundColor: active
-                            ? "rgba(59, 130, 246, 0.15)"
+                            ? theme.palette.action.selected
                             : "transparent",
-                          color: active ? "#3b82f6" : "#94a3b8",
+
+                          color: active
+                            ? theme.palette.primary.main
+                            : theme.palette.text.secondary,
+
                           border: active
-                            ? "1px solid rgba(59, 130, 246, 0.3)"
+                            ? `1px solid ${theme.palette.primary.main}33`
                             : "1px solid transparent",
-                          transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                          position: "relative",
-                          overflow: "hidden",
-                          justifyContent: isCollapsed ? "center" : "flex-start",
+
+                          "&:hover": {
+                            backgroundColor: theme.palette.action.hover,
+                            color: theme.palette.text.primary,
+                          },
 
                           "&::before": {
                             content: '""',
@@ -280,25 +291,10 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
                             top: 0,
                             bottom: 0,
                             width: "3px",
-                            backgroundColor: "#3b82f6",
+                            backgroundColor: theme.palette.primary.main,
                             opacity: active ? 1 : 0,
-                            transition: "opacity 0.2s",
                           },
-
-                          "&:hover": {
-                            bgcolor: active
-                              ? "rgba(59, 130, 246, 0.2)"
-                              : "rgba(148, 163, 184, 0.08)",
-                            color: active ? "#3b82f6" : "#cbd5e1",
-                            transform: isCollapsed ? "none" : "translateX(2px)",
-                          },
-
-                          "& .MuiListItemText-primary": {
-                            fontWeight: active ? 600 : 500,
-                            fontSize: "14px",
-                            letterSpacing: "0.01em",
-                          },
-                        }}
+                        })}
                       >
                         {link.icon && (
                           <Box
@@ -355,26 +351,26 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
                               <ListItemButton
                                 selected={subActive}
                                 onClick={() => navigate(sub.path)}
-                                sx={{
+                                sx={(theme) => ({
                                   borderRadius: "8px",
                                   py: 1,
                                   px: 2,
                                   gap: 1.5,
                                   ml: 2.5,
-                                  bgcolor: subActive
-                                    ? "rgba(59, 130, 246, 0.1)"
+                                  backgroundColor: subActive
+                                    ? theme.palette.action.selected
                                     : "transparent",
-                                  color: subActive ? "#3b82f6" : "#94a3b8",
+                                  color: subActive
+                                    ? theme.palette.primary.main
+                                    : theme.palette.text.secondary,
                                   borderLeft: subActive
                                     ? "2px solid #3b82f6"
                                     : "2px solid transparent",
                                   transition: "all 0.2s",
 
                                   "&:hover": {
-                                    bgcolor: subActive
-                                      ? "rgba(59, 130, 246, 0.15)"
-                                      : "rgba(148, 163, 184, 0.06)",
-                                    color: subActive ? "#3b82f6" : "#cbd5e1",
+                                    backgroundColor: theme.palette.action.hover,
+                                    color: theme.palette.text.primary,
                                     transform: "translateX(2px)",
                                   },
 
@@ -382,7 +378,7 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
                                     fontSize: "13px",
                                     fontWeight: subActive ? 600 : 400,
                                   },
-                                }}
+                                })}
                               >
                                 {sub.icon && (
                                   <Box
@@ -413,6 +409,55 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
             })}
           </List>
         </Box>
+
+        <Button
+          onClick={() => dispatch(toggleTheme())}
+          variant="outlined"
+          sx={(theme) => ({
+            mx: 1,
+            mb: 1,
+            borderRadius: "10px",
+            textTransform: "none",
+            fontWeight: 600,
+            minWidth: isCollapsed ? 42 : "auto",
+
+            color:
+              theme.palette.mode === "dark"
+                ? theme.palette.common.white
+                : theme.palette.common.black,
+
+            borderColor:
+              theme.palette.mode === "dark"
+                ? "rgba(255,255,255,0.4)"
+                : "rgba(0,0,0,0.3)",
+
+            backgroundColor:
+              theme.palette.mode === "dark"
+                ? "rgba(255,255,255,0.05)"
+                : "rgba(0,0,0,0.04)",
+
+            "&:hover": {
+              backgroundColor:
+                theme.palette.mode === "dark"
+                  ? "rgba(255,255,255,0.12)"
+                  : "rgba(0,0,0,0.08)",
+              borderColor:
+                theme.palette.mode === "dark"
+                  ? theme.palette.common.white
+                  : theme.palette.common.black,
+            },
+          })}
+        >
+          {isCollapsed ? (
+            <span style={{ fontSize: "18px" }}>
+              {mode === "light" ? "🌙" : "☀️"}
+            </span>
+          ) : mode === "light" ? (
+            "🌙 Dark Mode"
+          ) : (
+            "☀️ Light Mode"
+          )}
+        </Button>
 
         {/* Logout Button - Fixed at Bottom */}
         <Box sx={{ mt: "auto", px: 0.5 }}>

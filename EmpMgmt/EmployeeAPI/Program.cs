@@ -306,7 +306,10 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles();
 app.MapControllers();
+
 app.MapHub<LeaveHub>("/leaveHub");
 app.MapHub<NotificationHub>("/notification");
 

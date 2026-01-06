@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchUserDocument } from "./documentApi";
+import { fetchUserDocument, uploadUserDocuments } from "./documentApi";
 import type { UserDocumentState } from "../../../interfaces/userDocument.interface";
 
 const initialState: UserDocumentState = {
@@ -30,6 +30,18 @@ const documentSlice = createSlice({
                 state.loading = false;
                 state.error =
                     action.error.message || "Failed to fetch user documents";
+            })
+
+            // UPLOAD
+            .addCase(uploadUserDocuments.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(uploadUserDocuments.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(uploadUserDocuments.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message ?? null;
             });
     },
 });

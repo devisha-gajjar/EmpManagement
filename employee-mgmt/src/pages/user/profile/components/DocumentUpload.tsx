@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
 import "../styles/DocumentUpload.css";
+import pdfLogo from "../../../../assets/icons/pdf-logo.png";
+import imageLogo from "../../../../assets/icons/image-logo.jpg";
+import fileLogo from "../../../../assets/icons/file-logo.png";
+import {
+  fetchUserDocument,
+  uploadUserDocuments,
+} from "../../../../features/user/profile/documentApi";
+import { useAppDispatch } from "../../../../app/hooks";
 
 interface PreviewFile {
   file: File;
@@ -12,6 +20,8 @@ export default function DocumentUpload() {
   const [documentType, setDocumentType] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [previewFile, setPreviewFile] = useState<PreviewFile | null>(null);
+
+  const dispatch = useAppDispatch();
 
   const handleFiles = (fileList: FileList) => {
     if (!documentType.trim()) {
@@ -35,22 +45,21 @@ export default function DocumentUpload() {
   const handleSubmit = async () => {
     if (!documentType || files.length === 0) return;
 
-    setSubmitting(true);
+    const formData = new FormData();
+    formData.append("DocumentType", documentType);
+    files.forEach((f) => formData.append("Files", f.file));
 
     try {
-      const formData = new FormData();
-      formData.append("DocumentType", documentType);
-      files.forEach((f) => formData.append("Files", f.file));
+      await dispatch(uploadUserDocuments(formData)).unwrap();
 
-      // TODO: API CALL
-      // await uploadDocuments(formData);
-
-      alert("Documents submitted successfully");
+      // refresh documents after upload
+      dispatch(fetchUserDocument());
 
       setFiles([]);
       setDocumentType("");
-    } finally {
-      setSubmitting(false);
+      alert("Documents uploaded successfully");
+    } catch (error) {
+      alert("Failed to upload documents");
     }
   };
 
@@ -105,27 +114,33 @@ export default function DocumentUpload() {
       {files.length > 0 && (
         <div className="preview-grid">
           {files.map((f, i) => (
-            <div key={i} className="preview-card">
-              <div className="file-preview-wrapper">
-                {/* File Type Icon */}
-                <div className={`file-icon ${f.type}`}>
-                  {f.type === "image" && "🖼️"}
-                  {f.type === "pdf" && "📄"}
-                  {f.type === "other" && "📁"}
-                </div>
+            <div className="preview-card">
+              <div className="preview-thumb">
+                <img
+                  src={
+                    f.type === "pdf"
+                      ? pdfLogo
+                      : f.type === "image"
+                      ? imageLogo
+                      : fileLogo
+                  }
+                  alt="file"
+                  className="file-logo"
+                />
 
-                {/* Preview overlay */}
                 <button
-                  className="preview-overlay-btn"
+                  className="preview-eye"
                   onClick={() => window.open(f.previewUrl, "_blank")}
+                  title="Preview"
                 >
                   👁
                 </button>
               </div>
 
-              <div className="file-name">{f.file.name}</div>
-
-              <span className="doc-type-tag">{documentType}</span>
+              <div className="preview-info">
+                <p className="file-name">{f.file.name}</p>
+                <span className="doc-type-tag">{documentType}</span>
+              </div>
 
               <button
                 className="remove-btn"

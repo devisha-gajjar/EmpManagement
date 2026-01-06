@@ -1,22 +1,41 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
+import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import { store } from "./app/store.ts";
 import { Provider } from "react-redux";
-import GlobalLoader from "./components/shared/loader/GlobalLoader.tsx";
-import { injectStore } from "./api/axiosClient.ts";
-import ErrorBoundary from "./components/shared/error-boundry/ErrorBoundary.tsx";
+import { store } from "./app/store";
+import GlobalLoader from "./components/shared/loader/GlobalLoader";
+import { injectStore } from "./api/axiosClient";
+import ErrorBoundary from "./components/shared/error-boundry/ErrorBoundary";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import { getMuiTheme } from "./muiTheme";
+import { useAppSelector } from "./app/hooks";
+import { useEffect } from "react";
 
 injectStore(store);
 
+function Root() {
+  const mode = useAppSelector((state) => state.theme.mode);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", mode);
+  }, [mode]);
+
+  return (
+    <ThemeProvider theme={getMuiTheme(mode)}>
+      <CssBaseline />
+      <ErrorBoundary>
+        <GlobalLoader />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ErrorBoundary>
+    </ThemeProvider>
+  );
+}
+
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
-    <ErrorBoundary>
-      <GlobalLoader />
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ErrorBoundary>
+    <Root />
   </Provider>
 );
