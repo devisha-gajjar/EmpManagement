@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Dashboard UI Components – Snapshot Tests CenteredContainer matches snapshot 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-1okbyjb"
+  >
+    <span>
+      Centered Content
+    </span>
+  </div>
+</div>
+`;
+
+exports[`Dashboard UI Components – Snapshot Tests DashboardCard matches snapshot 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-1pdlc3y-MuiPaper-root-MuiCard-root"
+    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+  >
+    <div
+      class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
+    >
+      <h6
+        class="MuiTypography-root MuiTypography-h6 css-2q0vu3-MuiTypography-root"
+      >
+        User Statistics
+      </h6>
+      <div>
+        Some dashboard content
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Dashboard UI Components – Snapshot Tests InfoText matches snapshot when value is null (fallback) 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-1c3srm3"
+  >
+    <p
+      class="MuiTypography-root MuiTypography-body2 css-1wle3ir-MuiTypography-root"
+    >
+      Active Users
+    </p>
+    <p
+      class="MuiTypography-root MuiTypography-body1 css-izap9d-MuiTypography-root"
+    >
+      —
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Dashboard UI Components – Snapshot Tests InfoText matches snapshot when value is provided 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-1c3srm3"
+  >
+    <p
+      class="MuiTypography-root MuiTypography-body2 css-1wle3ir-MuiTypography-root"
+    >
+      Total Users
+    </p>
+    <p
+      class="MuiTypography-root MuiTypography-body1 css-izap9d-MuiTypography-root"
+    >
+      150
+    </p>
+  </div>
+</div>
+`;
