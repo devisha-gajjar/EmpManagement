@@ -50,7 +50,7 @@ public class AuthController(IAuthService authService, EmployeeMgmtContext db, IC
     }
 
     [HttpPost("google-login")]
-    public IActionResult GoogleLogin([FromBody] GoogleLoginDto dto)
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto dto)
     {
         GoogleJsonWebSignature.Payload payload;
 
@@ -65,9 +65,8 @@ public class AuthController(IAuthService authService, EmployeeMgmtContext db, IC
             };
 
             // Blocking call instead of async/await
-            payload = GoogleJsonWebSignature
-                        .ValidateAsync(dto.IdToken, settings)
-                        .Result;
+            payload = await GoogleJsonWebSignature
+                        .ValidateAsync(dto.IdToken, settings);
         }
         catch
         {

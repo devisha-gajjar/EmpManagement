@@ -9,6 +9,7 @@ import AuthLayout from "../../components/layout/AuthLayout";
 import PasswordField from "../../components/shared/password-field/PasswordField";
 import { clearReturnUrl } from "../../features/auth/authSlice";
 import { environment } from "../../environment/environment.dev";
+import { GoogleLogin } from "@react-oauth/google";
 
 // validation errors
 interface ValidationErrors {
@@ -94,25 +95,6 @@ export default function Login() {
 
     dispatch(googleLogin(idToken));
   };
-
-  useEffect(() => {
-    if (!window.google) return;
-
-    window.google.accounts.id.initialize({
-      client_id: environment.REACT_APP_GOOGLE_CLIENT_ID,
-      callback: handleGoogleResponse,
-      ux_mode: "popup",
-    });
-
-    window.google.accounts.id.renderButton(
-      document.getElementById("googleSignInDiv"),
-      {
-        theme: "outline",
-        size: "large",
-        width: 350,
-      }
-    );
-  }, []);
 
   useEffect(() => {
     if (!isAuthenticated || !role) return;
@@ -202,7 +184,22 @@ export default function Login() {
             {loading ? "Signing in..." : "Login"}
           </Button>
           <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
-            <div id="googleSignInDiv"></div>
+            <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                const idToken = credentialResponse.credential;
+
+                if (!idToken) {
+                  console.error("Google ID Token not received");
+                  return;
+                }
+
+                dispatch(googleLogin(idToken));
+              }}
+              onError={() => {
+                console.error("Google Login Failed");
+              }}
+              useOneTap={false}
+            />
           </Box>
 
           <Box

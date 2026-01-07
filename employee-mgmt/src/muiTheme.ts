@@ -5,8 +5,8 @@ export const getMuiTheme = (mode: "light" | "dark") =>
         palette: {
             mode,
             background: {
-                default: mode === "dark" ? "#0f172a" : "#ffffff",
-                paper: mode === "dark" ? "#1e293b" : "#ffffff",
+                default: mode === "dark" ? "#0f172a" : "#e1e2f827",
+                paper: mode === "dark" ? "#1e293b" : "#e1e7fa38",
             },
         },
     });
