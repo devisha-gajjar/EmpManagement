@@ -6,6 +6,7 @@ import { useAppSelector } from "../../app/hooks";
 import { useEffect } from "react";
 import { leaveHubService } from "../../services/signalR/leaveHub.service";
 import { notificationHubService } from "../../services/signalR/notificationHub.service";
+import { Box } from "@mui/material";
 
 export default function MainLayout() {
   const { userId, role } = useAppSelector((state) => state.auth);
@@ -38,22 +39,33 @@ export default function MainLayout() {
   }, [userId, role]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      <div style={{ display: "flex", flex: 1 }}>
+    <div style={{ display: "flex", flex: 1, position: "relative" }}>
+      <div style={{ position: "relative" }}>
         <Sidebar role={role!} drawerWidth={280} />
-        <main
-          style={{
-            flex: 1,
-            padding: "2rem",
-            overflowY: "auto",
-            background:
-              "linear-gradient(to bottom right, #f5f3ff, #eff6ff, #eef2ff)",
-          }}
-        >
-          <SnackbarComponent />
-          <Outlet />
-        </main>
       </div>
+
+      <main
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          overflowY: "auto",
+          background:
+            mode == "light"
+              ? "linear-gradient(to bottom right, #f5f3ff, #eff6ff, #eef2ff)"
+              : "#01132eff",
+        }}
+      >
+        <SnackbarComponent />
+        <Navbar />
+        <Box
+          sx={{
+            padding: "0.5rem 2rem 2rem 2rem",
+          }}  
+        >
+          <Outlet />
+        </Box>
+      </main>
     </div>
   );
 }

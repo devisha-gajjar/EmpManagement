@@ -7,15 +7,17 @@ using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace EmployeeAPI.Services.Implementation;
 
 public class NotificationService(
     IGenericRepository<Notification> notificationRepository,
-    IMapper mapper, IHttpContextAccessor httpContextAccessor) : INotificationService
+    IMapper mapper, IHttpContextAccessor httpContextAccessor, IEmailService emailService, IConfiguration config, IGenericRepository<User> userRepository) : INotificationService
 {
     public int UserId => httpContextAccessor.HttpContext?.User?.GetUserId() ?? throw new UnauthorizedAccessException(Constants.UNAUTHORIZED_USER);
 
+    #region Add notification
     public async Task<NotificationResponseDto> AddNotificationAsync(NotificationRequestDto request)
     {
         var entity = new Notification
@@ -31,10 +33,18 @@ public class NotificationService(
 
         notificationRepository.Add(entity);
 
-        return mapper.Map<NotificationResponseDto>(entity);
-    }
+        User user = userRepository.GetById(request.UserId)!;
 
-    // Mark notification as read
+        var emailSent = await SendMailTUser(user.Email);
+
+        var response = mapper.Map<NotificationResponseDto>(entity);
+        response.EmailSent = emailSent;
+
+        return response;
+    }
+    #endregion
+
+    #region Mark notification as read
     public async Task<NotificationResponseDto?> MarkAsRead(int notificationId)
     {
         var entity = await notificationRepository.GetByInclude(x => x.NotificationId == notificationId);
@@ -49,8 +59,9 @@ public class NotificationService(
 
         return mapper.Map<NotificationResponseDto>(entity);
     }
+    #endregion
 
-    // Get notifications by user
+    #region Get notifications by user
     public async Task<List<NotificationResponseDto>> GetNotificationsByUserAsync(int userId)
     {
         var notifications = notificationRepository
@@ -65,8 +76,9 @@ public class NotificationService(
 
         return [.. mapper.ProjectTo<NotificationResponseDto>(notifications)];
     }
+    #endregion
 
-    // mark as all read
+    #region Mark as all read
     public async Task<int> MarkAllAsRead(List<int>? notificationIds = null)
     {
         var query = notificationRepository
@@ -94,5 +106,32 @@ public class NotificationService(
 
         return notifications.Count;
     }
+    #endregion
 
+    #region Send mail
+    private async Task<string> SendMailTUser(string email)
+    {
+        string? templatePath = config["EmailSettings:NewUserTemplatePath"];
+        if (string.IsNullOrWhiteSpace(templatePath))
+            throw new AppException(Constants.EMAIL_PATH_NOT_CONFIGURED);
+
+        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), templatePath);
+        string emailBody = await File.ReadAllTextAsync(fullPath);
+
+        emailBody = emailBody.Replace("{username}", email);
+
+        bool isEmailSent = await emailService.SendEmailAsync(new EmailRequestDto
+        {
+            To = email,
+            Subject = "Notofication Received!",
+            Body = emailBody
+        });
+
+        if (isEmailSent)
+            return string.Format(Constants.EMAIL_SENT_SUCCESS, email);
+        else
+            return Constants.EMAIL_NOT_SENT;
+
+    }
+    #endregion
 }

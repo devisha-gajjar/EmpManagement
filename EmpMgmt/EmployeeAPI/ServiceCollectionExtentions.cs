@@ -27,6 +27,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserTaskService, UserTaskService>();
         services.AddScoped<ITaskWorkLogService, TaskWorkLogService>();
         services.AddScoped<IUserDocumentService, UserDocumentService>();
+        services.AddScoped<IEmailService, EmailService>();
 
         //mappers
         services.AddAutoMapper(typeof(MappingProfile));

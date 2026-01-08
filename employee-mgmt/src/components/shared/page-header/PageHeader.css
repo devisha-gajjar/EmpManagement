@@ -2,7 +2,7 @@
     padding: 5px;
     margin: auto;
     border-radius: 12px;
-    border: 1px solid #000000;
+    border: 1px solid transparent;
     box-shadow:
         0 1px 2px rgba(15, 23, 42, 0.06),
         0 4px 12px rgba(15, 23, 42, 0.08);
@@ -30,64 +30,145 @@
     font-size: 14px;
 }
 
-/* ================= THEMES ================= */
-
-.page-header-card.red {
-    background: linear-gradient(to right, #fff4f2, #fffaf6);
-    color: #991b1b;
-    border-color: #fecaca;
+/* ---- BLUE ---- */
+/* LIGHT */
+[data-theme="light"] .page-header-card.blue {
+    background: linear-gradient(to right, #EAF2FF, #F5F9FF);
+    color: #022A52;
+    border-color: #BFDBFE;
 }
 
-.page-header-card.red .subtitle {
-    color: #b91c1c;
+[data-theme="light"] .page-header-card.blue .subtitle {
+    color: #334E68;
 }
 
-.page-header-card.blue {
-    background: linear-gradient(to right, #e1edfc, #e0f2fe);
-    color: #1e40af;
-    border-color: #bfdbfe;
+/* DARK */
+[data-theme="dark"] .page-header-card.blue {
+    background: linear-gradient(to right, #012e5a, #1f60a5);
+    color: #EAF1F8;
+    border-color: #88C2FC;
 }
 
-.page-header-card.blue .subtitle {
-    color: #1d4ed8;
+[data-theme="dark"] .page-header-card.blue .subtitle {
+    color: #B7C7DB;
 }
 
-.page-header-card.purple {
-    background: linear-gradient(to right, #e0defd, #e8eafa);
-    color: #3730a3;
-    border-color: #c7d2fe;
+/* --- RED --- */
+/* LIGHT */
+[data-theme="light"] .page-header-card.red {
+    background: linear-gradient(to right, #FFF4F2, #FFFAF6);
+    color: #991B1B;
+    border-color: #FECACA;
 }
 
-.page-header-card.purple .subtitle {
-    color: #4338ca;
+[data-theme="light"] .page-header-card.red .subtitle {
+    color: #B91C1C;
 }
 
-.page-header-card.orange {
-    background: linear-gradient(to right, #fff7ed, #fff3e0);
-    color: #9a3412;
-    border-color: #fed7aa;
+/* DARK */
+[data-theme="dark"] .page-header-card.red {
+    background: linear-gradient(to right, #450A0A, #7F1D1D);
+    color: #FEE2E2;
+    border-color: #EF4444;
 }
 
-.page-header-card.orange .subtitle {
-    color: #c2410c;
+[data-theme="dark"] .page-header-card.red .subtitle {
+    color: #FCA5A5;
 }
 
-.page-header-card.pink {
-    background: linear-gradient(to right, #f1e3ff, #dfd8e6);
-    color: #6b21a8;
-    border-color: #e9d5ff;
+
+/* --- PURPLE --- */
+/* LIGHT */
+[data-theme="light"] .page-header-card.purple {
+    background: linear-gradient(to right, #E0DEFD, #E8EAFA);
+    color: #3730A3;
+    border-color: #C7D2FE;
 }
 
-.page-header-card.pink .subtitle {
-    color: #7e22ce;
+[data-theme="light"] .page-header-card.purple .subtitle {
+    color: #4338CA;
 }
 
-.page-header-card.green {
-    background: linear-gradient(to right, #ecfdf5, #d1fae5);
-    color: #065f46;
-    border-color: #a7f3d0;
+/* DARK */
+[data-theme="dark"] .page-header-card.purple {
+    background: linear-gradient(to right, #1E1B4B, #3c3a7c);
+    color: #E0E7FF;
+    border-color: #818CF8;
 }
 
-.page-header-card.green .subtitle {
+[data-theme="dark"] .page-header-card.purple .subtitle {
+    color: #A5B4FC;
+}
+
+
+/* --- ORANGE --- */
+/* LIGHT */
+[data-theme="light"] .page-header-card.orange {
+    background: linear-gradient(to right, #FFF7ED, #FFF3E0);
+    color: #9A3412;
+    border-color: #FED7AA;
+}
+
+[data-theme="light"] .page-header-card.orange .subtitle {
+    color: #C2410C;
+}
+
+/* DARK */
+[data-theme="dark"] .page-header-card.orange {
+    background: linear-gradient(to right, #581401, #853419);
+    color: #FFEDD5;
+    border-color: #FB923C;
+}
+
+[data-theme="dark"] .page-header-card.orange .subtitle {
+    color: #FDBA74;
+}
+
+
+/* --- PINK --- */
+/* LIGHT */
+[data-theme="light"] .page-header-card.pink {
+    background: linear-gradient(to right, #F1E3FF, #f4effa);
+    color: #6B21A8;
+    border-color: #E9D5FF;
+}
+
+[data-theme="light"] .page-header-card.pink .subtitle {
+    color: #7E22CE;
+}
+
+/* DARK */
+[data-theme="dark"] .page-header-card.pink {
+    background: linear-gradient(to right, #290144, #573075);
+    color: #f5dafc;
+    border-color: #D946EF;
+}
+
+[data-theme="dark"] .page-header-card.pink .subtitle {
+    color: #f4baff;
+}
+
+
+/* --- GREEN --- */
+
+/* LIGHT */
+[data-theme="light"] .page-header-card.green {
+    background: linear-gradient(to right, #ECFDF5, #D1FAE5);
+    color: #065F46;
+    border-color: #A7F3D0;
+}
+
+[data-theme="light"] .page-header-card.green .subtitle {
     color: #047857;
+}
+
+/* DARK */
+[data-theme="dark"] .page-header-card.green {
+    background: linear-gradient(to right, #064E3B, #022C22);
+    color: #D1FAE5;
+    border-color: #34D399;
+}
+
+[data-theme="dark"] .page-header-card.green .subtitle {
+    color: #6EE7B7;
 }

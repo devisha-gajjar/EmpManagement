@@ -57,7 +57,7 @@ const ProjectsPage = () => {
           icon="kanban"
           title="Project List"
           subtitle="Manage projects and track progress"
-          theme="red"
+          theme="pink"
         />
       </div>
 

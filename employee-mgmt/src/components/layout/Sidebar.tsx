@@ -141,377 +141,397 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
 
   return (
     <>
-      <Drawer
-        variant="permanent"
-        sx={(theme) => ({
-          width: currentWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: currentWidth,
-            height: "100vh",
-            padding: "16px 10px",
-            backgroundColor: theme.palette.background.default,
-            color: theme.palette.text.primary,
-            display: "flex",
-            flexDirection: "column",
-            transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-            overflowX: "hidden",
-            borderRight: `1px solid ${theme.palette.divider}`,
-          },
-        })}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            px: isCollapsed ? 1 : 2,
-            py: 2,
-            mb: 2,
-            borderRadius: "12px",
-            background: (theme) =>
-              theme.palette.mode === "dark"
-                ? "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)"
-                : "linear-gradient(135deg, #232d38ff 0%, #04378aff 100%)",
-            boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
-            justifyContent: isCollapsed ? "center" : "flex-start",
-          }}
-        >
-          <Box
-            sx={{
-              width: 40,
-              height: 40,
-              borderRadius: "10px",
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "20px",
-            }}
-          >
-            <i className="bi bi-briefcase-fill" style={{ color: "#fff" }}></i>
-          </Box>
-          {!isCollapsed && (
-            <Box>
-              <Box sx={{ fontWeight: 700, fontSize: "18px", color: "#fff" }}>
-                Employee
-              </Box>
-              <Box sx={{ fontSize: "11px", color: "rgba(255,255,255,0.7)" }}>
-                Management System
-              </Box>
-            </Box>
-          )}
-        </Box>
-
-        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.08)", mb: 1 }} />
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-          <IconButton
-            onClick={toggleSidebar}
-            sx={{
-              color: "#94a3b8",
-              backgroundColor: "rgba(148, 163, 184, 0.08)",
-              width: 32,
-              height: 32,
-              "&:hover": {
-                backgroundColor: "rgba(59, 130, 246, 0.15)",
-                color: "#3b82f6",
-              },
-              borderRadius: "10px",
-            }}
-          >
-            {isCollapsed ? <ChevronRight /> : <Close />}
-          </IconButton>
-        </Box>
-
-        {/* <button
-          onClick={toggleSidebar}
-          className="position-absolute top-30 end-0 translate-middle-y w-30 h-30 bg-primary rounded-circle d-flex align-items-center justify-content-center shadow-lg hover:scale-110 transition-all"
-        >
-          {isCollapsed ? (
-            <ChevronRight className="w-4 h-4 text-white" />
-          ) : (
-            <ChevronLeft className="w-4 h-4 text-white" />
-          )}
-        </button> */}
-
-        <Box sx={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
-          <List sx={{ px: 0.5 }}>
-            {navLinks.map((link) => {
-              const active = isParentActive(link);
-              const isOpen = openMenu[link.name] || false;
-
-              return (
-                <React.Fragment key={link.name}>
-                  <ListItem disablePadding sx={{ mb: 0.5 }}>
-                    <Tooltip
-                      title={isCollapsed ? link.name : ""}
-                      placement="right"
-                      arrow
-                    >
-                      <ListItemButton
-                        selected={active}
-                        onMouseEnter={(e) => handlePopoverOpen(e, link)}
-                        onMouseLeave={handlePopoverClose}
-                        onClick={() => {
-                          if (link.subMenu) {
-                            if (!isCollapsed) {
-                              handleMenuClick(link.name);
-                            }
-                          } else {
-                            navigate(link.path);
-                          }
-                        }}
-                        sx={(theme) => ({
-                          borderRadius: "10px",
-                          py: 1.3,
-                          px: isCollapsed ? 1 : 2,
-                          gap: 1.8,
-
-                          backgroundColor: active
-                            ? theme.palette.action.selected
-                            : "transparent",
-
-                          color: active
-                            ? theme.palette.primary.main
-                            : theme.palette.text.secondary,
-
-                          border: active
-                            ? `1px solid ${theme.palette.primary.main}33`
-                            : "1px solid transparent",
-
-                          "&:hover": {
-                            backgroundColor: theme.palette.action.hover,
-                            color: theme.palette.text.primary,
-                          },
-
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            width: "3px",
-                            backgroundColor: theme.palette.primary.main,
-                            opacity: active ? 1 : 0,
-                          },
-                        })}
-                      >
-                        {link.icon && (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              fontSize: "18px",
-                              color: "inherit",
-                              minWidth: "20px",
-                            }}
-                          >
-                            <i className={link.icon}></i>
-                          </Box>
-                        )}
-                        {!isCollapsed && (
-                          <>
-                            <ListItemText
-                              primary={link.name}
-                              sx={{ margin: 0 }}
-                            />
-                            {link.subMenu && (
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  color: "inherit",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                {isOpen ? (
-                                  <ExpandLess fontSize="small" />
-                                ) : (
-                                  <ExpandMore fontSize="small" />
-                                )}
-                              </Box>
-                            )}
-                          </>
-                        )}
-                      </ListItemButton>
-                    </Tooltip>
-                  </ListItem>
-
-                  {link.subMenu && !isCollapsed && (
-                    <Collapse in={isOpen} timeout="auto" unmountOnExit>
-                      <List component="div" disablePadding>
-                        {link.subMenu.map((sub) => {
-                          const subActive = sub.path === location.pathname;
-
-                          return (
-                            <ListItem
-                              key={sub.name}
-                              sx={{ pl: 2, mb: 0.5, mt: 0 }}
-                            >
-                              <ListItemButton
-                                selected={subActive}
-                                onClick={() => navigate(sub.path)}
-                                sx={(theme) => ({
-                                  borderRadius: "8px",
-                                  py: 1,
-                                  px: 2,
-                                  gap: 1.5,
-                                  ml: 2.5,
-                                  backgroundColor: subActive
-                                    ? theme.palette.action.selected
-                                    : "transparent",
-                                  color: subActive
-                                    ? theme.palette.primary.main
-                                    : theme.palette.text.secondary,
-                                  borderLeft: subActive
-                                    ? "2px solid #3b82f6"
-                                    : "2px solid transparent",
-                                  transition: "all 0.2s",
-
-                                  "&:hover": {
-                                    backgroundColor: theme.palette.action.hover,
-                                    color: theme.palette.text.primary,
-                                    transform: "translateX(2px)",
-                                  },
-
-                                  "& .MuiListItemText-primary": {
-                                    fontSize: "13px",
-                                    fontWeight: subActive ? 600 : 400,
-                                  },
-                                })}
-                              >
-                                {sub.icon && (
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      fontSize: "16px",
-                                      color: "inherit",
-                                      minWidth: "18px",
-                                    }}
-                                  >
-                                    <i className={sub.icon}></i>
-                                  </Box>
-                                )}
-                                <ListItemText
-                                  primary={sub.name}
-                                  sx={{ m: 0 }}
-                                />
-                              </ListItemButton>
-                            </ListItem>
-                          );
-                        })}
-                      </List>
-                    </Collapse>
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </List>
-        </Box>
-
-        <Button
-          onClick={() => dispatch(toggleTheme())}
-          variant="outlined"
+      <Box sx={{ position: "relative" }}>
+        <Drawer
+          variant="permanent"
           sx={(theme) => ({
-            mx: 1,
-            mb: 1,
-            borderRadius: "10px",
-            textTransform: "none",
-            fontWeight: 600,
-            minWidth: isCollapsed ? 42 : "auto",
-
-            color:
-              theme.palette.mode === "dark"
-                ? theme.palette.common.white
-                : theme.palette.common.black,
-
-            borderColor:
-              theme.palette.mode === "dark"
-                ? "rgba(255,255,255,0.4)"
-                : "rgba(0,0,0,0.3)",
-
-            backgroundColor:
-              theme.palette.mode === "dark"
-                ? "rgba(255,255,255,0.05)"
-                : "rgba(0,0,0,0.04)",
-
-            "&:hover": {
-              backgroundColor:
-                theme.palette.mode === "dark"
-                  ? "rgba(255,255,255,0.12)"
-                  : "rgba(0,0,0,0.08)",
-              borderColor:
-                theme.palette.mode === "dark"
-                  ? theme.palette.common.white
-                  : theme.palette.common.black,
+            width: currentWidth,
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: {
+              width: currentWidth,
+              height: "100vh",
+              padding: "16px 10px",
+              backgroundColor: theme.palette.background.default,
+              color: theme.palette.text.primary,
+              display: "flex",
+              flexDirection: "column",
+              transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              overflowX: "hidden",
+              borderRight: `1px solid ${theme.palette.divider}`,
+              position: "relative",
             },
           })}
         >
-          {isCollapsed ? (
-            <span style={{ fontSize: "18px" }}>
-              {mode === "light" ? "🌙" : "☀️"}
-            </span>
-          ) : mode === "light" ? (
-            "🌙 Dark Mode"
-          ) : (
-            "☀️ Light Mode"
-          )}
-        </Button>
-
-        {/* Logout Button - Fixed at Bottom */}
-        <Box sx={{ mt: "auto", px: 0.5 }}>
-          <Divider
+          <Box
             sx={{
-              borderColor: "rgba(255, 255, 255, 0.08)",
-              mb: 1.5,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 1.5,
+              px: isCollapsed ? 1 : 2,
+              py: isCollapsed ? 1 : 2,
+              mb: 2,
+              borderRadius: "12px",
+              background: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)"
+                  : "linear-gradient(135deg, #232d38ff 0%, #04378aff 100%)",
+              boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
             }}
-          />
-          <Tooltip title={isCollapsed ? "Logout" : ""} placement="right" arrow>
-            <ListItemButton
-              onClick={() => setOpenLogoutDialog(true)}
-              sx={{
-                borderRadius: "10px",
-                py: 1.3,
-                px: isCollapsed ? 1 : 2,
-                gap: 1.8,
-                backgroundColor: "transparent",
-                color: "#ef4444",
-                border: "1px solid rgba(239, 68, 68, 0.2)",
-                transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                justifyContent: isCollapsed ? "center" : "flex-start",
-
-                "&:hover": {
-                  bgcolor: "rgba(239, 68, 68, 0.1)",
-                  borderColor: "rgba(239, 68, 68, 0.4)",
-                  transform: isCollapsed ? "none" : "translateX(2px)",
-                },
-
-                "& .MuiListItemText-primary": {
-                  fontWeight: 600,
-                  fontSize: "14px",
-                  letterSpacing: "0.01em",
-                },
-              }}
-            >
+          >
+            {/* Left: Logo + Title */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
               <Box
                 sx={{
+                  width: 33,
+                  height: 33,
+                  borderRadius: "10px",
+                  backgroundColor: "rgba(255, 255, 255, 0.15)",
                   display: "flex",
                   alignItems: "center",
-                  fontSize: "18px",
-                  color: "inherit",
-                  minWidth: "20px",
+                  justifyContent: "center",
+                  fontSize: "20px",
                 }}
               >
-                <i className="bi bi-box-arrow-right"></i>
+                <i
+                  className="bi bi-briefcase-fill"
+                  style={{ color: "#fff" }}
+                ></i>
               </Box>
+
               {!isCollapsed && (
-                <ListItemText primary="Logout" sx={{ margin: 0 }} />
+                <Box>
+                  <Box
+                    sx={{ fontWeight: 700, fontSize: "18px", color: "#fff" }}
+                  >
+                    Employee
+                  </Box>
+                  <Box
+                    sx={{ fontSize: "11px", color: "rgba(255,255,255,0.7)" }}
+                  >
+                    Management System
+                  </Box>
+                </Box>
               )}
-            </ListItemButton>
-          </Tooltip>
-        </Box>
-      </Drawer>
+            </Box>
+          </Box>
+
+          <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.08)", mb: 1 }} />
+
+          <Box sx={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
+            <List sx={{ px: 0.5 }}>
+              {navLinks.map((link) => {
+                const active = isParentActive(link);
+                const isOpen = openMenu[link.name] || false;
+
+                return (
+                  <React.Fragment key={link.name}>
+                    <ListItem disablePadding sx={{ mb: 0.5 }}>
+                      <Tooltip
+                        title={isCollapsed ? link.name : ""}
+                        placement="right"
+                        arrow
+                      >
+                        <ListItemButton
+                          selected={active}
+                          onMouseEnter={(e) => handlePopoverOpen(e, link)}
+                          onMouseLeave={handlePopoverClose}
+                          onClick={() => {
+                            if (link.subMenu) {
+                              if (!isCollapsed) {
+                                handleMenuClick(link.name);
+                              }
+                            } else {
+                              navigate(link.path);
+                            }
+                          }}
+                          sx={(theme) => ({
+                            borderRadius: "10px",
+                            py: 1.3,
+                            px: isCollapsed ? 1 : 2,
+                            gap: 1.8,
+
+                            backgroundColor: active
+                              ? theme.palette.action.selected
+                              : "transparent",
+
+                            color: active
+                              ? theme.palette.primary.main
+                              : theme.palette.text.secondary,
+
+                            border: active
+                              ? `1px solid ${theme.palette.primary.main}33`
+                              : "1px solid transparent",
+
+                            "&:hover": {
+                              backgroundColor: theme.palette.action.hover,
+                              color: theme.palette.text.primary,
+                            },
+
+                            "&::before": {
+                              content: '""',
+                              position: "absolute",
+                              left: 0,
+                              top: 0,
+                              bottom: 0,
+                              width: "3px",
+                              backgroundColor: theme.palette.primary.main,
+                              opacity: active ? 1 : 0,
+                            },
+                          })}
+                        >
+                          {link.icon && (
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                fontSize: "18px",
+                                color: "inherit",
+                                minWidth: "20px",
+                              }}
+                            >
+                              <i className={link.icon}></i>
+                            </Box>
+                          )}
+                          {!isCollapsed && (
+                            <>
+                              <ListItemText
+                                primary={link.name}
+                                sx={{
+                                  margin: 0,
+                                  fontSize: "16px",
+                                }}
+                              />
+                              {link.subMenu && (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    color: "inherit",
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  {isOpen ? (
+                                    <ExpandLess fontSize="small" />
+                                  ) : (
+                                    <ExpandMore fontSize="small" />
+                                  )}
+                                </Box>
+                              )}
+                            </>
+                          )}
+                        </ListItemButton>
+                      </Tooltip>
+                    </ListItem>
+
+                    {link.subMenu && !isCollapsed && (
+                      <Collapse in={isOpen} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                          {link.subMenu.map((sub) => {
+                            const subActive = sub.path === location.pathname;
+
+                            return (
+                              <ListItem
+                                key={sub.name}
+                                sx={{ pl: 2, mb: 0.5, mt: 0 }}
+                              >
+                                <ListItemButton
+                                  selected={subActive}
+                                  onClick={() => navigate(sub.path)}
+                                  sx={(theme) => ({
+                                    borderRadius: "8px",
+                                    py: 1,
+                                    px: 2,
+                                    gap: 1.5,
+                                    ml: 2.5,
+                                    backgroundColor: subActive
+                                      ? theme.palette.action.selected
+                                      : "transparent",
+                                    color: subActive
+                                      ? theme.palette.primary.main
+                                      : theme.palette.text.secondary,
+                                    borderLeft: subActive
+                                      ? "2px solid #3b82f6"
+                                      : "2px solid transparent",
+                                    transition: "all 0.2s",
+
+                                    "&:hover": {
+                                      backgroundColor:
+                                        theme.palette.action.hover,
+                                      color: theme.palette.text.primary,
+                                      transform: "translateX(2px)",
+                                    },
+
+                                    "& .MuiListItemText-primary": {
+                                      fontSize: "13px",
+                                      fontWeight: subActive ? 600 : 400,
+                                    },
+                                  })}
+                                >
+                                  {sub.icon && (
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        fontSize: "16px",
+                                        color: "inherit",
+                                        minWidth: "18px",
+                                      }}
+                                    >
+                                      <i className={sub.icon}></i>
+                                    </Box>
+                                  )}
+                                  <ListItemText
+                                    primary={sub.name}
+                                    sx={{ m: 0 }}
+                                  />
+                                </ListItemButton>
+                              </ListItem>
+                            );
+                          })}
+                        </List>
+                      </Collapse>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </List>
+          </Box>
+
+          <Button
+            onClick={() => dispatch(toggleTheme())}
+            variant="outlined"
+            sx={(theme) => ({
+              mx: 1,
+              mb: 1,
+              borderRadius: "10px",
+              textTransform: "none",
+              fontWeight: 600,
+              minWidth: isCollapsed ? 42 : "auto",
+
+              color:
+                theme.palette.mode === "dark"
+                  ? theme.palette.common.white
+                  : theme.palette.common.black,
+
+              borderColor:
+                theme.palette.mode === "dark"
+                  ? "rgba(255,255,255,0.4)"
+                  : "rgba(0,0,0,0.3)",
+
+              backgroundColor:
+                theme.palette.mode === "dark"
+                  ? "rgba(255,255,255,0.05)"
+                  : "rgba(0,0,0,0.04)",
+
+              "&:hover": {
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255,255,255,0.12)"
+                    : "rgba(0,0,0,0.08)",
+                borderColor:
+                  theme.palette.mode === "dark"
+                    ? theme.palette.common.white
+                    : theme.palette.common.black,
+              },
+            })}
+          >
+            {isCollapsed ? (
+              <span style={{ fontSize: "18px" }}>
+                {mode === "light" ? "🌙" : "☀️"}
+              </span>
+            ) : mode === "light" ? (
+              "🌙 Dark Mode"
+            ) : (
+              "☀️ Light Mode"
+            )}
+          </Button>
+
+          {/* Logout Button - Fixed at Bottom */}
+          <Box sx={{ mt: "auto", px: 0.5 }}>
+            <Divider
+              sx={{
+                borderColor: "rgba(255, 255, 255, 0.08)",
+                mb: 1.5,
+              }}
+            />
+            <Tooltip
+              title={isCollapsed ? "Logout" : ""}
+              placement="right"
+              arrow
+            >
+              <ListItemButton
+                onClick={() => setOpenLogoutDialog(true)}
+                sx={{
+                  borderRadius: "10px",
+                  py: 1.3,
+                  px: isCollapsed ? 1 : 2,
+                  gap: 1.8,
+                  backgroundColor: "transparent",
+                  color: "#ef4444",
+                  border: "1px solid rgba(239, 68, 68, 0.2)",
+                  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+
+                  "&:hover": {
+                    bgcolor: "rgba(239, 68, 68, 0.1)",
+                    borderColor: "rgba(239, 68, 68, 0.4)",
+                    transform: isCollapsed ? "none" : "translateX(2px)",
+                  },
+
+                  "& .MuiListItemText-primary": {
+                    fontWeight: 600,
+                    fontSize: "14px",
+                    letterSpacing: "0.01em",
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    fontSize: "18px",
+                    color: "inherit",
+                    minWidth: "20px",
+                  }}
+                >
+                  <i className="bi bi-box-arrow-right"></i>
+                </Box>
+                {!isCollapsed && (
+                  <ListItemText primary="Logout" sx={{ margin: 0 }} />
+                )}
+              </ListItemButton>
+            </Tooltip>
+          </Box>
+        </Drawer>
+
+        {/* Toggle Button - OUTSIDE Drawer */}
+        <IconButton
+          onClick={toggleSidebar}
+          sx={{
+            position: "absolute",
+            top: isCollapsed ? 78 : 102,
+            right: -14,
+            zIndex: 1201, // Higher than drawer (1200)
+            width: 28,
+            height: 28,
+            borderRadius: "50%",
+            backgroundColor: "#02347eec",
+            color: "#fff",
+            border: "1px solid rgba(255,255,255,0.2)",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+            "&:hover": {
+              backgroundColor: "#012355ff",
+            },
+          }}
+        >
+          {isCollapsed ? (
+            <ChevronRight fontSize="small" />
+          ) : (
+            <Close fontSize="small" />
+          )}
+        </IconButton>
+      </Box>
 
       {/* Floating Submenu Popover for Collapsed State */}
       <Popper
@@ -606,6 +626,7 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
           </List>
         </Paper>
       </Popper>
+
       <CommonConfirmDialog
         open={openLogoutDialog}
         title="Confirm Logout"

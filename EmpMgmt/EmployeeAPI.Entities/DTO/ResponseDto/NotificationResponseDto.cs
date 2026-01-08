@@ -10,4 +10,5 @@ public class NotificationResponseDto
     public int? ReferenceId { get; set; }
     public bool IsRead { get; set; }
     public DateTime CreatedAt { get; set; }
+    public string EmailSent { get; set; } = null!;
 }

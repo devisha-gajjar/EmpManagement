@@ -42,4 +42,12 @@ public static class Constants
     public const string TASK_UPDATED = "Task updated successfully.";
     public const string TASK_DELETED = "Task deleted successfully.";
     #endregion
+
+    #region Email Service
+    public const string EMAIL_NOT_SENT = "Email not sent.";
+    public const string SMTP_CONFIG_MISSING = "SMTP configuration is missing required fields.";
+    public const string EMAIL_BODY_EMPTY = "Email body is not provided.";
+    public const string EMAIL_PATH_NOT_CONFIGURED = "Email template path is not configured.";
+    public const string EMAIL_SENT_SUCCESS = "Email successfully sent to {0}.";
+    #endregion
 }
