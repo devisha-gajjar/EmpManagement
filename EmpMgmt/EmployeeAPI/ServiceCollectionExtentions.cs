@@ -28,6 +28,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITaskWorkLogService, TaskWorkLogService>();
         services.AddScoped<IUserDocumentService, UserDocumentService>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddSingleton<IGeoLocationService, GeoLocationService>();
+
 
         //mappers
         services.AddAutoMapper(typeof(MappingProfile));

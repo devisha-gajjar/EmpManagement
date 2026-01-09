@@ -35,7 +35,18 @@ public class NotificationService(
 
         User user = userRepository.GetById(request.UserId)!;
 
-        var emailSent = await SendMailTUser(user.Email);
+        string actionUrl = $"{config["Frontend:BaseUrl"]}user/notification";
+
+        var mailDto = new NotificationMailDto
+        {
+            Email = user.Email,
+            UserName = user.Username,
+            NotificationTitle = request.Title,
+            NotificationMessage = request.Message,
+            ActionUrl = actionUrl
+        };
+
+        var emailSent = await SendMailToUser(mailDto);
 
         var response = mapper.Map<NotificationResponseDto>(entity);
         response.EmailSent = emailSent;
@@ -109,29 +120,34 @@ public class NotificationService(
     #endregion
 
     #region Send mail
-    private async Task<string> SendMailTUser(string email)
+    private async Task<string> SendMailToUser(NotificationMailDto notificationMailDto)
     {
         string? templatePath = config["EmailSettings:NewUserTemplatePath"];
         if (string.IsNullOrWhiteSpace(templatePath))
             throw new AppException(Constants.EMAIL_PATH_NOT_CONFIGURED);
 
         string fullPath = Path.Combine(Directory.GetCurrentDirectory(), templatePath);
+        Console.WriteLine("Path : " + fullPath);
         string emailBody = await File.ReadAllTextAsync(fullPath);
 
-        emailBody = emailBody.Replace("{username}", email);
+        emailBody = emailBody
+            .Replace("{UserName}", notificationMailDto.UserName)
+            .Replace("{NotificationTitle}", notificationMailDto.NotificationTitle)
+            .Replace("{NotificationMessage}", notificationMailDto.NotificationMessage)
+            .Replace("{ActionUrl}", notificationMailDto.ActionUrl)
+            .Replace("{Year}", DateTime.Now.Year.ToString());
 
         bool isEmailSent = await emailService.SendEmailAsync(new EmailRequestDto
         {
-            To = email,
-            Subject = "Notofication Received!",
+            To = notificationMailDto.Email,
+            Subject = "Notification Received",
             Body = emailBody
         });
 
-        if (isEmailSent)
-            return string.Format(Constants.EMAIL_SENT_SUCCESS, email);
-        else
-            return Constants.EMAIL_NOT_SENT;
-
+        return isEmailSent
+            ? string.Format(Constants.EMAIL_SENT_SUCCESS, notificationMailDto.Email)
+            : Constants.EMAIL_NOT_SENT;
     }
     #endregion
+
 }
