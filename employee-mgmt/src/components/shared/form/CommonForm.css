@@ -71,3 +71,7 @@ label {
 .btn-outline-secondary:hover {
     background-color: #f8f8f8;
 }
+
+.form-select {
+    padding: .53rem 2.25rem .53rem .75rem !important;
+}

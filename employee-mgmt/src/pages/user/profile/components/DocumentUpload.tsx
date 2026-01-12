@@ -93,7 +93,9 @@ export default function DocumentUpload() {
         }}
       >
         <div className="upload-content">
-          <span className="upload-icon">⬆</span>
+          <span className="upload-icon">
+            <i className="bi bi-cloud-arrow-up"></i>
+          </span>
           <p className="upload-text">Drop your file here, or click to browse</p>
 
           <input

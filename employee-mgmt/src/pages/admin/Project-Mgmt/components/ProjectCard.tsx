@@ -120,12 +120,14 @@ const ProjectCard = ({ project }: Props) => {
           </div>
 
           <h5 className="mt-3">{project.projectName}</h5>
-          <p className="text-muted small">{project.description}</p>
+          <p className="text-muted small project-details-text">
+            {project.description}
+          </p>
 
           <div className="mb-2 small">Progress</div>
           <Progress value={project.progressPercentage} />
 
-          <div className="d-flex justify-content-between mt-3 text-muted small">
+          <div className="d-flex justify-content-between mt-3 text-muted small project-details-text">
             <span>{new Date(project.createdOn).toLocaleDateString()}</span>
             <div className="d-flex gap-2">
               <span>

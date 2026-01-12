@@ -15,6 +15,7 @@ import {
   IconButton,
   Tooltip,
   TablePagination,
+  TextField,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -186,31 +187,35 @@ export default function Employees() {
 
       <Button
         variant="contained"
-        color="primary"
         startIcon={<AddIcon />}
         onClick={handleAddEmployee}
+        sx={(theme) => ({
+          backgroundColor: theme.palette.primary.main,
+          color: theme.palette.primary.contrastText,
+        })}
       >
         Add Employee
       </Button>
 
       <Box mb={2} display="flex" justifyContent="flex-end">
-        <input
-          type="text"
+        <TextField
+          size="small"
           placeholder="Search employee..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            padding: "8px",
-            width: "250px",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
+          sx={{
+            width: 260,
           }}
         />
       </Box>
 
       <TableContainer component={Paper} elevation={3}>
         <Table sx={{ minWidth: 650 }} aria-label="employee table">
-          <TableHead sx={{ backgroundColor: "#f0f0f0" }}>
+          <TableHead
+            sx={(theme) => ({
+              backgroundColor: theme.palette.background.default,
+            })}
+          >
             <TableRow>
               <TableCell sx={{ fontWeight: "bold" }}>ID</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>

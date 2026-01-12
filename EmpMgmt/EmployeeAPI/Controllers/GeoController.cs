@@ -1,3 +1,4 @@
+using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,22 +11,22 @@ public class GeoController(IGeoLocationService geoService) : ControllerBase
     private readonly IGeoLocationService _geoService = geoService;
 
     [HttpGet("country")]
-    public IActionResult GetCountry([FromQuery] string? ip)
+    public async Task<IActionResult> GetCountry([FromQuery] string? ip)
     {
-        // 1️⃣ If no IP provided, use client IP
+        // 1️⃣ If IP not provided, get server public IP
         if (string.IsNullOrWhiteSpace(ip))
         {
-            ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            ip = await ClientIpResolver.GetPublicIpAddressAsync();
         }
 
         if (string.IsNullOrWhiteSpace(ip))
-            return BadRequest("Could not determine client IP");
+            return BadRequest("Public IP could not be determined");
 
-        // 2️⃣ Get country info
+        // 2️⃣ Geo lookup
         var result = _geoService.GetCountryByIp(ip);
 
         if (result == null)
-            return BadRequest("Invalid or unsupported IP address");
+            return BadRequest("Invalid or unsupported public IP address");
 
         return Ok(new
         {
@@ -35,4 +36,5 @@ public class GeoController(IGeoLocationService geoService) : ControllerBase
             continent = result.Continent.Name
         });
     }
+
 }

@@ -20,7 +20,7 @@ export const ProjectStatusUI: Record<
     [ProjectStatus.Planning]: {
         label: "Planning",
         backgroundColor: "light-purple",
-        textColor: "purple",
+        textColor: "blue",
         icon: "diagram-3",
     },
 

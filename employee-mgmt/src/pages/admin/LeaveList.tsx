@@ -16,6 +16,7 @@ import {
   Tooltip,
   Stack,
   TablePagination,
+  TextField,
 } from "@mui/material";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -137,23 +138,24 @@ export default function LeaveList() {
       </div>
 
       <Box mb={2} display="flex" justifyContent="flex-end">
-        <input
-          type="text"
+        <TextField
+          size="small"
           placeholder="Search Levaes..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            padding: "8px",
-            width: "250px",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
+          sx={{
+            width: 260,
           }}
         />
       </Box>
 
       <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2 }}>
         <Table>
-          <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
+          <TableHead
+            sx={(theme) => ({
+              backgroundColor: theme.palette.background.default,
+            })}
+          >
             <TableRow>
               <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Leave Type</TableCell>

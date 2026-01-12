@@ -5,6 +5,16 @@ export const getMuiTheme = (mode: "light" | "dark") =>
         palette: {
             mode,
 
+            primary: {
+                main: mode === "dark" ? "#4A90E2" : "#10386d",
+                contrastText: "#FFFFFF",
+            },
+
+            secondary: {
+                main: mode === "dark" ? "#38BDF8" : "#022536",
+                contrastText: "#FFFFFF",
+            },
+
             background: {
                 default: mode === "dark" ? "#010E1D" : "#F4F7FB",
                 paper: mode === "dark" ? "#011A33" : "#FFFFFF",
@@ -19,14 +29,14 @@ export const getMuiTheme = (mode: "light" | "dark") =>
             },
 
             action: {
-                hover: mode === "dark"
-                    ? "rgba(255, 255, 255, 0.06)"
-                    : "rgba(2, 42, 82, 0.04)",
-
-                selected: mode === "dark"
-                    ? "rgba(74, 144, 226, 0.18)"
-                    : "rgba(74, 144, 226, 0.12)",
-
+                hover:
+                    mode === "dark"
+                        ? "rgba(255, 255, 255, 0.06)"
+                        : "rgba(2, 42, 82, 0.04)",
+                selected:
+                    mode === "dark"
+                        ? "rgba(74, 144, 226, 0.18)"
+                        : "rgba(74, 144, 226, 0.12)",
                 active: mode === "dark" ? "#4A90E2" : "#022A52",
             },
         },
