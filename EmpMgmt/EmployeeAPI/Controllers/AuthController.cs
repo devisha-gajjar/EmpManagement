@@ -8,13 +8,14 @@ using EmployeeAPI.Entities.Data;
 using System.Text.Json;
 using EmployeeAPI.Entities.DTO.RequestDto;
 using EmployeeAPI.Entities.DTO.ResponseDto;
+using System.Security.Claims;
 
 namespace EmployeeAPI.Controllers;
 
 [EnableCors("AllowAll")]
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IAuthService authService, EmployeeMgmtContext db, ICustomService customService, IConfiguration configuration) : ControllerBase
+public class AuthController(IAuthService authService, EmployeeMgmtContext db, ICustomService customService, IConfiguration configuration, ITwoFactorService twoFactorService) : ControllerBase
 {
     [HttpPost("register")]
     public IActionResult Register([FromBody] RegisterDto dto)
@@ -147,5 +148,27 @@ public class AuthController(IAuthService authService, EmployeeMgmtContext db, IC
         return Ok(new { Token = token });
     }
 
+    [HttpPost("verify-2fa")]
+    public async Task<IActionResult> Verify2FA([FromBody] Verify2FADto dto)
+    {
+        var result = await authService.VerifyTwoFactorAsync(dto);
+        return Ok(result);
+    }
+
+    [HttpPost("2fa/setup")]
+    public ActionResult<TwoFactorSetupDto> SetupTwoFactor()
+    {
+        // UserId comes from JWT
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrWhiteSpace(userIdClaim))
+            return Unauthorized();
+
+        int userId = int.Parse(userIdClaim);
+
+        var result = twoFactorService.Generate2FASetup(userId);
+
+        return Ok(result);
+    }
 }
 

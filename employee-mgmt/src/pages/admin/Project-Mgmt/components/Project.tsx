@@ -7,12 +7,19 @@ import { ProjectStatus } from "../../../../enums/enum";
 import { useMemo, useState } from "react";
 import { useDebounce } from "../../../../app/hooks";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@mui/material";
 
 const ProjectsPage = () => {
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState<number | "">("");
   const debouncedSearch = useDebounce(searchText, 400);
   const navigate = useNavigate();
+
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+  const inputClass = isDark
+    ? "bg-dark text-light border-secondary"
+    : "bg-white text-dark";
 
   const { data: projects = [], isError } = useGetProjectsQuery();
 
@@ -64,17 +71,24 @@ const ProjectsPage = () => {
       <ProjectSummary counts={counts} />
 
       {/* Filters */}
-      <Row className="align-items-center bg-white p-3 m-1 border border-1 rounded ">
+      <Row
+        className={`align-items-center p-3 m-1 border border-1 rounded ${
+          isDark ? "bg-dark text-light" : "bg-white"
+        }`}
+      >
         <Col md={4}>
           <Input
+            className={inputClass}
             placeholder="Search projects..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
         </Col>
+
         <Col md={3}>
           <Input
             type="select"
+            className={inputClass}
             value={statusFilter}
             onChange={(e) =>
               setStatusFilter(

@@ -6,6 +6,14 @@ public static class Constants
     public const string UNAUTHORIZED_USER = "User is not authorized.";
     public const string ADMIN_GROUP = "Admins";
     public const string BEARER = "Bearer";
+    public const string USER_NOT_FOUND = "User not found!";
+    #endregion
+
+    #region Token Messages
+    public const string INVALID_TOKEN_FORMAT_MESSAGE = "Invalid Token Format.";
+    public const string EXPIRED_TOKEN_MESSAGE = "Token has expired.";
+    public const string EMPTY_TOKEN_MESSAGE = "Token must not be null or empty.";
+    public const string JWT_KEY_ERROR_MESSAGE = "JWT Key is not configured.";
     #endregion
 
     #region Entity Field Names

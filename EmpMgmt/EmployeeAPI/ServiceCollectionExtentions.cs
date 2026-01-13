@@ -29,7 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserDocumentService, UserDocumentService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddSingleton<IGeoLocationService, GeoLocationService>();
-
+        services.AddScoped<ITwoFactorService, TwoFactorService>();
 
         //mappers
         services.AddAutoMapper(typeof(MappingProfile));

@@ -37,6 +37,12 @@ public partial class User
 
     public string? Position { get; set; }
 
+    public bool IsTwoFactorEnabled { get; set; }
+
+    public string? TwoFactorSecret { get; set; }
+
+    public DateTime? TwoFactorEnabledOn { get; set; }
+
     public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
 
     public virtual ICollection<Department> Departments { get; set; } = new List<Department>();

@@ -5,7 +5,7 @@ import type { DynamicFormField } from "../../../../interfaces/form.interface";
 import { useAppDispatch, useSnackbar } from "../../../../app/hooks";
 import { notificationHubService } from "../../../../services/signalR/notificationHub.service";
 import { useLazySearchUsersQuery } from "../../../../features/admin/project-mgmt/projectMembersApi";
-import { debounce } from "@mui/material";
+import { debounce, useTheme } from "@mui/material";
 import type { ProjectTask } from "../../../../interfaces/project.interface";
 import { taskStatusOptions } from "../../../../utils/constant";
 import { fetchProjectById } from "../../../../features/admin/project-mgmt/projectDetailsApi";
@@ -22,6 +22,9 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
   const isEditMode = Boolean(taskId);
   const snackbar = useSnackbar();
   const dispatch = useAppDispatch();
+
+  const muiTheme = useTheme();
+  const isDark = muiTheme.palette.mode === "dark";
 
   const [isLoading, setIsLoading] = useState(false);
   const [triggerSearch, { isFetching }] = useLazySearchUsersQuery();
@@ -162,11 +165,19 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} toggle={onClose} centered>
-      <ModalHeader toggle={onClose}>
+    <Modal
+      isOpen={isOpen}
+      toggle={onClose}
+      centered
+      className={isDark ? "dark-modal" : ""}
+    >
+      <ModalHeader
+        toggle={onClose}
+        className={isDark ? "bg-dark text-white" : ""}
+      >
         {isEditMode ? "Edit Task" : "Add Task"}
       </ModalHeader>
-      <ModalBody>
+      <ModalBody className={isDark ? "bg-dark text-white" : ""}>
         <DynamicFormComponent
           formConfig={formConfig}
           onSubmit={handleSubmit}

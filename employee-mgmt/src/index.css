@@ -22,6 +22,10 @@
   background-color: #a8a8a8;
 }
 
+input.bg-dark::placeholder {
+  color: white;
+}
+
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

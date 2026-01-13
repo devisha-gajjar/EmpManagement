@@ -104,7 +104,7 @@ const ProjectCard = ({ project }: Props) => {
                 <i className="bi bi-three-dots-vertical cursor-pointer "></i>
               </DropdownToggle>
 
-              <DropdownMenu end>
+              <DropdownMenu end className="project-menu-content">
                 <DropdownItem onClick={onEdit}>
                   <i className="bi bi-pencil me-2"></i> Edit
                 </DropdownItem>

@@ -68,7 +68,7 @@ public class EmployeeServiceTest
     [Fact]
     public void AddEmployee_ShouldReturnNull_IfEmailExists()
     {
-        var dto = new AddEmployeeViewModelDTO { Email = "test@example.com" };
+        var dto = new AddEmployeeViewModelDto { Email = "test@example.com" };
         _employeeRepoMock.Setup(r => r.EmployeeExistsByEmail(dto.Email)).Returns(true);
 
         var result = _employeeService.AddEmployee(dto);
@@ -79,7 +79,7 @@ public class EmployeeServiceTest
     [Fact]
     public void AddEmployee_ShouldAddEmployee_IfEmailNotExists()
     {
-        var dto = new AddEmployeeViewModelDTO
+        var dto = new AddEmployeeViewModelDto
         {
             Name = "Tom",
             Email = "tom@example.com",
@@ -111,7 +111,7 @@ public class EmployeeServiceTest
     [Fact]
     public void UpdateEmployee_ShouldReturnFalse_IfIdMismatch()
     {
-        var dto = new AddEmployeeViewModelDTO { Id = 2 };
+        var dto = new AddEmployeeViewModelDto { Id = 2 };
         var result = _employeeService.UpdateEmployee(1, dto);
         result.Should().BeFalse();
     }
@@ -119,7 +119,7 @@ public class EmployeeServiceTest
     [Fact]
     public void UpdateEmployee_ShouldReturnFalse_IfEmployeeNotFound()
     {
-        var dto = new AddEmployeeViewModelDTO { Id = 1 };
+        var dto = new AddEmployeeViewModelDto { Id = 1 };
         _employeeRepoMock.Setup(r => r.GetById(1)).Returns((Employee?)null);
 
         var result = _employeeService.UpdateEmployee(1, dto);
@@ -129,7 +129,7 @@ public class EmployeeServiceTest
     [Fact]
     public void UpdateEmployee_ShouldReturnFalse_IfEmailAlreadyExists()
     {
-        var dto = new AddEmployeeViewModelDTO
+        var dto = new AddEmployeeViewModelDto
         {
             Id = 1,
             Email = "new@example.com"
@@ -151,7 +151,7 @@ public class EmployeeServiceTest
     [Fact]
     public void UpdateEmployee_ShouldUpdateSuccessfully()
     {
-        var dto = new AddEmployeeViewModelDTO
+        var dto = new AddEmployeeViewModelDto
         {
             Id = 1,
             Name = "Updated",

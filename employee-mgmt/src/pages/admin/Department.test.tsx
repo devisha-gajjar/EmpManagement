@@ -94,7 +94,6 @@ describe("Department Component", () => {
       leaves: {},
       attendance: {},
       employee: {},
-      holiday: {},
       departmentApi: {},
       employeeApi: {},
       attendanceApi: {},

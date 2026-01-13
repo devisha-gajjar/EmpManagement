@@ -1,5 +1,6 @@
 using EmployeeAPI.Controllers;
 using EmployeeAPI.Entities.DTO;
+using EmployeeAPI.Entities.DTO.ResponseDto;
 using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Services.IServices;
 using FluentAssertions;
@@ -23,7 +24,7 @@ public class EmployeeControllerTest
     public void GetEmployeeList_ShouldReturnOkResultWithData()
     {
         // Arrange
-        var employeeList = new List<EmployeeListDTO>
+        var employeeList = new List<EmployeeListDto>
             {
                 new() { Id = 1, Name = "Alice", Email = "alice@example.com" },
                 new() { Id = 2, Name = "Bob", Email = "bob@example.com" }
@@ -43,7 +44,7 @@ public class EmployeeControllerTest
     [Fact]
     public void GetById_ShouldReturnOk_WhenEmployeeExists()
     {
-        var dto = new AddEmployeeViewModelDTO { Id = 1, Name = "Alice", Email = "alice@example.com" };
+        var dto = new AddEmployeeViewModelDto { Id = 1, Name = "Alice", Email = "alice@example.com" };
         _serviceMock.Setup(s => s.GetEmployeeById(1)).Returns(dto);
 
         var result = _controller.GetById(1);
@@ -57,7 +58,7 @@ public class EmployeeControllerTest
     [Fact]
     public void GetById_ShouldReturnNotFound_WhenEmployeeDoesNotExist()
     {
-        _serviceMock.Setup(s => s.GetEmployeeById(99)).Returns((AddEmployeeViewModelDTO)null!);
+        _serviceMock.Setup(s => s.GetEmployeeById(99)).Returns((AddEmployeeViewModelDto)null!);
 
         var result = _controller.GetById(99);
 
@@ -67,7 +68,7 @@ public class EmployeeControllerTest
     [Fact]
     public void AddEmployee_ShouldReturnCreated_WhenEmployeeAdded()
     {
-        var dto = new AddEmployeeViewModelDTO { Name = "John", Email = "john@example.com", DepartmentId = 1 };
+        var dto = new AddEmployeeViewModelDto { Name = "John", Email = "john@example.com", DepartmentId = 1 };
         var created = new Employee { Id = 10, Name = "John", Email = "john@example.com" };
 
         _serviceMock.Setup(s => s.AddEmployee(dto)).Returns(created);
@@ -83,7 +84,7 @@ public class EmployeeControllerTest
     [Fact]
     public void AddEmployee_ShouldReturnBadRequest_WhenEmployeeExists()
     {
-        var dto = new AddEmployeeViewModelDTO { Name = "John", Email = "john@example.com", DepartmentId = 1 };
+        var dto = new AddEmployeeViewModelDto { Name = "John", Email = "john@example.com", DepartmentId = 1 };
         _serviceMock.Setup(s => s.AddEmployee(dto)).Returns((Employee)null!);
 
         var result = _controller.AddEmployee(dto);
@@ -96,7 +97,7 @@ public class EmployeeControllerTest
     [Fact]
     public void EditEmployee_ShouldReturnNoContent_WhenSuccessful()
     {
-        var dto = new AddEmployeeViewModelDTO { Id = 1, Name = "Alice", Email = "alice@example.com", DepartmentId = 1 };
+        var dto = new AddEmployeeViewModelDto { Id = 1, Name = "Alice", Email = "alice@example.com", DepartmentId = 1 };
         _serviceMock.Setup(s => s.UpdateEmployee(1, dto)).Returns(true);
 
         var result = _controller.EditEmployee(1, dto);
@@ -107,7 +108,7 @@ public class EmployeeControllerTest
     [Fact]
     public void EditEmployee_ShouldReturnBadRequest_WhenUpdateFails()
     {
-        var dto = new AddEmployeeViewModelDTO { Id = 1, Name = "Alice", Email = "alice@example.com", DepartmentId = 1 };
+        var dto = new AddEmployeeViewModelDto { Id = 1, Name = "Alice", Email = "alice@example.com", DepartmentId = 1 };
         _controller.ModelState.AddModelError("Email", "Required");
 
         var result = _controller.EditEmployee(1, dto);

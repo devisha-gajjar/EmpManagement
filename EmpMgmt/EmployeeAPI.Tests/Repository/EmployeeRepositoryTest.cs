@@ -1,6 +1,6 @@
 using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Entities.Models;
-using EmployeeAPI.Repositories.Repositories;
+using EmployeeAPI.Repositories.Implementation;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 

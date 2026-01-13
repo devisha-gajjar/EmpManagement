@@ -364,3 +364,8 @@ CREATE TABLE public.user_documents
         FOREIGN KEY (approved_by)
         REFERENCES public.users (user_id)
 );
+
+ALTER TABLE public.users
+ADD COLUMN is_two_factor_enabled BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN two_factor_secret TEXT,
+ADD COLUMN two_factor_enabled_on TIMESTAMP;

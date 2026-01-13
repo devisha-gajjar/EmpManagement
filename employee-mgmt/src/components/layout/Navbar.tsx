@@ -104,7 +104,7 @@ const Navbar = () => {
 
   const handleViewAllNotifications = () => {
     handleNotificationClose();
-    navigate("/notifications");
+    navigate("/user/notifications");
   };
 
   const handleLogout = () => {
@@ -451,23 +451,19 @@ const Navbar = () => {
         <Divider />
 
         {/* Menu Items */}
-        <MenuItem
-          onClick={() => {
-            handleProfileClose();
-            navigate("/user/profile");
-          }}
-          sx={{
-            py: 1.5,
-            "&:hover": {
-              backgroundColor: "rgba(59, 130, 246, 0.08)",
-            },
-          }}
-        >
-          <ListItemIcon>
-            <PersonIcon fontSize="small" sx={{ color: "#3b82f6" }} />
-          </ListItemIcon>
-          <ListItemText>My Profile</ListItemText>
-        </MenuItem>
+        {role === "user" ? (
+          <MenuItem
+            onClick={() => {
+              handleProfileClose();
+              navigate("/user/profile");
+            }}
+          >
+            <ListItemIcon>
+              <PersonIcon fontSize="small" sx={{ color: "#3b82f6" }} />
+            </ListItemIcon>
+            <ListItemText>My Profile</ListItemText>
+          </MenuItem>
+        ) : null}
 
         <MenuItem
           onClick={() => {

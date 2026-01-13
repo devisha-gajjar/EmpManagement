@@ -18,6 +18,7 @@ import {
 import { useAppSelector } from "../../../../app/hooks";
 import AddTaskForm from "./AddTaskForm";
 import TaskDetails from "./TaskDetails";
+import { useTheme } from "@mui/material";
 
 const statusColumns = [
   "Pending",
@@ -38,7 +39,9 @@ const ProjectDetails = () => {
     (state) => state.projectDetails
   );
 
-  console.log("project", project);
+  const muiTheme = useTheme();
+  const isDark = muiTheme.palette.mode === "dark";
+
   useEffect(() => {
     dispatch(fetchProjectById(projectId));
   }, [projectId, dispatch]);
@@ -84,12 +87,22 @@ const ProjectDetails = () => {
         />
       </div>
 
-      <Row className="mb-4 align-items-center bg-white m-1 rounded border p-3">
+      <Row
+        className={`mb-4 align-items-center m-1 rounded border p-3 ${
+          isDark ? "bg-dark text-light border-secondary" : "bg-white text-dark"
+        }`}
+      >
         <Col>
-          <p className="text-muted mb-0">{project.description}</p>
+          <p className={`mb-0 ${isDark ? "text-white" : "text-muted"}`}>
+            {project.description}
+          </p>
         </Col>
+
         <Col className="text-end">
-          <Button color="primary" onClick={() => setIsTaskModalOpen(true)}>
+          <Button
+            color={isDark ? "secondary" : "primary"}
+            onClick={() => setIsTaskModalOpen(true)}
+          >
             <i className="bi bi-plus-lg me-2"></i>
             Add Task
           </Button>

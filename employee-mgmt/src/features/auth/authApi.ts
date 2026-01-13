@@ -9,7 +9,8 @@ export const login = createAsyncThunk(
             const response = await axiosClient.post("/auth/login", data);
             return response.data.token as string;
         } catch (err: any) {
-            const errorMessage = err.response?.data?.message || "Login failed due to network or server error.";
+            console.log(err);
+            const errorMessage = err.response?.data?.Message || "Login failed due to network or server error.";
             return thunkAPI.rejectWithValue(errorMessage);
         }
     }

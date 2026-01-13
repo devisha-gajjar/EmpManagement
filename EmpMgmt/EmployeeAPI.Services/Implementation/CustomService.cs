@@ -42,9 +42,10 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
         Claim[]? authClaims =
             [
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.RoleName),
+                new Claim(ClaimTypes.Role, user.Role.RoleName!),
                 new Claim(ClaimTypes.Name,user.UserId.ToString()),
-                new Claim(ClaimTypes.GivenName, user.Username)
+                new Claim(ClaimTypes.GivenName, user.Username),
+                new Claim("2fa", "true")
             ];
 
         var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
@@ -59,6 +60,77 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
         );
 
         return tokenHandler.WriteToken(token);
+    }
+
+    public string GenerateTempToken(int userId)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        byte[] key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]!);
+
+        var claims = new[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+        new Claim("type", "2fa")
+    };
+
+        var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(5),
+            signingCredentials: new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature
+            )
+        );
+
+        return tokenHandler.WriteToken(token);
+    }
+
+    public ClaimsPrincipal? ValidateTempToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
+
+        try
+        {
+            var principal = tokenHandler.ValidateToken(
+                token,
+                new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = _config["Jwt:Issuer"],
+                    ValidAudience = _config["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+
+                    ClockSkew = TimeSpan.Zero
+                },
+                out _
+            );
+
+            return principal;
+        }
+        catch (SecurityTokenExpiredException)
+        {
+            throw new AppException(Constants.EXPIRED_TOKEN_MESSAGE, StatusCodes.Status401Unauthorized);
+        }
+        catch (Exception ex) when (
+            ex is SecurityTokenException ||
+            ex is ArgumentException ||
+            ex is FormatException
+        )
+        {
+            throw new AppException(Constants.INVALID_TOKEN_FORMAT_MESSAGE, StatusCodes.Status401Unauthorized);
+        }
+
+        catch (Exception ex)
+        {
+            throw new AppException(ex.Message, StatusCodes.Status500InternalServerError);
+        }
     }
     #endregion
 

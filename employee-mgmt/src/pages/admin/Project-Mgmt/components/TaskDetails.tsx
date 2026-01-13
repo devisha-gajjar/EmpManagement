@@ -22,6 +22,7 @@ import {
   fetchProjectById,
 } from "../../../../features/admin/project-mgmt/projectDetailsApi";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@mui/material";
 
 interface DraggableTaskProps {
   task: ProjectTask;
@@ -30,6 +31,9 @@ interface DraggableTaskProps {
 }
 
 const DraggableTask = ({ task, onEdit, onDelete }: DraggableTaskProps) => {
+  const muiTheme = useTheme();
+  const isDark = muiTheme.palette.mode === "dark";
+
   const navigate = useNavigate();
 
   const { attributes, listeners, setNodeRef, transform, isDragging } =
@@ -72,7 +76,11 @@ const DraggableTask = ({ task, onEdit, onDelete }: DraggableTaskProps) => {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      <Card className="mb-3 card-container">
+      <Card
+        className={`mb-3 card-container ${
+          isDark ? "bg-dark text-light border-secondary" : "bg-white text-dark"
+        }`}
+      >
         <CardHeader className="d-flex justify-content-between align-items-center">
           <div
             {...listeners}
@@ -92,7 +100,12 @@ const DraggableTask = ({ task, onEdit, onDelete }: DraggableTaskProps) => {
               <i className="bi bi-three-dots-vertical"></i>
             </DropdownToggle>
 
-            <DropdownMenu end>
+            <DropdownMenu
+              end
+              className={
+                isDark ? "bg-body-secondary text-light border-secondary" : ""
+              }
+            >
               <DropdownItem onClick={onEditClick}>
                 <i className="bi bi-pencil me-2"></i> Edit
               </DropdownItem>
@@ -106,7 +119,9 @@ const DraggableTask = ({ task, onEdit, onDelete }: DraggableTaskProps) => {
 
         <CardBody onClick={handleOpenLogs} className="cursor-pointer">
           <h6>{task.taskName}</h6>
-          <p className="text-muted small">{task.description}</p>
+          <p className={`small ${isDark ? "text-light" : "text-muted"}`}>
+            {task.description}
+          </p>
 
           <div className="d-flex justify-content-between small">
             <span>{truncateText(task.assignedTo, 15)}</span>

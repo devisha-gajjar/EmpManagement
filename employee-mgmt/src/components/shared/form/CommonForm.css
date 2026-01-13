@@ -75,3 +75,110 @@ label {
 .form-select {
     padding: .53rem 2.25rem .53rem .75rem !important;
 }
+
+/* Dark mode styles */
+
+[data-theme="dark"] label {
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: #1f2933;
+    border-color: #374151;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.35);
+}
+
+[data-theme="dark"] .form-control:disabled {
+    background-color: #111827;
+    color: #6b7280;
+}
+
+[data-theme="dark"] .form-control.is-invalid {
+    border-color: #ef4444;
+}
+
+/* Error text */
+[data-theme="dark"] .invalid-feedback {
+    color: #f87171;
+}
+
+/* ===== Buttons ===== */
+
+[data-theme="dark"] .btn-primary {
+    background-color: #4a90e2;
+    border-color: #4a90e2;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background-color: #357abd;
+    border-color: #357abd;
+}
+
+[data-theme="dark"] .btn-outline-secondary {
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .btn-outline-secondary:hover {
+    background-color: #1f2933;
+}
+
+/* ===== react-select ===== */
+
+[data-theme="dark"] .react-select__control {
+    background-color: #1f2933;
+    border-color: #374151;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .react-select__menu {
+    background-color: #1f2933;
+}
+
+[data-theme="dark"] .react-select__option {
+    background-color: #1f2933;
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .react-select__option--is-focused {
+    background-color: #374151;
+}
+
+[data-theme="dark"] .react-select__single-value {
+    color: #f9fafb;
+}
+
+/* ===== react-phone-input-2 ===== */
+
+[data-theme="dark"] .react-tel-input .form-control {
+    background-color: #1f2933;
+    color: #f9fafb;
+    border-color: #374151;
+}
+
+[data-theme="dark"] .react-tel-input .country-list {
+    background-color: #1f2933;
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .react-tel-input .country-list .country:hover {
+    background-color: #374151;
+}
+
+/* ===== Form container polish ===== */
+
+[data-theme="dark"] .form-actions {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 1rem;
+}

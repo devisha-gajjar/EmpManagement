@@ -507,6 +507,7 @@ public partial class EmployeeMgmtContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("first_name");
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
+            entity.Property(e => e.IsTwoFactorEnabled).HasColumnName("is_two_factor_enabled");
             entity.Property(e => e.LastName)
                 .HasMaxLength(255)
                 .HasColumnName("last_name");
@@ -523,6 +524,10 @@ public partial class EmployeeMgmtContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("profile_picture");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
+            entity.Property(e => e.TwoFactorEnabledOn)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("two_factor_enabled_on");
+            entity.Property(e => e.TwoFactorSecret).HasColumnName("two_factor_secret");
             entity.Property(e => e.Username)
                 .HasMaxLength(255)
                 .HasColumnName("username");

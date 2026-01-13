@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import "./PageHeader.css";
 import type { PageHeaderProps } from "../../../interfaces/pageHeader.interface";
+import { useTheme } from "@mui/material/styles";
 
 const PageHeader: React.FC<PageHeaderProps> = ({
   icon = "pencil-square",
@@ -14,6 +15,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   onBackClick,
 }) => {
   const navigate = useNavigate();
+
+  const muiTheme = useTheme();
+  const isDark = muiTheme.palette.mode === "dark";
 
   const handleBack = () => {
     if (onBackClick) {
@@ -31,7 +35,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             <button
               type="button"
               onClick={handleBack}
-              className="btn p-0 border-0 bg-transparent"
+              className={classNames(
+                "btn p-0 border-0 bg-transparent",
+                isDark ? "text-light" : "text-dark"
+              )}
               aria-label="Go back"
             >
               <i className="bi bi-chevron-left me-2 fs-4" />

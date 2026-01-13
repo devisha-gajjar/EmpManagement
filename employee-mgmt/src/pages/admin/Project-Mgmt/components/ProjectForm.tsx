@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ProjectStatus } from "../../../../enums/enum";
 import DynamicFormComponent from "../../../../components/shared/form/CommonForm";
 import { projectFormConfig } from "../configs/project-form.config";
-import { Box, Card } from "@mui/material";
+import { Box, Card, useTheme } from "@mui/material";
 import {
   useGetProjectByIdQuery,
   useSaveProjectMutation,
@@ -15,6 +15,9 @@ const ProjectFormPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = Boolean(id);
+
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
   const { data: project, isLoading } = useGetProjectByIdQuery(Number(id), {
     skip: !isEditMode,
@@ -82,8 +85,8 @@ const ProjectFormPage = () => {
         elevation={0}
         sx={{
           borderRadius: 2,
-          border: "1px solid #E0E3EB",
-          backgroundColor: "#FFFFFF",
+          border: `1px solid  ${theme.palette.divider}`,
+          backgroundColor: theme.palette.background.default,
         }}
       >
         <div className="dynamic-form-wrapper">
