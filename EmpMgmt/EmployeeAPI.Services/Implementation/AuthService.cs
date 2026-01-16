@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.DTO.RequestDto;
@@ -6,6 +7,7 @@ using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using static EmployeeAPI.Entities.Enums.Enum;
 
 namespace EmployeeAPI.Services.Implementation
 {
@@ -26,7 +28,6 @@ namespace EmployeeAPI.Services.Implementation
 
             return user;
         }
-
         public LoginResponse Login(string usernameOrEmail, string password)
         {
             var user = db.Users
@@ -38,19 +39,31 @@ namespace EmployeeAPI.Services.Implementation
             if (user == null || !customService.Verify(password, user.Password))
                 throw new AppException("Invalid credentials");
 
+            // 1️⃣ 2FA enabled → OTP verification
             if (user.IsTwoFactorEnabled)
             {
                 return new LoginResponse
                 {
-                    RequiresTwoFactor = true,
+                    Step = LoginStep.RequireTwoFactor,
                     TempToken = customService.GenerateTempToken(user.UserId)
                 };
             }
 
+            // 2️⃣ 2FA secret exists but not verified → setup screen
+            if (!string.IsNullOrWhiteSpace(user.TwoFactorSecret))
+            {
+                return new LoginResponse
+                {
+                    Step = LoginStep.RequireTwoFactorSetup,
+                    TempToken = customService.GenerateTempToken(user.UserId)
+                };
+            }
+
+            // 3️⃣ Normal login
             return new LoginResponse
             {
-                AccessToken = customService.GenerateJwtToken(user.Username),
-                RequiresTwoFactor = false
+                Step = LoginStep.Success,
+                AccessToken = customService.GenerateJwtToken(user.Username)
             };
         }
 
@@ -61,7 +74,7 @@ namespace EmployeeAPI.Services.Implementation
                 ?? throw new AppException("Invalid or expired temporary token");
 
             var userId = int.Parse(
-                principal.FindFirst("uid")?.Value
+                principal.FindFirst(ClaimTypes.NameIdentifier)?.Value
                 ?? throw new AppException("Invalid token payload")
             );
 

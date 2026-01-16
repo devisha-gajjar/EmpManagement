@@ -31,4 +31,11 @@ public class Enum
         Approved = 2,
         Denied = 3
     }
+
+    public enum LoginStep
+    {
+        Success = 1,          // Access token issued
+        RequireTwoFactor = 2, // OTP verification required
+        RequireTwoFactorSetup = 3 // Show QR / setup screen
+    }
 }

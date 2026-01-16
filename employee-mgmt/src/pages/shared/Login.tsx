@@ -3,12 +3,19 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { googleLogin, login } from "../../features/auth/authApi";
 
-import { TextField, Button, Typography, Box, Alert, Link } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Alert,
+  Link,
+  useTheme,
+} from "@mui/material";
 import { emailRegex } from "../../utils/constant";
 import AuthLayout from "../../components/layout/AuthLayout";
 import PasswordField from "../../components/shared/password-field/PasswordField";
 import { clearReturnUrl } from "../../features/auth/authSlice";
-import { environment } from "../../environment/environment.dev";
 import { GoogleLogin } from "@react-oauth/google";
 
 // validation errors
@@ -20,9 +27,9 @@ interface ValidationErrors {
 export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated, role, returnUrl } = useAppSelector(
-    (state) => state.auth
-  );
+  const theme = useTheme();
+  const { loading, error, isAuthenticated, role, returnUrl, loginStep } =
+    useAppSelector((state) => state.auth);
 
   const [form, setForm] = useState({
     usernameOrEmail: "",
@@ -81,7 +88,8 @@ export default function Login() {
     }
   };
 
-  const handleRegisterClick = () => {
+  const handleRegisterClick = (e: any) => {
+    e.preventDefault();
     navigate("/register");
   };
 
@@ -117,13 +125,23 @@ export default function Login() {
     }
   }, [isAuthenticated, role, returnUrl, navigate, dispatch]);
 
+  useEffect(() => {
+    if (loginStep === "require_2fa") {
+      navigate("/auth/2fa");
+    }
+
+    if (loginStep === "require_2fa_setup") {
+      navigate("/auth/2fa-setup");
+    }
+  }, [loginStep]);
+
   return (
     <AuthLayout>
       <Box
         sx={{
           width: "100%",
           maxWidth: 520,
-          background: "#ffffff",
+          background: theme.palette.background.paper,
           p: 6,
           borderRadius: "18px",
           boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
@@ -221,7 +239,7 @@ export default function Login() {
                   cursor: "pointer",
                   fontWeight: "bold",
                 }}
-                onClick={handleRegisterClick}
+                onClick={(e) => handleRegisterClick(e)}
               >
                 Register
               </Link>

@@ -43,11 +43,8 @@ public class AuthController(IAuthService authService, EmployeeMgmtContext db, IC
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginDto dto)
     {
-        var token = authService.Login(dto.UsernameOrEmail, dto.Password);
-        if (token == null)
-            return Unauthorized("Invalid username/email or password.");
-
-        return Ok(new { Token = token });
+        var result = authService.Login(dto.UsernameOrEmail, dto.Password);
+        return Ok(result);
     }
 
     [HttpPost("google-login")]

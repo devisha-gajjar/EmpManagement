@@ -150,4 +150,30 @@ public class NotificationService(
     }
     #endregion
 
+    #region Unread Notification Count
+    public async Task<int> GetUnreadCountAsync(int userId)
+    {
+        return await Task.FromResult(
+            notificationRepository
+                .GetAll()
+                .Count(n => n.UserId == userId && !n.IsRead)
+        );
+    }
+    #endregion
+
+    #region Delete Notification
+    public async Task<bool> DeleteNotificationAsync(int notificationId)
+    {
+        var notification = await notificationRepository.GetByInclude(
+            x => x.NotificationId == notificationId && x.UserId == UserId
+        );
+
+        if (notification == null)
+            return false;
+
+        notificationRepository.Delete(notification);
+
+        return true;
+    }
+    #endregion
 }

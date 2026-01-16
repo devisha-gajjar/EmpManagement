@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { googleLogin, login, registerUser } from "./authApi";
+import { googleLogin, login, registerUser, verify2FA } from "./authApi";
 import { roleClaimKey, userIdClaimKey, userNameClaimKey } from "../../utils/constant";
 
 export interface AuthState {
     token: string | null;
+    tempToken: string | null;
+    loginStep: "success" | "require_2fa" | "require_2fa_setup" | null;
     role: string | null;
     userId: string | null;
     userName: string | null;
@@ -49,6 +51,8 @@ const initialToken = localStorage.getItem("token");
 
 const initialState: AuthState = {
     token: initialToken,
+    tempToken: null,
+    loginStep: null,
     role: getRoleFromToken(initialToken),
     userId: getUserIdFromToken(initialToken),
     userName: getUserNameFromToken(initialToken),
@@ -91,14 +95,41 @@ const authSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
+            // .addCase(login.fulfilled, (state, action) => {
+            //     state.loading = false;
+            //     state.token = action.payload;
+            //     state.isAuthenticated = true;
+            //     state.error = null;
+            //     state.registerSuccess = null;
+            //     state.role = getRoleFromToken(action.payload);
+            //     localStorage.setItem("token", action.payload as string);
+            // })
             .addCase(login.fulfilled, (state, action) => {
                 state.loading = false;
-                state.token = action.payload;
-                state.isAuthenticated = true;
                 state.error = null;
-                state.registerSuccess = null;
-                state.role = getRoleFromToken(action.payload);
-                localStorage.setItem("token", action.payload as string);
+
+                const { step, accessToken, tempToken } = action.payload;
+
+                if (step === 1) {
+                    // SUCCESS
+                    state.token = accessToken;
+                    state.isAuthenticated = true;
+                    state.loginStep = "success";
+                    localStorage.setItem("token", accessToken);
+                    state.role = getRoleFromToken(accessToken);
+                }
+
+                if (step === 2) {
+                    // REQUIRE OTP
+                    state.tempToken = tempToken;
+                    state.loginStep = "require_2fa";
+                }
+
+                if (step === 3) {
+                    // REQUIRE SETUP
+                    state.tempToken = tempToken;
+                    state.loginStep = "require_2fa_setup";
+                }
             })
             .addCase(login.rejected, (state, action) => {
                 state.loading = false;
@@ -137,6 +168,15 @@ const authSlice = createSlice({
             .addCase(googleLogin.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+            })
+
+            // ---- verify the 2FA ------
+            .addCase(verify2FA.fulfilled, (state, action) => {
+                state.token = action.payload;
+                state.isAuthenticated = true;
+                state.loginStep = "success";
+                localStorage.setItem("token", action.payload);
+                state.role = getRoleFromToken(action.payload);
             })
             ;
     },

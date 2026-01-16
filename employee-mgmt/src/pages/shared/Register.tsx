@@ -8,6 +8,7 @@ import {
   Box,
   Alert,
   Link,
+  useTheme,
 } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { registerUser } from "../../features/auth/authApi";
@@ -24,6 +25,7 @@ const inputFields = RegisterFormFields;
 export default function Register() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const { loading, error, registerSuccess, isAuthenticated } = useAppSelector(
     (state) => state.auth
@@ -169,7 +171,7 @@ export default function Register() {
         sx={{
           width: "100%",
           maxWidth: 620,
-          background: "#ffffff",
+          background: theme.palette.background.paper,
           borderRadius: "18px",
           p: 6,
           boxShadow: "0 10px 40px rgba(0,0,0,0.08)",

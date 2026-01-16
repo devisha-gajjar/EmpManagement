@@ -17,7 +17,7 @@ export const getMuiTheme = (mode: "light" | "dark") =>
 
             background: {
                 default: mode === "dark" ? "#010E1D" : "#F4F7FB",
-                paper: mode === "dark" ? "#011A33" : "#FFFFFF",
+                paper: mode === "dark" ? "#01203f" : "#FFFFFF",
             },
 
             divider: mode === "dark" ? "#1F4D7A" : "#E2E8F0",

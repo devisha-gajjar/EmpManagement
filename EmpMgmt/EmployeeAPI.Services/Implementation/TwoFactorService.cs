@@ -35,7 +35,7 @@ public class TwoFactorService(IGenericRepository<User> userRepository) : ITwoFac
     {
         var user = userRepository.GetById(userId) ?? throw new AppException(Constants.USER_NOT_FOUND);
 
-        if (user.IsTwoFactorEnabled)
+        if (user.TwoFactorSecret != null)
             throw new AppException("2FA already enabled");
 
         var secretKey = KeyGeneration.GenerateRandomKey(20);

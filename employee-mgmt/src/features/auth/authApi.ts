@@ -7,14 +7,15 @@ export const login = createAsyncThunk(
     async (data: LoginData, thunkAPI) => {
         try {
             const response = await axiosClient.post("/auth/login", data);
-            return response.data.token as string;
+            return response.data; // LoginResponse
         } catch (err: any) {
-            console.log(err);
-            const errorMessage = err.response?.data?.Message || "Login failed due to network or server error.";
-            return thunkAPI.rejectWithValue(errorMessage);
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Login failed"
+            );
         }
     }
 );
+
 
 export const registerUser = createAsyncThunk(
     "auth/register",
@@ -46,6 +47,31 @@ export const googleLogin = createAsyncThunk(
             return rejectWithValue(
                 error.response?.data || "Google login failed"
             );
+        }
+    }
+);
+
+export const verify2FA = createAsyncThunk(
+    "auth/verify2fa",
+    async (data: { tempToken: string; code: string }, thunkAPI) => {
+        try {
+            const res = await axiosClient.post("/auth/verify-2fa", data);
+            return res.data.accessToken;
+        } catch {
+            return thunkAPI.rejectWithValue("Invalid authentication code");
+        }
+    }
+);
+
+
+export const setup2FA = createAsyncThunk(
+    "auth/setup2fa",
+    async (_, thunkAPI) => {
+        try {
+            const res = await axiosClient.post("/auth/2fa/setup");
+            return res.data; // { secret, qrCodeUri }
+        } catch {
+            return thunkAPI.rejectWithValue("Failed to setup 2FA");
         }
     }
 );

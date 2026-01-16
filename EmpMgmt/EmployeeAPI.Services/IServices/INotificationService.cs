@@ -9,4 +9,6 @@ public interface INotificationService
     Task<NotificationResponseDto?> MarkAsRead(int notificationId);
     Task<List<NotificationResponseDto>> GetNotificationsByUserAsync(int userId);
     Task<int> MarkAllAsRead(List<int>? notificationIds = null);
+    Task<int> GetUnreadCountAsync(int userId);
+    Task<bool> DeleteNotificationAsync(int notificationId);
 }

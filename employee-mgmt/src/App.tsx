@@ -20,11 +20,15 @@ import NotificationList from "./pages/user/notification/notification-list";
 import UserTask from "./pages/user/user-task/user-task";
 import TaskWorkLogsPage from "./pages/admin/Project-Mgmt/components/TaskWorkLogsPage";
 import MyProfilePage from "./pages/user/profile/components/MyProfielPage";
+import TwoFactorVerify from "./pages/auth/TwoFactorVerify";
+import TwoFactorSetup from "./pages/auth/TwoFactorSetup";
 
 function App() {
   const routes = useRoutes([
     // ---------- PUBLIC ROUTES ----------
     { path: "/login", element: <Login /> },
+    { path: "/auth/2fa-setup", element: <TwoFactorSetup /> },
+    { path: "/auth/2fa", element: <TwoFactorVerify /> },
     { path: "/register", element: <Register /> },
     { path: "/", element: <Navigate to="/login" /> },
     { path: "/unauthorized", element: <Unauthorized /> },
