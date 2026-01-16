@@ -6,7 +6,7 @@ import { environment } from "../../../../environment/environment.dev";
 import "../styles/DocumentTable.css";
 
 export default function DocumentTable() {
-  const { documents, loading } = useAppSelector((state) => state.documents);
+  const { documents } = useAppSelector((state) => state.documents);
   const [previewDoc, setPreviewDoc] = useState<UserDocument | null>(null);
 
   const dispatch = useAppDispatch();

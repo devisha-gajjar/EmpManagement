@@ -5,7 +5,7 @@ interface Props {
   qrCodeUri: string;
 }
 
-export default function TwoFactorQr({ qrCodeUri }: Props) {
+export default function TwoFactorQr({ qrCodeUri }: Readonly<Props>) {
   return (
     <Box
       sx={{

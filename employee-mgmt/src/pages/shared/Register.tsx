@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Container,
   TextField,
   Button,
   Typography,
@@ -104,7 +103,7 @@ export default function Register() {
     }
     if (
       form.zipcode.trim() &&
-      (form.zipcode.length !== 6 || isNaN(Number(form.zipcode)))
+      (form.zipcode.length !== 6 || Number.isNaN(Number(form.zipcode)))
     ) {
       errors.zipcode = "Zipcode must be 6 digits.";
       isValid = false;

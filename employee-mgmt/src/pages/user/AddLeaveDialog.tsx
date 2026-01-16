@@ -105,7 +105,7 @@ const AddLeaveDialog = ({ open, onClose, leaveToEdit }: Props) => {
   }, [leaveToEdit]);
 
   const handleSubmit = async (data: CreateLeaveRequest) => {
-    data.userId = parseInt(userId!);
+    data.userId = Number.parseInt(userId!);
 
     if (leaveToEdit?.leaveRequestId) {
       data.leaveRequestId = leaveToEdit.leaveRequestId; // Valid ID

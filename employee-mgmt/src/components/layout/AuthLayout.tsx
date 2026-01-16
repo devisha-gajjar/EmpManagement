@@ -7,9 +7,9 @@ import { toggleTheme } from "../../features/shared/themeSlice";
 
 export default function AuthLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const mode = useAppSelector((state) => state.theme.mode);

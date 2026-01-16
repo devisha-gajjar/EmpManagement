@@ -6,6 +6,7 @@ import {
   Typography,
   Alert,
   Paper,
+  useTheme,
 } from "@mui/material";
 import { QRCodeSVG } from "qrcode.react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -15,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 export default function TwoFactorSetup() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const { tempToken, loading, error } = useAppSelector((state) => state.auth);
 
@@ -24,13 +26,20 @@ export default function TwoFactorSetup() {
 
   // Load QR + secret on mount
   useEffect(() => {
+    if (!tempToken) {
+      console.log("... from the setup");
+      navigate("/login", { replace: true });
+      return;
+    }
+
     dispatch(setup2FA())
       .unwrap()
-      .then((res: any) => {
+      .then((res) => {
         setQrCodeUri(res.qrCodeUri);
         setSecret(res.secret);
-      });
-  }, [dispatch]);
+      })
+      .catch(console.error);
+  }, [tempToken]);
 
   const handleVerify = () => {
     if (!tempToken || code.length !== 6) return;
@@ -73,13 +82,14 @@ export default function TwoFactorSetup() {
         {secret && (
           <Box sx={{ mb: 2 }}>
             <Typography variant="caption" color="text.secondary">
-              Can’t scan? Enter this key manually:
+              Can't scan? Enter this key manually:
             </Typography>
 
             <Typography
               sx={{
                 fontFamily: "monospace",
-                bgcolor: "grey.100",
+                bgcolor: theme.palette.background.default,
+                color: theme.palette.text.primary,
                 p: 1,
                 borderRadius: 1,
                 mt: 0.5,
@@ -97,13 +107,16 @@ export default function TwoFactorSetup() {
           label="6-digit authentication code"
           value={code}
           onChange={(e) =>
-            setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+            setCode(e.target.value.replaceAll(/\D/g, "").slice(0, 6))
           }
-          inputProps={{
-            maxLength: 6,
-            inputMode: "numeric",
-          }}
           margin="normal"
+          slotProps={{
+            htmlInput: {
+              maxLength: 6,
+              inputMode: "numeric",
+              autoComplete: "one-time-code",
+            },
+          }}
         />
 
         {error && (

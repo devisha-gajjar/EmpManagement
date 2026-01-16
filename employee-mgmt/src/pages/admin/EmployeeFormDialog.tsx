@@ -31,7 +31,7 @@ export default function EmployeeFormDialog({
   open,
   onClose,
   employeeToEdit,
-}: Props) {
+}: Readonly<Props>) {
   const [addEmployee] = useAddEmployeeMutation();
   const [updateEmployee] = useUpdateEmployeeMutation();
 

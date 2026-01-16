@@ -1,10 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
+import { render, screen } from "@testing-library/react";
 import { Department } from "./Department";
 import { fetchDepartments } from "../../features/admin/department/departmentApi";
-import departmentReducer from "../../features/admin/department/departmentSlice";
-import authReducer from "../../features/auth/authSlice";
 
 // Mock the hooks and API
 jest.mock("../../app/hooks", () => ({

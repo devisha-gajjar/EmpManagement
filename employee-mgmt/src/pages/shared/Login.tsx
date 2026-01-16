@@ -93,16 +93,16 @@ export default function Login() {
     navigate("/register");
   };
 
-  const handleGoogleResponse = (response: any) => {
-    const idToken = response.credential;
+  // const handleGoogleResponse = (response: any) => {
+  //   const idToken = response.credential;
 
-    if (!idToken) {
-      console.error("Google ID Token not received");
-      return;
-    }
+  //   if (!idToken) {
+  //     console.error("Google ID Token not received");
+  //     return;
+  //   }
 
-    dispatch(googleLogin(idToken));
-  };
+  //   dispatch(googleLogin(idToken));
+  // };
 
   useEffect(() => {
     if (!isAuthenticated || !role) return;

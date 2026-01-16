@@ -1,6 +1,9 @@
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const phoneRegex = /^\d{10}$/;
 
+export const TEMP_TOKEN_KEY = "temp_token";
+export const ACCESS_TOKEN_KEY = "access_token";
+
 export const getNavLinksByRole = (role: string) => {
   if (!role) return [];
 

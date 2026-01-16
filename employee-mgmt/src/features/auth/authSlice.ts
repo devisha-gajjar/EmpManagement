@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { googleLogin, login, registerUser, verify2FA } from "./authApi";
-import { roleClaimKey, userIdClaimKey, userNameClaimKey } from "../../utils/constant";
+import { ACCESS_TOKEN_KEY, roleClaimKey, TEMP_TOKEN_KEY, userIdClaimKey, userNameClaimKey } from "../../utils/constant";
 
 export interface AuthState {
     token: string | null;
@@ -73,7 +73,7 @@ const authSlice = createSlice({
             state.isAuthenticated = false;
             state.error = null;
             state.registerSuccess = null;
-            localStorage.removeItem("token");
+            localStorage.removeItem(ACCESS_TOKEN_KEY);
         },
         // Action to clear any previous errors or success messages
         clearAuthStatus(state) {
@@ -115,7 +115,7 @@ const authSlice = createSlice({
                     state.token = accessToken;
                     state.isAuthenticated = true;
                     state.loginStep = "success";
-                    localStorage.setItem("token", accessToken);
+                    localStorage.setItem(ACCESS_TOKEN_KEY, action.payload);
                     state.role = getRoleFromToken(accessToken);
                 }
 
@@ -128,6 +128,7 @@ const authSlice = createSlice({
                 if (step === 3) {
                     // REQUIRE SETUP
                     state.tempToken = tempToken;
+                    localStorage.setItem(TEMP_TOKEN_KEY, tempToken);
                     state.loginStep = "require_2fa_setup";
                 }
             })
@@ -163,7 +164,7 @@ const authSlice = createSlice({
                 state.token = action.payload;
                 state.isAuthenticated = true;
                 state.role = getRoleFromToken(action.payload);
-                localStorage.setItem("token", action.payload as string);
+                localStorage.setItem(ACCESS_TOKEN_KEY, action.payload);
             })
             .addCase(googleLogin.rejected, (state, action) => {
                 state.loading = false;
@@ -175,7 +176,8 @@ const authSlice = createSlice({
                 state.token = action.payload;
                 state.isAuthenticated = true;
                 state.loginStep = "success";
-                localStorage.setItem("token", action.payload);
+                localStorage.removeItem(TEMP_TOKEN_KEY);
+                localStorage.setItem(ACCESS_TOKEN_KEY, action.payload);
                 state.role = getRoleFromToken(action.payload);
             })
             ;

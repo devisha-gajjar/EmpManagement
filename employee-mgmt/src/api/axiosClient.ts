@@ -3,6 +3,7 @@ import axios from "axios";
 import { hideLoader, showLoader } from "../features/shared/loaderSlice";
 import { environment } from "../environment/environment.dev";
 import type { Store } from '@reduxjs/toolkit';
+import { ACCESS_TOKEN_KEY, TEMP_TOKEN_KEY } from "../utils/constant";
 
 let store: Store | null = null;
 
@@ -27,8 +28,11 @@ axiosClient.interceptors.request.use(
             store.dispatch(showLoader());
         }
 
+        const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+        const tempToken = localStorage.getItem(TEMP_TOKEN_KEY);
+
         // Add auth token
-        const token = localStorage.getItem("token");
+        const token = accessToken ?? tempToken;
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -61,7 +65,7 @@ axiosClient.interceptors.response.use(
         console.log("interceptor", error);
         // Handle 401 Unauthorized (redirect to login)
         if (error.response?.status == 401) {
-            localStorage.removeItem("token");
+            localStorage.removeItem(ACCESS_TOKEN_KEY);
             globalThis.location.href = '/login';
         }
 

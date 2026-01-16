@@ -400,8 +400,8 @@ const Navbar = () => {
                   },
                 }}
               >
-                <i className="bi bi-arrow-right-circle me-2"></i>
-                View All Notifications
+                <i className="bi bi-arrow-right-circle me-2"></i> View All
+                Notifications
               </Button>
             </Box>
           </>

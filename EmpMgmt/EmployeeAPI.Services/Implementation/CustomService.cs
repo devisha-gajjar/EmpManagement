@@ -53,7 +53,7 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
 
         JwtSecurityToken token = new(
             issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
             claims: authClaims,
             expires: DateTime.UtcNow.AddHours(2),
             signingCredentials: credentials

@@ -7,7 +7,7 @@ import {
   fetchUserDocument,
   uploadUserDocuments,
 } from "../../../../features/user/profile/documentApi";
-import { useAppDispatch } from "../../../../app/hooks";
+import { useAppDispatch, useSnackbar } from "../../../../app/hooks";
 
 interface PreviewFile {
   file: File;
@@ -18,10 +18,11 @@ interface PreviewFile {
 export default function DocumentUpload() {
   const [files, setFiles] = useState<PreviewFile[]>([]);
   const [documentType, setDocumentType] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [submitting] = useState(false);
   const [previewFile, setPreviewFile] = useState<PreviewFile | null>(null);
 
   const dispatch = useAppDispatch();
+  const snackbar = useSnackbar();
 
   const handleFiles = (fileList: FileList) => {
     if (!documentType.trim()) {
@@ -57,9 +58,9 @@ export default function DocumentUpload() {
 
       setFiles([]);
       setDocumentType("");
-      alert("Documents uploaded successfully");
+      snackbar.success("Documents uploaded successfully");
     } catch (error) {
-      alert("Failed to upload documents");
+      snackbar.error(`Failed to upload documents - ${error}`);
     }
   };
 
@@ -135,7 +136,7 @@ export default function DocumentUpload() {
                   onClick={() => window.open(f.previewUrl, "_blank")}
                   title="Preview"
                 >
-                  👁
+                  <i className="bi bi-eye"></i>
                 </button>
               </div>
 

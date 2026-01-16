@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     hmr: {
-      overlay: true, // ✅ force enable error overlay
+      overlay: true,
     },
   },
 });

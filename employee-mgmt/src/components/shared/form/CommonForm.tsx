@@ -28,7 +28,7 @@ export default function DynamicFormComponent({
   cancleLabel,
   isFetching,
   loading = false,
-}: FormProp) {
+}: Readonly<FormProp>) {
   const {
     control,
     handleSubmit,

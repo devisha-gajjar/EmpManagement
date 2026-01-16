@@ -48,11 +48,15 @@ export default function TwoFactorVerify() {
           label="Authentication code"
           value={code}
           onChange={(e) =>
-            setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+            setCode(e.target.value.replaceAll(/\D/g, "").slice(0, 6))
           }
-          inputProps={{
-            maxLength: 6,
-            inputMode: "numeric",
+          margin="normal"
+          slotProps={{
+            htmlInput: {
+              maxLength: 6,
+              inputMode: "numeric",
+              autoComplete: "one-time-code",
+            },
           }}
         />
 

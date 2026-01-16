@@ -20,7 +20,7 @@ function Root() {
   const mode = useAppSelector((state) => state.theme.mode);
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", mode);
+    document.documentElement.dataset.theme = mode;
   }, [mode]);
 
   return (

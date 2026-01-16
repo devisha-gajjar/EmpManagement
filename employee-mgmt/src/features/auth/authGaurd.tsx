@@ -9,7 +9,7 @@ interface Props {
   allowedRoles?: string[];
 }
 
-export default function AuthGuard({ children, allowedRoles }: Props) {
+export default function AuthGuard({ children, allowedRoles }: Readonly<Props>) {
   const { isAuthenticated, role } = useSelector((state: any) => state.auth);
   const location = useLocation();
   const dispatch = useAppDispatch();

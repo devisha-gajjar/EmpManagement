@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { fetchNotificationsByUser, markAllNotificationsAsRead, markNotificationAsRead } from "../../../features/user/notifications/notificationApi";
+import {
+  fetchNotificationsByUser,
+  markAllNotificationsAsRead,
+  markNotificationAsRead,
+} from "../../../features/user/notifications/notificationApi";
 import { notificationHubService } from "../../../services/signalR/notificationHub.service";
 import type { NotificationList } from "../../../interfaces/notification.interface";
-import { Card, CardBody, Badge, Button } from "reactstrap";
+import { Card, CardBody, Button } from "reactstrap";
 import "./notification-list.css";
 import { getNotificationTag } from "./notification.config";
 import Tag from "../../../components/shared/tag/Tag";
@@ -125,7 +129,7 @@ function NotificationsList() {
           <Card
             key={n.notificationId}
             className={`mb-3 shadow-sm notification-card ${
-              !n.isRead ? "notification-unread" : "notification-read"
+              n.isRead ? "notification-read" : "notification-unread"
             }`}
             style={{
               transition: "all 0.3s ease",

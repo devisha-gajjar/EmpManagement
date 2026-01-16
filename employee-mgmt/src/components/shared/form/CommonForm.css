@@ -101,7 +101,7 @@ label {
 
 [data-theme="dark"] .form-control:disabled {
     background-color: #111827;
-    color: #6b7280;
+    color: #aaaeb6;
 }
 
 [data-theme="dark"] .form-control.is-invalid {

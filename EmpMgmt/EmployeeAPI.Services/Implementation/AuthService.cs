@@ -42,19 +42,19 @@ namespace EmployeeAPI.Services.Implementation
             // 1️⃣ 2FA enabled → OTP verification
             if (user.IsTwoFactorEnabled)
             {
+                // 2️⃣ 2FA secret exists but not verified → setup screen
+                if (string.IsNullOrWhiteSpace(user.TwoFactorSecret))
+                {
+                    return new LoginResponse
+                    {
+                        Step = LoginStep.RequireTwoFactorSetup,
+                        TempToken = customService.GenerateTempToken(user.UserId)
+                    };
+                }
+
                 return new LoginResponse
                 {
                     Step = LoginStep.RequireTwoFactor,
-                    TempToken = customService.GenerateTempToken(user.UserId)
-                };
-            }
-
-            // 2️⃣ 2FA secret exists but not verified → setup screen
-            if (!string.IsNullOrWhiteSpace(user.TwoFactorSecret))
-            {
-                return new LoginResponse
-                {
-                    Step = LoginStep.RequireTwoFactorSetup,
                     TempToken = customService.GenerateTempToken(user.UserId)
                 };
             }

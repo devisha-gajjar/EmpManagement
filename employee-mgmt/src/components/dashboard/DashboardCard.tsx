@@ -5,7 +5,10 @@ import type {
   CenteredProps,
 } from "../../interfaces/dashboard.interface";
 
-export function DashboardCard({ title, children }: DashboardCardProps) {
+export function DashboardCard({
+  title,
+  children,
+}: Readonly<DashboardCardProps>) {
   return (
     <Card
       sx={{
@@ -35,7 +38,7 @@ export function DashboardCard({ title, children }: DashboardCardProps) {
   );
 }
 
-export function InfoText({ label, value }: InfoTextProps) {
+export function InfoText({ label, value }: Readonly<InfoTextProps>) {
   return (
     <Box sx={{ mb: 1.2 }}>
       <Typography variant="body2" color="text.secondary">
@@ -48,7 +51,7 @@ export function InfoText({ label, value }: InfoTextProps) {
   );
 }
 
-export function CenteredContainer({ children }: CenteredProps) {
+export function CenteredContainer({ children }: Readonly<CenteredProps>) {
   return (
     <Box
       display="flex"

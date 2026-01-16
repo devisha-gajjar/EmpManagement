@@ -38,10 +38,10 @@ const Tag: React.FC<TagProps> = ({ tagConfig, onTagSelected, onTagClosed }) => {
     if (e) e.stopPropagation();
     if (type !== "selectable") return;
 
-    if (!isSelected) {
-      onTagSelected?.({ id, label, isSelected: true });
-    } else {
+    if (isSelected) {
       onTagClosed?.({ id, label });
+    } else {
+      onTagSelected?.({ id, label, isSelected: true });
     }
   };
 

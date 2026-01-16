@@ -438,7 +438,7 @@ const Sidebar = ({ role, drawerWidth = 260 }: SidebarProps) => {
           >
             {isCollapsed ? (
               <span style={{ fontSize: "18px" }}>
-                {mode === "light" ? "🌙" : "☀️"}
+                {mode === "light" ? "🌙" : <i className="bi bi-sun-fill"></i>}
               </span>
             ) : mode === "light" ? (
               "🌙 Dark Mode"

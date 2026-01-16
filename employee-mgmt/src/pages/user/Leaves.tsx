@@ -89,7 +89,7 @@ const Leaves = () => {
         snackbar.success("Leave deleted successfully");
         dispatch(fetchLeaves());
       } catch (err) {
-        snackbar.error("Failed to delete leave");
+        snackbar.error(`Failed to delete leave - ${err}`);
       } finally {
         handleCloseDeleteDialog();
       }
@@ -276,7 +276,7 @@ const Leaves = () => {
           onPageChange={(event, newPage) => setPage(newPage)}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={(e) => {
-            setRowsPerPage(parseInt(e.target.value, 10));
+            setRowsPerPage(Number.parseInt(e.target.value, 10));
             setPage(0);
           }}
         />
