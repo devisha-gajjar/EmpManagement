@@ -8,14 +8,9 @@ namespace EmployeeAPI.Controllers;
 [ApiController]
 [Route("api/Department")]
 [Authorize(Roles = "Admin")]
-public class DepartmentController : ControllerBase
+public class DepartmentController(IDepartmentService service) : ControllerBase
 {
-    private readonly IDepartmentService _service;
-
-    public DepartmentController(IDepartmentService service)
-    {
-        _service = service;
-    }
+    private readonly IDepartmentService _service = service;
 
     [HttpGet]
     public IActionResult GetDepartments()

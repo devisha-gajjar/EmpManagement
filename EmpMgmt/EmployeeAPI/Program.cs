@@ -239,6 +239,16 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddAuthorization();
+
+var jwtSecret =
+    builder.Configuration["JWT_SECRET"]
+    ?? Environment.GetEnvironmentVariable("JWT_SECRET")
+    ?? throw new Exception("JWT_SECRET not configured");
+
+var signingKey = new SymmetricSecurityKey(
+    Encoding.UTF8.GetBytes(jwtSecret)
+);
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.Events = new JwtBearerEvents
@@ -270,7 +280,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+        IssuerSigningKey = signingKey,
         RoleClaimType = ClaimTypes.Role
     };
 });

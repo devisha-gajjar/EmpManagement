@@ -36,20 +36,26 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
     {
         User user = _userRepository.GetAll().Include(u => u.Role).FirstOrDefault(u => u.Username == name) ?? throw new AppException(Constants.UNAUTHORIZED_USER);
 
-        JwtSecurityTokenHandler tokenHandler = new();
-        byte[] key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]!);
+        var jwtSecret =
+            _config["JWT_SECRET"]
+            ?? Environment.GetEnvironmentVariable("JWT_SECRET")
+            ?? throw new AppException("JWT_SECRET not configured");
 
-        Claim[]? authClaims =
-            [
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.RoleName!),
-                new Claim(ClaimTypes.Name,user.UserId.ToString()),
-                new Claim(ClaimTypes.GivenName, user.Username),
-                new Claim("2fa", "true")
-            ];
+        byte[] key = Encoding.UTF8.GetBytes(jwtSecret);
 
-        var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
+        Claim[] authClaims =
+        [
+            new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.Role, user.Role.RoleName!),
+        new Claim(ClaimTypes.Name, user.UserId.ToString()),
+        new Claim(ClaimTypes.GivenName, user.Username),
+        new Claim("2fa", "true")
+        ];
 
+        var credentials = new SigningCredentials(
+            new SymmetricSecurityKey(key),
+            SecurityAlgorithms.HmacSha256
+        );
 
         JwtSecurityToken token = new(
             issuer: _config["Jwt:Issuer"],
@@ -59,29 +65,37 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
             signingCredentials: credentials
         );
 
-        return tokenHandler.WriteToken(token);
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     public string GenerateTempToken(int userId)
     {
+        var jwtSecret =
+           _config["JWT_SECRET"]
+           ?? Environment.GetEnvironmentVariable("JWT_SECRET")
+           ?? throw new AppException("JWT_SECRET not configured");
+
+        byte[] key = Encoding.UTF8.GetBytes(jwtSecret);
+
         var tokenHandler = new JwtSecurityTokenHandler();
-        byte[] key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]!);
 
         var claims = new[]
-    {
-        new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-        new Claim("type", "2fa")
-    };
+        {
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+            new Claim("type", "2fa")
+        };
+
+        var credentials = new SigningCredentials(
+                 new SymmetricSecurityKey(key),
+                 SecurityAlgorithms.HmacSha256
+             );
 
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(5),
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(key),
-                SecurityAlgorithms.HmacSha256Signature
-            )
+            signingCredentials: credentials
         );
 
         return tokenHandler.WriteToken(token);
@@ -90,7 +104,12 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
     public ClaimsPrincipal? ValidateTempToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
+        var jwtSecret =
+           _config["JWT_SECRET"]
+           ?? Environment.GetEnvironmentVariable("JWT_SECRET")
+           ?? throw new AppException("JWT_SECRET not configured");
+
+        byte[] key = Encoding.UTF8.GetBytes(jwtSecret);
 
         try
         {
