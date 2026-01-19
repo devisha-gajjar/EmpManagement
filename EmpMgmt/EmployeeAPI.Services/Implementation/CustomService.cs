@@ -36,9 +36,7 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
     {
         User user = _userRepository.GetAll().Include(u => u.Role).FirstOrDefault(u => u.Username == name) ?? throw new AppException(Constants.UNAUTHORIZED_USER);
 
-        var jwtSecret =
-            _config["JWT_SECRET"]
-            ?? Environment.GetEnvironmentVariable("JWT_SECRET")
+        var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
             ?? throw new AppException("JWT_SECRET not configured");
 
         byte[] key = Encoding.UTF8.GetBytes(jwtSecret);
@@ -73,9 +71,7 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
 
     public string GenerateTempToken(int userId)
     {
-        var jwtSecret =
-           _config["JWT_SECRET"]
-           ?? Environment.GetEnvironmentVariable("JWT_SECRET")
+        var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
            ?? throw new AppException("JWT_SECRET not configured");
 
         byte[] key = Encoding.UTF8.GetBytes(jwtSecret);
