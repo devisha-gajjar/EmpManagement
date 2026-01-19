@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { environment } from "../../../environment/environment.dev";
 import type { ApiResponse } from "../../../interfaces/apiResponse.interface";
 import type { ProjectRole } from "../../../enums/enum";
+import { ACCESS_TOKEN_KEY } from "../../../utils/constant";
 
 export interface ProjectMember {
     projectMemberId: number;
@@ -18,7 +19,7 @@ export const projectMembersApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: environment.baseUrl,
         prepareHeaders: (headers) => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem(ACCESS_TOKEN_KEY);
             if (token) headers.set("authorization", `Bearer ${token}`);
             return headers;
         },

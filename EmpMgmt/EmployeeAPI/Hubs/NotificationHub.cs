@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace EmployeeAPI.Hubs;
 
-public class NotificationHub(IProjectMemberService projectMemberService, IGenericRepository<ProjectMember> projectMemberRepository, IUserTaskService userTaskService) : Hub
+public class NotificationHub(IProjectMemberService projectMemberService, IGenericRepository<ProjectMember> projectMemberRepository, IUserTaskService userTaskService, INotificationService notificationService) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -111,4 +111,57 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
                 action = isEdit ? "Updated" : "Created"
             });
     }
+
+    public async Task MarkNotificationAsRead(int notificationId)
+    {
+        // 1️⃣ Call the service to mark as read
+        var updatedNotification = await notificationService.MarkAsRead(notificationId);
+
+        if (updatedNotification == null)
+        {
+            // Optionally, you can send a failure message back to the caller
+            await Clients.Caller.SendAsync("NotificationError", $"Notification {notificationId} not found");
+            return;
+        }
+
+        int userId = updatedNotification.UserId;
+
+        // 2️⃣ Notify user that this specific notification was marked as read
+        await Clients.Group($"User_{userId}")
+            .SendAsync("NotificationMarkedAsRead", updatedNotification);
+
+        // 3️⃣ Get new unread count and send it
+        int unreadCount = await notificationService.GetUnreadCountAsync();
+        await Clients.Group($"User_{userId}")
+            .SendAsync("UnreadNotificationCountUpdated", unreadCount);
+    }
+
+    public async Task MarkAllNotificationsAsRead(List<int>? notificationIds = null)
+    {
+        int userId = Context.User.GetUserId()
+             ?? throw new AppException(Constants.UNAUTHORIZED_USER);
+
+        // 1️⃣ Call service to mark all (or selected) as read
+        int markedCount = await notificationService.MarkAllAsRead(notificationIds);
+
+        if (markedCount == 0)
+        {
+            await Clients.Caller.SendAsync("NotificationError", "No unread notifications found");
+            return;
+        }
+
+        // 2️⃣ Notify user that notifications were marked as read
+        await Clients.Group($"User_{userId}")
+            .SendAsync("AllNotificationsMarkedAsRead", new
+            {
+                notificationIds = notificationIds,
+                markedCount
+            });
+
+        // 3️⃣ Send updated unread count
+        int unreadCount = await notificationService.GetUnreadCountAsync();
+        await Clients.Group($"User_{userId}")
+            .SendAsync("UnreadNotificationCountUpdated", unreadCount);
+    }
+
 }

@@ -18,5 +18,4 @@ public class DepartmentController(IDepartmentService service) : ControllerBase
         return Ok(_service.GetDepartments());
     }
 
-
 }

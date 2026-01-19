@@ -47,7 +47,7 @@ const getUserNameFromToken = (token: string | null): string | null => {
     }
 };
 
-const initialToken = localStorage.getItem("token");
+const initialToken = localStorage.getItem(ACCESS_TOKEN_KEY);
 
 const initialState: AuthState = {
     token: initialToken,
@@ -115,7 +115,7 @@ const authSlice = createSlice({
                     state.token = accessToken;
                     state.isAuthenticated = true;
                     state.loginStep = "success";
-                    localStorage.setItem(ACCESS_TOKEN_KEY, action.payload);
+                    localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
                     state.role = getRoleFromToken(accessToken);
                 }
 

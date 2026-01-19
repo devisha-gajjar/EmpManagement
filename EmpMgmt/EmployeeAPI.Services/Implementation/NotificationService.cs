@@ -15,7 +15,7 @@ public class NotificationService(
     IGenericRepository<Notification> notificationRepository,
     IMapper mapper, IHttpContextAccessor httpContextAccessor, IEmailService emailService, IConfiguration config, IGenericRepository<User> userRepository) : INotificationService
 {
-    public int UserId => httpContextAccessor.HttpContext?.User?.GetUserId() ?? throw new UnauthorizedAccessException(Constants.UNAUTHORIZED_USER);
+    public int UserId => httpContextAccessor.HttpContext?.User?.GetUserId() ?? throw new AppException(Constants.UNAUTHORIZED_USER);
 
     #region Add notification
     public async Task<NotificationResponseDto> AddNotificationAsync(NotificationRequestDto request)
@@ -73,11 +73,11 @@ public class NotificationService(
     #endregion
 
     #region Get notifications by user
-    public async Task<List<NotificationResponseDto>> GetNotificationsByUserAsync(int userId)
+    public async Task<List<NotificationResponseDto>> GetNotificationsByUserAsync()
     {
         var notifications = notificationRepository
             .GetQueryableInclude()
-            .Where(x => x.UserId == userId)
+            .Where(x => x.UserId == UserId)
             .OrderByDescending(x => x.CreatedAt);
 
         if (!notifications.Any())
@@ -151,12 +151,12 @@ public class NotificationService(
     #endregion
 
     #region Unread Notification Count
-    public async Task<int> GetUnreadCountAsync(int userId)
+    public async Task<int> GetUnreadCountAsync()
     {
         return await Task.FromResult(
             notificationRepository
                 .GetAll()
-                .Count(n => n.UserId == userId && !n.IsRead)
+                .Count(n => n.UserId == UserId && !n.IsRead)
         );
     }
     #endregion
@@ -174,6 +174,22 @@ public class NotificationService(
         notificationRepository.Delete(notification);
 
         return true;
+    }
+    #endregion
+
+    #region Notification for Navbar
+    public async Task<List<NotificationResponseDto>> GetNavbarNotificationsAsync(int take = 5)
+    {
+        var notifications = notificationRepository
+                .GetQueryableInclude()
+                .Where(n => n.UserId == UserId)
+                .OrderBy(n => n.IsRead)
+                .ThenByDescending(n => n.CreatedAt)
+                .Take(take);
+
+        return await Task.FromResult(
+            mapper.ProjectTo<NotificationResponseDto>(notifications).ToList()
+        );
     }
     #endregion
 }

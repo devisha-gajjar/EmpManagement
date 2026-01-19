@@ -3,10 +3,10 @@ import axiosClient from "../../../api/axiosClient";
 
 export const fetchNotificationsByUser = createAsyncThunk(
     "notifications/fetchByUser",
-    async (userId: number, thunkAPI) => {
+    async (_, thunkAPI) => {
         try {
             const response = await axiosClient.get(
-                `/Notification/user/${userId}`
+                `/Notification/user`
             );
             return response.data;
         } catch (err: any) {
@@ -49,6 +49,48 @@ export const markAllNotificationsAsRead = createAsyncThunk(
             const errorMessage =
                 err.response?.data?.message || "Failed to mark notifications as read";
             return thunkAPI.rejectWithValue(errorMessage);
+        }
+    }
+);
+
+export const fetchUnreadCount = createAsyncThunk(
+    "notifications/fetchUnreadCount",
+    async (_, thunkAPI) => {
+        try {
+            const response = await axiosClient.get(`/Notification/unread-count`);
+            return response.data;
+        } catch (err: any) {
+            const errorMessage =
+                err.response?.data?.message || "Failed to load unread count";
+            return thunkAPI.rejectWithValue(errorMessage);
+        }
+    }
+);
+
+export const fetchNavbarNotifications = createAsyncThunk(
+    "notifications/fetchNavbar",
+    async (_, thunkAPI) => {
+        try {
+            const response = await axiosClient.get(
+                "/Notification/navbar"
+            );
+            return response.data;
+        } catch (err: any) {
+            const errorMessage =
+                err.response?.data?.message || "Failed to load navbar notifications";
+            return thunkAPI.rejectWithValue(errorMessage);
+        }
+    }
+);
+
+export const deleteNotification = createAsyncThunk(
+    "notifications/delete",
+    async (id: number, thunkAPI) => {
+        try {
+            await axiosClient.delete(`/Notification/${id}`);
+            return id;
+        } catch {
+            return thunkAPI.rejectWithValue("Failed to delete notification");
         }
     }
 );

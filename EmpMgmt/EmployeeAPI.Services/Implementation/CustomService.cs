@@ -44,14 +44,11 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
         Claim[] authClaims =
         [
             new Claim(ClaimTypes.Email, user.Email),
-        new Claim(ClaimTypes.Role, user.Role.RoleName!),
-        new Claim(ClaimTypes.Name, user.UserId.ToString()),
-        new Claim(ClaimTypes.GivenName, user.Username),
-        new Claim("2fa", "true")
+            new Claim(ClaimTypes.Role, user.Role.RoleName!),
+            new Claim(ClaimTypes.Name, user.UserId.ToString()),
+            new Claim(ClaimTypes.GivenName, user.Username),
+            new Claim("2fa", "true")
         ];
-
-        // JWT signing key is injected at runtime via environment variables or secret store.
-        // No hardcoded or configuration-based secrets are present.
 
         var credentials = new SigningCredentials(
             new SymmetricSecurityKey(key),
@@ -103,9 +100,7 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
     public ClaimsPrincipal? ValidateTempToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var jwtSecret =
-           _config["JWT_SECRET"]
-           ?? Environment.GetEnvironmentVariable("JWT_SECRET")
+        var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
            ?? throw new AppException("JWT_SECRET not configured");
 
         byte[] key = Encoding.UTF8.GetBytes(jwtSecret);

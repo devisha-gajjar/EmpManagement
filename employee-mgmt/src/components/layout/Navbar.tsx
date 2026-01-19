@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -25,6 +25,13 @@ import {
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { logout } from "../../features/auth/authSlice";
+import {
+  deleteNotification,
+  fetchNavbarNotifications,
+  fetchUnreadCount,
+  markNotificationAsRead,
+} from "../../features/user/notifications/notificationApi";
+import { notificationHubService } from "../../services/signalR/notificationHub.service";
 
 // Mock notification data - replace with your actual data
 interface Notification {
@@ -74,7 +81,36 @@ const Navbar = () => {
   const [notifications, setNotifications] =
     useState<Notification[]>(mockNotifications);
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const { navbarList, unreadCount, loading } = useAppSelector(
+    (state) => state.notification
+  );
+
+  // useEffect(() => {
+  //   dispatch(fetchNavbarNotifications());
+  //   dispatch(fetchUnreadCount());
+  // }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchNavbarNotifications());
+    dispatch(fetchUnreadCount());
+
+    const onMarkedRead = (updatedNotification: any) => {
+      dispatch(fetchNavbarNotifications());
+    };
+
+    const onUnreadUpdated = (unreadCount: number) => {
+      console.log("nudb");
+      dispatch(fetchUnreadCount());
+    };
+
+    notificationHubService.onNotificationMarkedAsRead(onMarkedRead);
+    notificationHubService.onUnreadCountUpdated(onUnreadUpdated);
+
+    return () => {
+      notificationHubService.offNotificationMarkedAsRead(onMarkedRead);
+      notificationHubService.offUnreadCountUpdated(onUnreadUpdated);
+    };
+  }, [dispatch]);
 
   const handleNotificationClick = (event: React.MouseEvent<HTMLElement>) => {
     setNotificationAnchor(event.currentTarget);
@@ -92,19 +128,21 @@ const Navbar = () => {
     setProfileAnchor(null);
   };
 
-  const handleMarkAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-    );
+  // const handleMarkAsRead = (id: number) => {
+  //   dispatch(markNotificationAsRead(id));
+  // };
+
+  const handleMarkAsRead = async (id: number) => {
+    await notificationHubService.markNotificationAsRead(id);
   };
 
-  const handleDeleteNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  const handleDeleteNotification = (id: number) => {
+    dispatch(deleteNotification(id));
   };
 
   const handleViewAllNotifications = () => {
     handleNotificationClose();
-    navigate("/user/notifications");
+    navigate("/user/notification");
   };
 
   const handleLogout = () => {
@@ -183,20 +221,21 @@ const Navbar = () => {
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           {/* Notifications */}
-          <IconButton
-            onClick={handleNotificationClick}
-            sx={(theme) => ({
-              color: theme.palette.text.secondary,
-              backgroundColor: theme.palette.action.hover,
-              "&:hover": {
-                backgroundColor: theme.palette.action.selected,
-              },
-            })}
-          >
-            <Badge badgeContent={unreadCount} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
+          {role == "user" && (
+            <IconButton
+              onClick={handleNotificationClick}
+              sx={(theme) => ({
+                color: theme.palette.text.secondary,
+                backgroundColor: theme.palette.action.hover,
+                "&:hover": {
+                  backgroundColor: theme.palette.action.selected,
+                },
+              })}
+            >
+              <Badge badgeContent={unreadCount} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>)}
 
           {/* Profile */}
           <IconButton
@@ -221,192 +260,198 @@ const Navbar = () => {
       </Toolbar>
 
       {/* Notifications Menu */}
-      <Menu
-        anchorEl={notificationAnchor}
-        open={Boolean(notificationAnchor)}
-        onClose={handleNotificationClose}
-        PaperProps={{
-          sx: {
-            mt: 1.5,
-            width: 420,
-            maxHeight: 500,
-            borderRadius: "12px",
-            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
-          },
-        }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        {/* Header */}
-        <Box
-          sx={{
-            px: 2,
-            py: 1.5,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+      {role == "user" && (
+        <Menu
+          anchorEl={notificationAnchor}
+          open={Boolean(notificationAnchor)}
+          onClose={handleNotificationClose}
+          PaperProps={{
+            sx: {
+              mt: 1.5,
+              width: 420,
+              maxHeight: 500,
+              borderRadius: "12px",
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+            },
           }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Notifications
-          </Typography>
-          {unreadCount > 0 && (
-            <Box
-              sx={{
-                px: 1.5,
-                py: 0.5,
-                borderRadius: "12px",
-                backgroundColor: "rgba(59, 130, 246, 0.1)",
-                color: "#3b82f6",
-                fontSize: "12px",
-                fontWeight: 600,
-              }}
-            >
-              {unreadCount} unread
-            </Box>
-          )}
-        </Box>
-        <Divider />
-
-        {/* Notification List */}
-        <Box sx={{ maxHeight: 350, overflowY: "auto" }}>
-          {notifications.length === 0 ? (
-            <Box
-              sx={{
-                py: 4,
-                px: 2,
-                textAlign: "center",
-                color: "text.secondary",
-              }}
-            >
-              <NotificationsIcon sx={{ fontSize: 48, opacity: 0.3, mb: 1 }} />
-              <Typography variant="body2">No notifications</Typography>
-            </Box>
-          ) : (
-            notifications.map((notification) => (
-              <MenuItem
-                key={notification.id}
+          {/* Header */}
+          <Box
+            sx={{
+              px: 2,
+              py: 1.5,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Notifications
+            </Typography>
+            {unreadCount > 0 && (
+              <Box
                 sx={{
-                  px: 2,
-                  py: 1.5,
-                  backgroundColor: notification.isRead
-                    ? "transparent"
-                    : "rgba(59, 130, 246, 0.05)",
-                  borderLeft: notification.isRead
-                    ? "none"
-                    : "3px solid #3b82f6",
-                  "&:hover": {
-                    backgroundColor: "rgba(0, 0, 0, 0.04)",
-                  },
-                  display: "block",
+                  px: 1.5,
+                  py: 0.5,
+                  borderRadius: "12px",
+                  backgroundColor: "rgba(59, 130, 246, 0.1)",
+                  color: "#3b82f6",
+                  fontSize: "12px",
+                  fontWeight: 600,
                 }}
               >
-                <Box sx={{ display: "flex", gap: 1.5 }}>
-                  {/* Icon */}
-                  {getNotificationIcon(notification.type)}
+                {unreadCount} unread
+              </Box>
+            )}
+          </Box>
+          <Divider />
 
-                  {/* Content */}
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography
-                      variant="subtitle2"
+          {/* Notification List */}
+          <Box sx={{ maxHeight: 350, overflowY: "auto" }}>
+            {navbarList.length === 0 ? (
+              <Box
+                sx={{
+                  py: 4,
+                  px: 2,
+                  textAlign: "center",
+                  color: "text.secondary",
+                }}
+              >
+                <NotificationsIcon sx={{ fontSize: 48, opacity: 0.3, mb: 1 }} />
+                <Typography variant="body2">No notifications</Typography>
+              </Box>
+            ) : (
+              navbarList.map((notification) => (
+                <MenuItem
+                  key={notification.notificationId}
+                  sx={{
+                    px: 2,
+                    py: 1.5,
+                    backgroundColor: notification.isRead
+                      ? "transparent"
+                      : "rgba(59, 130, 246, 0.05)",
+                    borderLeft: notification.isRead
+                      ? "none"
+                      : "3px solid #3b82f6",
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.04)",
+                    },
+                    display: "block",
+                  }}
+                >
+                  <Box sx={{ display: "flex", gap: 1.5 }}>
+                    {/* Icon */}
+                    {getNotificationIcon(notification.type)}
+
+                    {/* Content */}
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography
+                        variant="subtitle2"
+                        sx={{
+                          fontWeight: 600,
+                          mb: 0.5,
+                          color: "text.primary",
+                        }}
+                      >
+                        {notification.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                          mb: 0.5,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                        }}
+                      >
+                        {notification.message}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "text.disabled" }}
+                      >
+                        {notification.createdAt}
+                      </Typography>
+                    </Box>
+
+                    {/* Actions */}
+                    <Box
                       sx={{
-                        fontWeight: 600,
-                        mb: 0.5,
-                        color: "text.primary",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 0.5,
                       }}
                     >
-                      {notification.title}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "text.secondary",
-                        mb: 0.5,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                      }}
-                    >
-                      {notification.message}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "text.disabled" }}
-                    >
-                      {notification.time}
-                    </Typography>
-                  </Box>
-
-                  {/* Actions */}
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}
-                  >
-                    {!notification.isRead && (
+                      {!notification.isRead && (
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMarkAsRead(notification.notificationId);
+                          }}
+                          sx={{
+                            color: "#3b82f6",
+                            "&:hover": {
+                              backgroundColor: "rgba(59, 130, 246, 0.1)",
+                            },
+                          }}
+                        >
+                          <CheckIcon fontSize="small" />
+                        </IconButton>
+                      )}
                       <IconButton
                         size="small"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleMarkAsRead(notification.id);
+                          handleDeleteNotification(notification.notificationId);
                         }}
                         sx={{
-                          color: "#3b82f6",
+                          color: "#ef4444",
                           "&:hover": {
-                            backgroundColor: "rgba(59, 130, 246, 0.1)",
+                            backgroundColor: "rgba(239, 68, 68, 0.1)",
                           },
                         }}
                       >
-                        <CheckIcon fontSize="small" />
+                        <DeleteIcon fontSize="small" />
                       </IconButton>
-                    )}
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteNotification(notification.id);
-                      }}
-                      sx={{
-                        color: "#ef4444",
-                        "&:hover": {
-                          backgroundColor: "rgba(239, 68, 68, 0.1)",
-                        },
-                      }}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                    </Box>
                   </Box>
-                </Box>
-              </MenuItem>
-            ))
-          )}
-        </Box>
+                </MenuItem>
+              ))
+            )}
+          </Box>
 
-        {/* Footer */}
-        {notifications.length > 0 && (
-          <>
-            <Divider />
-            <Box sx={{ p: 1.5 }}>
-              <Button
-                fullWidth
-                onClick={handleViewAllNotifications}
-                sx={{
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  fontWeight: 600,
-                  color: "#3b82f6",
-                  "&:hover": {
-                    backgroundColor: "rgba(59, 130, 246, 0.08)",
-                  },
-                }}
-              >
-                <i className="bi bi-arrow-right-circle me-2"></i> View All
-                Notifications
-              </Button>
-            </Box>
-          </>
-        )}
-      </Menu>
+          {/* Footer */}
+          {notifications.length > 0 && (
+            <>
+              <Divider />
+              <Box sx={{ p: 1.5 }}>
+                <Button
+                  fullWidth
+                  onClick={handleViewAllNotifications}
+                  sx={{
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    color: "#3b82f6",
+                    "&:hover": {
+                      backgroundColor: "rgba(59, 130, 246, 0.08)",
+                    },
+                  }}
+                >
+                  <i className="bi bi-arrow-right-circle me-2"></i> View All
+                  Notifications
+                </Button>
+              </Box>
+            </>
+          )}
+        </Menu>
+      )}
 
       {/* Profile Menu */}
       <Menu

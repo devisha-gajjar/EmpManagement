@@ -1,15 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchNotificationsByUser, markAllNotificationsAsRead, markNotificationAsRead } from "./notificationApi";
+import { deleteNotification, fetchNavbarNotifications, fetchNotificationsByUser, fetchUnreadCount, markAllNotificationsAsRead, markNotificationAsRead } from "./notificationApi";
 import type { NotificationList } from "../../../interfaces/notification.interface";
 
 interface NotificationState {
     list: NotificationList[];
+    navbarList: NotificationList[];
+    unreadCount: number;
     loading: boolean;
     error: string | null;
 }
 
 const initialState: NotificationState = {
     list: [],
+    navbarList: [],
+    unreadCount: 0,
     loading: false,
     error: null,
 };
@@ -31,17 +35,30 @@ const notificationSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string;
             })
+
             // Mark single as read
             .addCase(markNotificationAsRead.fulfilled, (state, action) => {
                 const updated = action.payload;
-                const index = state.list.findIndex(
-                    (n) => n.notificationId === updated.notificationId
-                );
 
+                // Full list
+                const index = state.list.findIndex(
+                    n => n.notificationId === updated.notificationId
+                );
                 if (index !== -1) {
                     state.list[index].isRead = true;
                 }
+
+                // Navbar list
+                const navIndex = state.navbarList.findIndex(
+                    n => n.notificationId === updated.notificationId
+                );
+                if (navIndex !== -1) {
+                    state.navbarList[navIndex].isRead = true;
+                }
+
+                state.unreadCount = Math.max(0, state.unreadCount - 1);
             })
+
 
             // Mark all / selected as read
             .addCase(markAllNotificationsAsRead.fulfilled, (state, action) => {
@@ -53,7 +70,32 @@ const notificationSlice = createSlice({
                         n.isRead = true;
                     }
                 });
-            });
+            })
+
+            // unread notification count 
+            .addCase(fetchUnreadCount.fulfilled, (state, action) => {
+                state.unreadCount = action.payload;
+            })
+
+            // notification list for the navbar
+            .addCase(fetchNavbarNotifications.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchNavbarNotifications.fulfilled, (state, action) => {
+                state.loading = false;
+                state.navbarList = action.payload;
+            })
+            .addCase(fetchNavbarNotifications.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+
+            // delete notification from navbar 
+            .addCase(deleteNotification.fulfilled, (state, action) => {
+                state.list = state.list.filter(n => n.notificationId !== action.payload);
+                state.navbarList = state.navbarList.filter(n => n.notificationId !== action.payload);
+            })
+            ;
     },
 });
 

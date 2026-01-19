@@ -259,7 +259,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
             var path = context.HttpContext.Request.Path;
             if (!string.IsNullOrEmpty(accessToken) &&
-                path.StartsWithSegments("/leaveHub"))   // match your hub path
+                (path.StartsWithSegments("/leaveHub") || path.StartsWithSegments("/notification"))) // match your hub path
             {
                 context.Token = accessToken;
             }

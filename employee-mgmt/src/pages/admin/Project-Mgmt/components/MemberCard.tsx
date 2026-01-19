@@ -15,6 +15,7 @@ import type { ProjectRole } from "../../../../enums/enum";
 import CommonConfirmDialog from "../../../../components/shared/confirmation-dialog/CommonConfirmDialog";
 import ProjectMemberForm from "./ProjectMemberFrom";
 import { useParams } from "react-router-dom";
+import { useTheme } from "@mui/material"; // import theme hook
 
 const MemberCard = ({ member }: { member: any }) => {
   const roleConfig = ProjectRoleConfig[member.role as ProjectRole];
@@ -26,6 +27,9 @@ const MemberCard = ({ member }: { member: any }) => {
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const [deleteMember] = useDeleteMemberMutation();
+
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark"; // detect dark mode
 
   const handleAddMember = () => {
     setOpenAddMember(true);
@@ -64,18 +68,33 @@ const MemberCard = ({ member }: { member: any }) => {
 
   return (
     <>
-      <Card className="member-card">
+      <Card
+        className={`member-card ${
+          isDark ? "bg-dark text-light border-secondary" : "bg-white text-dark"
+        }`}
+      >
         <CardBody>
           <div className="d-flex justify-content-between align-items-start">
             {/* Avatar */}
-            <div className="avatar-circle">{initials}</div>
+            <div
+              className="avatar-circle"
+              style={{
+                backgroundColor: isDark ? "#2c2c2c" : "#e0e0e0",
+                color: isDark ? "#fff" : "#000",
+              }}
+            >
+              {initials}
+            </div>
 
             {/* Menu */}
             <Dropdown isOpen={menuOpen} toggle={() => setMenuOpen(!menuOpen)}>
               <DropdownToggle tag="span" className="cursor-pointer">
                 <i className="bi bi-three-dots-vertical" />
               </DropdownToggle>
-              <DropdownMenu end>
+              <DropdownMenu
+                end
+                className={isDark ? "bg-body-secondary text-light" : ""}
+              >
                 <DropdownItem onClick={() => handleAddMember()}>
                   Edit Role
                 </DropdownItem>
@@ -118,6 +137,7 @@ const MemberCard = ({ member }: { member: any }) => {
           </div>
         </CardBody>
       </Card>
+
       <CommonConfirmDialog
         open={openDeleteDialog}
         title="Delete Project"
@@ -126,6 +146,7 @@ const MemberCard = ({ member }: { member: any }) => {
         onCancel={handleCancelDelete}
         onConfirm={handleConfirmDelete}
       />
+
       <ProjectMemberForm
         isOpen={openAddMember}
         onClose={() => setOpenAddMember(false)}

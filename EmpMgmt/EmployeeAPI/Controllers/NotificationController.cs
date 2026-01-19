@@ -1,3 +1,4 @@
+using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,13 +10,30 @@ namespace EmployeeAPI.Controllers;
 [Authorize(Roles = "User")]
 public class NotificationController(INotificationService notificationService) : ControllerBase
 {
-    [HttpGet("user/{userId}")]
-    public async Task<IActionResult> GetNotificationsByUserAsync(int userId)
+    private readonly INotificationService _notificationService = notificationService;
+
+    [HttpGet("navbar")]
+    public async Task<IActionResult> GetNavbarNotifications()
     {
-        var notifications = await notificationService.GetNotificationsByUserAsync(userId);
+        var result = await _notificationService.GetNavbarNotificationsAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("unread-count")]
+    public async Task<IActionResult> GetUnreadCount()
+    {
+        var count = await _notificationService.GetUnreadCountAsync();
+        return Ok(count);
+    }
+
+    [HttpGet("user")]
+    public async Task<IActionResult> GetNotificationsByUserAsync()
+    {
+        var notifications = await notificationService.GetNotificationsByUserAsync();
 
         return Ok(notifications);
     }
+
 
     [HttpPut("{notificationId}/read")]
     public async Task<IActionResult> MarkAsRead(int notificationId)
@@ -40,5 +58,12 @@ public class NotificationController(INotificationService notificationService) : 
                 ? "No unread notifications found"
                 : $"{count} notifications marked as read"
         });
+    }
+
+    [HttpDelete("{notificationId}")]
+    public async Task<IActionResult> Delete(int notificationId)
+    {
+        var deleted = await _notificationService.DeleteNotificationAsync(notificationId);
+        return deleted ? Ok() : NotFound();
     }
 }

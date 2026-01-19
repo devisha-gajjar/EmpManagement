@@ -1,6 +1,7 @@
 import * as signalR from "@microsoft/signalr";
 import { environment } from "../../environment/environment.dev";
 import type { ProjectRole } from "../../enums/enum";
+import { ACCESS_TOKEN_KEY } from "../../utils/constant";
 
 class NotificationHubService {
     public connection: signalR.HubConnection;
@@ -8,7 +9,9 @@ class NotificationHubService {
 
     constructor() {
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(environment.signalRNotificationUrl)
+            .withUrl(environment.signalRNotificationUrl, {
+                accessTokenFactory: () => localStorage.getItem(ACCESS_TOKEN_KEY) ?? ""
+            })
             .withAutomaticReconnect()
             .build();
     }
@@ -83,6 +86,22 @@ class NotificationHubService {
         this.connection.off("TaskAssigned", callback as any);
     }
 
+    onNotificationMarkedAsRead(callback: (notification: any) => void) {
+        this.connection.on("NotificationMarkedAsRead", callback);
+    }
+
+    onUnreadCountUpdated(callback: (count: number) => void) {
+        this.connection.on("UnreadNotificationCountUpdated", callback);
+    }
+
+    offNotificationMarkedAsRead(callback: Function) {
+        this.connection.off("NotificationMarkedAsRead", callback as any);
+    }
+
+    offUnreadCountUpdated(callback: Function) {
+        this.connection.off("UnreadNotificationCountUpdated", callback as any);
+    }
+
     async joinUser(userId: string) {
         await this.waitForConnection();
         await this.connection.invoke("JoinAsUser", userId);
@@ -119,6 +138,19 @@ class NotificationHubService {
     }) {
         await this.waitForConnection();
         await this.connection.invoke("AddOrUpdateTask", payload);
+    }
+
+    async markNotificationAsRead(notificationId: number) {
+        await this.waitForConnection();
+        await this.connection.invoke("MarkNotificationAsRead", notificationId);
+    }
+
+    async markAllNotificationsAsRead(notificationIds?: number[] | null) {
+        await this.waitForConnection();
+        await this.connection.invoke(
+            "MarkAllNotificationsAsRead",
+            notificationIds ?? null
+        );
     }
 
 }
