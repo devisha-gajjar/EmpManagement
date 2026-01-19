@@ -52,6 +52,9 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
         new Claim("2fa", "true")
         ];
 
+        // JWT signing key is injected at runtime via environment variables or secret store.
+        // No hardcoded or configuration-based secrets are present.
+
         var credentials = new SigningCredentials(
             new SymmetricSecurityKey(key),
             SecurityAlgorithms.HmacSha256
