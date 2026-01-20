@@ -10,7 +10,7 @@ export const login = createAsyncThunk(
             return response.data; // LoginResponse
         } catch (err: any) {
             return thunkAPI.rejectWithValue(
-                err.response?.data?.message || "Login failed"
+                err.response?.data?.Message || "Login failed"
             );
         }
     }
@@ -27,7 +27,7 @@ export const registerUser = createAsyncThunk(
             await axiosClient.post("/auth/register", dataToSend);
             return "Registration successful! Please log in.";
         } catch (err: any) {
-            const errorMessage = err.response?.data?.message || "Registration failed due to network or server error.";
+            const errorMessage = err.response?.data?.Message || "Registration failed due to network or server error.";
             return thunkAPI.rejectWithValue(errorMessage);
         }
     }

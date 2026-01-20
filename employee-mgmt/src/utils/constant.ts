@@ -1,5 +1,5 @@
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-export const phoneRegex = /^\d{10}$/;
+export const phoneRegex = /^\+?[1-9]\d{6,14}$/;
 
 export const TEMP_TOKEN_KEY = "temp_token";
 export const ACCESS_TOKEN_KEY = "access_token";

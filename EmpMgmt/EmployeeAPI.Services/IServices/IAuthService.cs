@@ -9,4 +9,6 @@ public interface IAuthService
     public User? Register(User user, string password);
     public LoginResponse Login(string usernameOrEmail, string password);
     Task<AuthTokenResponseDto> VerifyTwoFactorAsync(Verify2FADto dto);
+    Task<(string accessToken, string refreshToken)> ValidateRefreshTokens(string refreshToken);
+    Task<(string accessToken, string refereshToken)> AuthenticateUser(UserLoginDto userLoginDto);
 }

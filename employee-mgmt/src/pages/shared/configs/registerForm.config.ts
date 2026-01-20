@@ -1,65 +1,92 @@
-export const RegisterFormFields = [
+import type { DynamicFormField } from "../../../interfaces/form.interface";
+import { emailRegex, phoneRegex } from "../../../utils/constant";
+
+export const RegisterFormFields: DynamicFormField[] = [
     {
         label: "First Name",
         name: "firstName",
         type: "text",
-        autoComplete: "given-name",
-        width: "50%",
+        gridClass: "half",
+        rules: { required: true },
+        validationMessages: { required: "First name is required" },
     },
     {
         label: "Last Name",
         name: "lastName",
         type: "text",
-        autoComplete: "family-name",
-        width: "50%",
+        gridClass: "half",
+        rules: { required: true },
+        validationMessages: { required: "Last name is required" },
     },
     {
         label: "Username",
         name: "username",
         type: "text",
-        autoComplete: "username",
-        width: "100%",
+        rules: { required: true },
+        validationMessages: { required: "Username is required" },
     },
     {
         label: "Email",
         name: "email",
         type: "email",
-        autoComplete: "email",
-        width: "100%",
+        rules: {
+            required: true,
+            pattern: emailRegex,
+        },
+        validationMessages: {
+            required: "Email is required",
+            pattern: "Invalid email address",
+        },
     },
     {
         label: "Password",
         name: "password",
         type: "password",
-        autoComplete: "new-password",
-        width: "100%",
+        rules: {
+            required: true,
+            minLength: 8,
+        },
+        validationMessages: {
+            required: "Password is required",
+            minLength: "Minimum 8 characters",
+        },
     },
     {
         label: "Confirm Password",
         name: "confirmPassword",
         type: "password",
-        autoComplete: "new-password",
-        width: "100%",
+        rules: { required: true },
+        validationMessages: {
+            required: "Confirm password is required",
+        },
     },
     {
         label: "Phone",
         name: "phone",
-        type: "tel",
-        autoComplete: "tel",
-        width: "50%",
+        type: "phone",
+        gridClass: "half",
+        rules: { pattern: phoneRegex },
+        validationMessages: {
+            pattern: "Invalid phone number",
+        },
     },
     {
         label: "Zipcode",
         name: "zipcode",
         type: "text",
-        autoComplete: "postal-code",
-        width: "50%",
+        gridClass: "half",
+        rules: {
+            minLength: 6,
+            maxLength: 6,
+        },
+        validationMessages: {
+            minLength: "Zipcode must be 6 digits",
+            maxLength: "Zipcode must be 6 digits",
+        },
     },
     {
         label: "Address",
         name: "address",
         type: "text",
-        autoComplete: "street-address",
-        width: "100%",
     },
 ];

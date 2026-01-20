@@ -30,6 +30,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEmailService, EmailService>();
         services.AddSingleton<IGeoLocationService, GeoLocationService>();
         services.AddScoped<ITwoFactorService, TwoFactorService>();
+        services.AddScoped<ITokenService, TokenService>();
 
         //mappers
         services.AddAutoMapper(typeof(MappingProfile));

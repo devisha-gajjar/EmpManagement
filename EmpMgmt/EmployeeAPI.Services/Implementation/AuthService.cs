@@ -3,16 +3,19 @@ using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.DTO.RequestDto;
 using EmployeeAPI.Entities.DTO.ResponseDto;
+using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using static EmployeeAPI.Entities.Enums.Enum;
 
 namespace EmployeeAPI.Services.Implementation
 {
-    public class AuthService(EmployeeMgmtContext db, ICustomService customService, IGenericRepository<User> userRepository, ITwoFactorService twoFactorService) : IAuthService
+    public class AuthService(EmployeeMgmtContext db, ICustomService customService, IGenericRepository<User> userRepository, ITwoFactorService twoFactorService, ITokenService tokenService) : IAuthService
     {
+        #region Register
         public User? Register(User user, string password)
         {
             if (db.Users.Any(u => u.Email == user.Email || u.Username == user.Username))
@@ -28,6 +31,9 @@ namespace EmployeeAPI.Services.Implementation
 
             return user;
         }
+        #endregion
+
+        #region Login
         public LoginResponse Login(string usernameOrEmail, string password)
         {
             var user = db.Users
@@ -37,12 +43,12 @@ namespace EmployeeAPI.Services.Implementation
                     && !u.IsDeleted);
 
             if (user == null || !customService.Verify(password, user.Password))
-                throw new AppException("Invalid credentials");
+                throw new AppException(Constants.INVALID_LOGIN_CREDENTIALS_MESSAGE);
 
-            // 1️⃣ 2FA enabled → OTP verification
+            // 2FA enabled → OTP verification
             if (user.IsTwoFactorEnabled)
             {
-                // 2️⃣ 2FA secret exists but not verified → setup screen
+                // 2FA secret not exists → setup screen
                 if (string.IsNullOrWhiteSpace(user.TwoFactorSecret))
                 {
                     return new LoginResponse
@@ -59,7 +65,7 @@ namespace EmployeeAPI.Services.Implementation
                 };
             }
 
-            // 3️⃣ Normal login
+            // Normal login
             return new LoginResponse
             {
                 Step = LoginStep.Success,
@@ -67,6 +73,35 @@ namespace EmployeeAPI.Services.Implementation
             };
         }
 
+        public async Task<(string accessToken, string refereshToken)> AuthenticateUser(UserLoginDto userLoginDto)
+        {
+            if (userLoginDto == null || string.IsNullOrEmpty(userLoginDto.Email) || string.IsNullOrEmpty(userLoginDto.Password))
+            {
+                throw new ArgumentException(Constants.INVALID_LOGIN_CREDENTIALS_MESSAGE);
+            }
+
+            User? user = await userRepository.GetByInclude(u => u.Email.ToLower() == userLoginDto.Email.ToLower() && !u.IsDeleted,
+                                                                query => query.Include(u => u.Role)) ?? throw new ArgumentException(Constants.USER_NOT_FOUND);
+
+
+            if (!customService.Verify(userLoginDto.Password, user.Password))
+            {
+                throw new AppException(Constants.INVALID_LOGIN_CREDENTIALS_MESSAGE);
+            }
+
+            string accessToken = tokenService.GenerateAccessToken(user);
+            string refreshToken = tokenService.GenerateRefreshToken(user, userLoginDto.RememberMe);
+            if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
+            {
+                throw new Exception(Constants.FAILED_TOKEN_GENERATION_MESSAGE);
+            }
+
+            return (accessToken, refreshToken);
+        }
+
+        #endregion
+
+        #region Verify 2FA token
         public async Task<AuthTokenResponseDto> VerifyTwoFactorAsync(Verify2FADto dto)
         {
             // 1. Validate temporary JWT (issued after username/password)
@@ -102,5 +137,63 @@ namespace EmployeeAPI.Services.Implementation
                 AccessToken = accessToken
             };
         }
+        #endregion
+
+        #region Verify Refresh Token
+        public async Task<(string accessToken, string refreshToken)> ValidateRefreshTokens(string refreshToken)
+        {
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new ArgumentException(Constants.REFRESH_TOKEN_REQUIRED_MESSAGE);
+            }
+
+            ClaimsPrincipal principal;
+            bool isExpired = false;
+
+            try
+            {
+                principal = tokenService.ValidateToken(refreshToken, validateLifetime: true);
+            }
+            catch (AppException ex) when (ex.StatusCode == StatusCodes.Status401Unauthorized && ex.Message.Contains("expired"))
+            {
+                principal = tokenService.ValidateToken(refreshToken, validateLifetime: false);
+                isExpired = true;
+            }
+
+            if (principal == null || principal.Identity == null || !principal.Identity.IsAuthenticated)
+            {
+                throw new ArgumentException(Constants.INVALID_DATA_MESSAGE);
+            }
+
+            var userIdStr = tokenService.GetUserIdFromToken(principal);
+            if (!int.TryParse(userIdStr, out int userId))
+            {
+                throw new ArgumentException(Constants.INVALID_USER_ID_MESSAGE);
+            }
+
+            User? user = await userRepository.GetByInclude(u => u.UserId == userId && !u.IsDeleted,
+                query => query.Include(u => u.Role))
+                ?? throw new ArgumentException(Constants.USER_NOT_FOUND);
+
+            if (isExpired)
+            {
+                bool rememberMe = tokenService.IsRememberMeEnabled(principal);
+                if (!rememberMe)
+                {
+                    throw new AppException(Constants.EXPIRED_LOGIN_SESSION_MESSAGE, StatusCodes.Status401Unauthorized);
+                }
+            }
+
+            string newAccessToken = tokenService.GenerateAccessToken(user);
+            string newRefreshToken = tokenService.GenerateRefreshToken(user, tokenService.IsRememberMeEnabled(principal));
+
+            if (string.IsNullOrEmpty(newAccessToken) || string.IsNullOrEmpty(newRefreshToken))
+            {
+                throw new Exception(Constants.FAILED_TOKEN_GENERATION_MESSAGE);
+            }
+
+            return (newAccessToken, newRefreshToken);
+        }
+        #endregion
     }
 }

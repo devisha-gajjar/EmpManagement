@@ -47,6 +47,50 @@ public class AuthController(IAuthService authService, EmployeeMgmtContext db, IC
         return Ok(result);
     }
 
+    [HttpPost("login-new")]
+    public async Task<IActionResult> LoginNew([FromBody] UserLoginDto dto)
+    {
+        var (accessToken, refreshToken) = await authService.AuthenticateUser(dto);
+
+        SetRefreshTokenCookie(refreshToken, dto.RememberMe);
+
+        return Ok(new
+        {
+            accessToken
+        });
+    }
+
+    private void SetRefreshTokenCookie(string refreshToken, bool rememberMe)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = rememberMe
+                ? DateTime.UtcNow.AddDays(30)
+                : DateTime.UtcNow.AddDays(1)
+        };
+
+        Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh()
+    {
+        var refreshToken = Request.Cookies["refreshToken"] ?? throw new AppException("No refresh token is found!");
+
+        var (newAccessToken, newRefreshToken) =
+            await authService.ValidateRefreshTokens(refreshToken);
+
+        SetRefreshTokenCookie(newRefreshToken, rememberMe: true);
+
+        return Ok(new
+        {
+            accessToken = newAccessToken
+        });
+    }
+
     [HttpPost("google-login")]
     public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto dto)
     {
