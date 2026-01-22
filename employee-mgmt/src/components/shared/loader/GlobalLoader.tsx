@@ -7,9 +7,10 @@ const GlobalLoader = () => {
   const { isLoading } = useAppSelector((state) => state.loader);
   console.log("loader value", isLoading);
   return isLoading ? (
-    <div className="loader-overlay">
-      <div className="loader"></div>
-    </div>
+    // <div className="loader-overlay">
+    //   <div className="loader"></div>
+    // </div>
+    <div></div>
   ) : (
     <></>
   );

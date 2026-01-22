@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Skeleton, Typography } from "@mui/material";
 import type {
   DashboardCardProps,
   InfoTextProps,
@@ -8,6 +8,7 @@ import type {
 export function DashboardCard({
   title,
   children,
+  loading = false,
 }: Readonly<DashboardCardProps>) {
   return (
     <Card
@@ -18,21 +19,28 @@ export function DashboardCard({
         transition: "0.3s",
         border: "0.1px solid #1976d233",
         height: "100%",
-        "&:hover": {
-          boxShadow: "0 6px 25px rgba(0,0,0,0.15)",
-          transform: "translateY(-2px)",
-        },
       }}
     >
       <CardContent>
-        <Typography
-          variant="h6"
-          sx={{ mb: 2, fontWeight: 700, color: "primary.main" }}
-        >
-          {title}
-        </Typography>
+        {loading ? (
+          <>
+            <Skeleton width="60%" height={30} />
+            <Skeleton height={20} sx={{ mt: 2 }} />
+            <Skeleton height={20} />
+            <Skeleton height={20} width="80%" />
+          </>
+        ) : (
+          <>
+            <Typography
+              variant="h6"
+              sx={{ mb: 2, fontWeight: 700, color: "primary.main" }}
+            >
+              {title}
+            </Typography>
 
-        {children}
+            {children}
+          </>
+        )}
       </CardContent>
     </Card>
   );

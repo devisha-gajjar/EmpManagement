@@ -40,7 +40,7 @@ public class TokenService(IConfiguration _configuration) : ITokenService
                 new (ClaimTypes.Name, user.UserId.ToString()),
                 new (Constants.REMEMBER_ME_CLAIM_NAME, rememberMe.ToString())
             };
-        var expiryDaysString = _configuration["RefreshTokenExpiryDays"] ?? throw new InvalidOperationException(Constants.REFRESH_TOKEN_EXPIRYTIME_NOT_CONFIGURED_MESSAGE);
+        var expiryDaysString = _configuration["RefreshTokenExpiryHours"] ?? throw new InvalidOperationException(Constants.REFRESH_TOKEN_EXPIRYTIME_NOT_CONFIGURED_MESSAGE);
         return CreateToken(claims, DateTime.UtcNow.AddDays(double.Parse(expiryDaysString)));
     }
 

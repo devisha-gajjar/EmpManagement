@@ -21,14 +21,6 @@ export default function UserDashboard() {
     dispatch(fetchDashboardData());
   }, [dispatch]);
 
-  if (loading) {
-    return (
-      <CenteredContainer>
-        <CircularProgress thickness={4} size={80} />
-      </CenteredContainer>
-    );
-  }
-
   if (error) {
     return (
       <CenteredContainer>
@@ -59,7 +51,7 @@ export default function UserDashboard() {
       >
         {/* Employee Information */}
         <ResponsiveCard>
-          <DashboardCard title="Employee Information">
+          <DashboardCard title="Employee Information" loading={loading}>
             <InfoText label="Name" value={dashboard?.fullName} />
             <InfoText label="Position" value={dashboard?.position} />
             <InfoText
@@ -77,7 +69,7 @@ export default function UserDashboard() {
 
         {/* Tasks */}
         <ResponsiveCard>
-          <DashboardCard title="Tasks">
+          <DashboardCard title="Tasks" loading={loading}>
             <InfoText
               label="Total Tasks"
               value={dashboard?.totalTasksAssigned}
@@ -89,7 +81,7 @@ export default function UserDashboard() {
 
         {/* Leave Information */}
         <ResponsiveCard>
-          <DashboardCard title="Leave Information">
+          <DashboardCard title="Leave Information" loading={loading}>
             <InfoText
               label="Total Leave Days"
               value={dashboard?.totalLeaveDays}
@@ -152,7 +144,7 @@ export default function UserDashboard() {
 
         {/* Department */}
         <ResponsiveCard>
-          <DashboardCard title="Department">
+          <DashboardCard title="Department" loading={loading}>
             <InfoText
               label="Department"
               value={dashboard?.department?.departmentName}

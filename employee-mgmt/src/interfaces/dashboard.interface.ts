@@ -7,6 +7,7 @@ export interface DashboardState {
 export interface DashboardCardProps {
     title: string;
     children: React.ReactNode;
+    loading?: boolean;
 }
 
 export interface InfoTextProps {
