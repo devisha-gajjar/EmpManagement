@@ -1,9 +1,9 @@
+using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Services.IServices;
 using MaxMind.GeoIP2;
 using MaxMind.GeoIP2.Exceptions;
 using MaxMind.GeoIP2.Responses;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using System.Net;
 
 namespace EmployeeAPI.Services.Implementation;
@@ -13,7 +13,7 @@ public class GeoLocationService : IGeoLocationService
     private readonly DatabaseReader _reader;
     private readonly IWebHostEnvironment _env;
 
-    private const string DefaultIndiaIp = "49.37.128.112";
+    private const string DefaultIndiaIp = Constants.INDIA_IP;
 
     public GeoLocationService(IWebHostEnvironment env)
     {
