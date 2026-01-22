@@ -19,7 +19,6 @@ public class EmailService(IConfiguration config) : IEmailService
             var port = int.Parse(config["EmailSettings:SmtpPort"] ?? "587");
             var username = config["EmailSettings:SmtpUsername"];
             var password = Environment.GetEnvironmentVariable("EmailSettings__SmtpPassword");
-            var enableSsl = bool.Parse(config["EmailSettings:EnableSsl"] ?? "true");
 
             if (string.IsNullOrWhiteSpace(from) || string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 throw new AppException(Constants.SMTP_CONFIG_MISSING);
@@ -27,7 +26,7 @@ public class EmailService(IConfiguration config) : IEmailService
             using var smtpClient = new SmtpClient(host, port)
             {
                 Credentials = new NetworkCredential(username, password),
-                EnableSsl = enableSsl
+                EnableSsl = true
             };
 
             using var message = new MailMessage
