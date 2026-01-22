@@ -2,6 +2,7 @@ import * as signalR from "@microsoft/signalr";
 import { environment } from "../../environment/environment.dev";
 import type { ProjectRole } from "../../enums/enum";
 import { ACCESS_TOKEN_KEY } from "../../utils/constant";
+import type { AssignedToProjectPayload, NotificationPayload, ProjectMemberChangedPayload, TaskAssignedPayload } from "../../interfaces/notification.interface";
 
 class NotificationHubService {
     public connection: signalR.HubConnection;
@@ -40,66 +41,63 @@ class NotificationHubService {
     }
 
     onProjectMemberChanged(
-        callback: (data: {
-            action: "Added" | "Updated";
-            projectId: number;
-            userId: number;
-            role: ProjectRole;
-        }) => void
+        callback: (data: ProjectMemberChangedPayload) => void
     ) {
         this.connection.on("ProjectMemberChanged", callback);
     }
 
-    offProjectMemberChanged(callback: Function) {
-        this.connection.off("ProjectMemberChanged", callback as any);
+    offProjectMemberChanged(
+        callback: (data: ProjectMemberChangedPayload) => void
+    ) {
+        this.connection.off("ProjectMemberChanged", callback);
     }
 
     onAssignedToProject(
-        callback: (data: {
-            projectId: number;
-            role: ProjectRole;
-            action: "Assigned" | "Updated";
-        }) => void
+        callback: (data: AssignedToProjectPayload) => void
     ) {
-        console.log("membeer assigned to one project")
         this.connection.on("AssignedToProject", callback);
     }
 
-    offAssignedToProject(callback: Function) {
-        this.connection.off("AssignedToProject", callback as any);
+    offAssignedToProject(
+        callback: (data: AssignedToProjectPayload) => void
+    ) {
+        this.connection.off("AssignedToProject", callback);
     }
 
     onTaskAssigned(
-        callback: (data: {
-            taskId: number;
-            taskName: string;
-            projectId: number;
-            status: string;
-            priority: string;
-            action: "Assigned" | "Updated";
-        }) => void
+        callback: (data: TaskAssignedPayload) => void
     ) {
         this.connection.on("TaskAssigned", callback);
     }
 
-    offTaskAssigned(callback: Function) {
-        this.connection.off("TaskAssigned", callback as any);
+    offTaskAssigned(
+        callback: (data: TaskAssignedPayload) => void
+    ) {
+        this.connection.off("TaskAssigned", callback);
     }
 
-    onNotificationMarkedAsRead(callback: (notification: any) => void) {
+    onNotificationMarkedAsRead(
+        callback: (notification: NotificationPayload) => void
+    ) {
         this.connection.on("NotificationMarkedAsRead", callback);
     }
 
-    onUnreadCountUpdated(callback: (count: number) => void) {
+    offNotificationMarkedAsRead(
+        callback: (notification: NotificationPayload) => void
+    ) {
+        this.connection.off("NotificationMarkedAsRead", callback);
+    }
+
+    onUnreadCountUpdated(
+        callback: (count: number) => void
+    ) {
         this.connection.on("UnreadNotificationCountUpdated", callback);
     }
 
-    offNotificationMarkedAsRead(callback: Function) {
-        this.connection.off("NotificationMarkedAsRead", callback as any);
-    }
-
-    offUnreadCountUpdated(callback: Function) {
-        this.connection.off("UnreadNotificationCountUpdated", callback as any);
+    offUnreadCountUpdated(
+        callback: (count: number) => void
+    ) {
+        this.connection.off("UnreadNotificationCountUpdated", callback);
     }
 
     async joinUser(userId: string) {

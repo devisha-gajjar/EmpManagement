@@ -11,6 +11,8 @@ import {
   Alert,
   Link,
   useTheme,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { emailRegex } from "../../utils/constant";
 import AuthLayout from "../../components/layout/AuthLayout";
@@ -34,6 +36,7 @@ export default function Login() {
   const [form, setForm] = useState({
     usernameOrEmail: "",
     password: "",
+    rememberMe: false,
   });
 
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
@@ -48,6 +51,13 @@ export default function Login() {
       }));
     }
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm((prev) => ({
+      ...prev,
+      rememberMe: e.target.checked,
+    }));
   };
 
   const validateForm = (): boolean => {
@@ -84,7 +94,13 @@ export default function Login() {
     e.preventDefault();
 
     if (validateForm()) {
-      dispatch(login(form));
+      dispatch(
+        login({
+          email: form.usernameOrEmail,
+          password: form.password,
+          rememberMe: form.rememberMe,
+        })
+      );
     }
   };
 
@@ -189,6 +205,21 @@ export default function Login() {
             onChange={handleChange}
             error={!!validationErrors.password}
             helperText={validationErrors.password}
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={form.rememberMe}
+                onChange={handleCheckboxChange}
+                color="primary"
+              />
+            }
+            label={
+              <Typography variant="body2" color="text.secondary">
+                Remember me
+              </Typography>
+            }
           />
 
           <Button

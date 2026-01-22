@@ -22,10 +22,11 @@ public class TokenService(IConfiguration _configuration) : ITokenService
 
         var claims = new List<Claim>
             {
-                new (ClaimTypes.Email, user.Email),
-                new (ClaimTypes.UserData, user.UserId.ToString()),
-                new (ClaimTypes.NameIdentifier, user.Username.ToString()),
-                new (ClaimTypes.Role, user.Role.RoleName ?? "no role")
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.RoleName!),
+                new Claim(ClaimTypes.Name, user.UserId.ToString()),
+                new Claim(ClaimTypes.GivenName, user.Username),
+                new Claim("2fa", "true")
             };
 
         var expiryMinutesString = _configuration["AccessTokenExpiryMinutes"] ?? throw new InvalidOperationException(Constants.ACCESS_TOKEN_EXPIRYTIME_NOT_CONFIGURED_MESSAGE);
@@ -36,7 +37,7 @@ public class TokenService(IConfiguration _configuration) : ITokenService
     {
         var claims = new List<Claim>
             {
-                new (ClaimTypes.UserData, user.UserId.ToString()),
+                new (ClaimTypes.Name, user.UserId.ToString()),
                 new (Constants.REMEMBER_ME_CLAIM_NAME, rememberMe.ToString())
             };
         var expiryDaysString = _configuration["RefreshTokenExpiryDays"] ?? throw new InvalidOperationException(Constants.REFRESH_TOKEN_EXPIRYTIME_NOT_CONFIGURED_MESSAGE);
@@ -45,13 +46,13 @@ public class TokenService(IConfiguration _configuration) : ITokenService
 
     private string CreateToken(IEnumerable<Claim> claims, DateTime expires)
     {
-        var keyString = _configuration["JwtSettings:Key"] ?? throw new InvalidOperationException(Constants.JWT_KEY_ERROR_MESSAGE);
+        var keyString = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new InvalidOperationException(Constants.JWT_KEY_ERROR_MESSAGE);
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["JwtSettings:Issuer"],
-            audience: _configuration["JwtSettings:Audience"],
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
             claims: claims,
             expires: expires,
             signingCredentials: creds
@@ -70,7 +71,7 @@ public class TokenService(IConfiguration _configuration) : ITokenService
         var tokenHandler = new JwtSecurityTokenHandler();
 
         var key = Encoding.UTF8.GetBytes(
-            _configuration["JwtSettings:Key"] ?? throw new InvalidOperationException(Constants.JWT_KEY_ERROR_MESSAGE)
+            Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new InvalidOperationException(Constants.JWT_KEY_ERROR_MESSAGE)
         );
 
         var validationParameters = new TokenValidationParameters
@@ -78,9 +79,9 @@ public class TokenService(IConfiguration _configuration) : ITokenService
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateIssuer = true,
-            ValidIssuer = _configuration["JwtSettings:Issuer"],
+            ValidIssuer = _configuration["Jwt:Issuer"],
             ValidateAudience = true,
-            ValidAudience = _configuration["JwtSettings:Audience"],
+            ValidAudience = _configuration["Jwt:Audience"],
             ValidateLifetime = validateLifetime,
             ClockSkew = TimeSpan.Zero
         };
@@ -124,7 +125,7 @@ public class TokenService(IConfiguration _configuration) : ITokenService
 
     public string GetUserIdFromToken(ClaimsPrincipal principal)
     {
-        return principal.FindFirst(ClaimTypes.UserData)?.Value ?? string.Empty;
+        return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
     }
 
     public DateTime GetTokenExpiration(string token)

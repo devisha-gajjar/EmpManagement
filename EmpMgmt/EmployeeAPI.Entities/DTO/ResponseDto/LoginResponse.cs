@@ -7,4 +7,5 @@ public class LoginResponse
     public LoginStep Step { get; set; }
     public string? AccessToken { get; set; }
     public string? TempToken { get; set; }
+    public string? RefreshToken{ get; set; }
 }

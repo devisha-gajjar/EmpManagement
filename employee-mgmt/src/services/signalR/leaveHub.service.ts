@@ -51,7 +51,7 @@ class LeaveHubService {
         this.statusChangeRegistered = false;
     }
 
-    onNewLeaveRequest(callback: (data: any) => void) {
+    onNewLeaveRequest(callback: (data: unknown) => void) {
         if (this.newLeaveRequestRegistered) return;
         this.newLeaveRequestRegistered = true;
 
@@ -59,7 +59,7 @@ class LeaveHubService {
         this.connection.on("NewLeaveRequest", callback);
     }
 
-    onEditLeaveRequest(callback: (data: any) => void) {
+    onEditLeaveRequest(callback: (data: unknown) => void) {
         this.connection.on("LeaveEdited", callback);
     }
 

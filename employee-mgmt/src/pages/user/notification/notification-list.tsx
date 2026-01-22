@@ -23,7 +23,7 @@ function NotificationsList() {
   // Initial fetch
   useEffect(() => {
     if (userId) {
-      dispatch(fetchNotificationsByUser(Number(userId)));
+      dispatch(fetchNotificationsByUser());
     }
   }, [dispatch, userId]);
 
@@ -31,7 +31,7 @@ function NotificationsList() {
   useEffect(() => {
     const onProjectMemberAssign = () => {
       if (userId) {
-        dispatch(fetchNotificationsByUser(Number(userId)));
+        dispatch(fetchNotificationsByUser());
       }
     };
 

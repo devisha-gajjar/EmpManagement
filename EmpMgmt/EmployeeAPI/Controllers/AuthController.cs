@@ -41,9 +41,9 @@ public class AuthController(IAuthService authService, EmployeeMgmtContext db, IC
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginDto dto)
+    public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
     {
-        var result = authService.Login(dto.UsernameOrEmail, dto.Password);
+        var result = await authService.Login(dto);
         return Ok(result);
     }
 

@@ -8,7 +8,7 @@ import { ProjectRole } from "../../../../enums/enum";
 import DynamicFormComponent from "../../../../components/shared/form/CommonForm";
 import type { DynamicFormField } from "../../../../interfaces/form.interface";
 import { useMemo, useState } from "react";
-import { debounce } from "@mui/material";
+import { debounce, useTheme } from "@mui/material";
 import { useSnackbar } from "../../../../app/hooks";
 import { notificationHubService } from "../../../../services/signalR/notificationHub.service";
 
@@ -26,8 +26,14 @@ const ProjectMemberForm = ({
   projectMemberId,
 }: Props) => {
   const isEditMode = Boolean(projectMemberId);
-
   const snackbar = useSnackbar();
+
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
+  const modalClass = isDark ? "bg-dark text-light" : "";
+  const headerClass = isDark ? "bg-dark text-light border-secondary" : "";
+  const bodyClass = isDark ? "bg-dark text-light" : "";
 
   const [addOrUpdateMember, { isLoading }] = useAddOrUpdateMemberMutation();
 
@@ -35,18 +41,14 @@ const ProjectMemberForm = ({
 
   const [userOptions, setUserOptions] = useState<any[]>([]);
 
-  const { data: memberData, isFetching: isLoadingMember } = useGetMemberQuery(
-    projectMemberId!,
-    {
-      skip: !isEditMode,
-    }
-  );
+  const { data: memberData } = useGetMemberQuery(projectMemberId!, {
+    skip: !isEditMode,
+  });
 
   const debouncedSearch = useMemo(
     () =>
       debounce(async (text: string) => {
         if (!text || text.length < 2) return;
-
         const res = await triggerSearch(text).unwrap();
         setUserOptions(res);
       }, 400),
@@ -60,7 +62,7 @@ const ProjectMemberForm = ({
       }
     : undefined;
 
-  const userSelectOptions: { value: number; label: string }[] =
+  const userSelectOptions =
     isEditMode && memberData
       ? [
           {
@@ -98,7 +100,7 @@ const ProjectMemberForm = ({
     try {
       await notificationHubService.addOrUpdateProjectMember({
         projectMemberId: isEditMode ? projectMemberId : 0,
-        projectId: projectId,
+        projectId,
         userId: Number(data.userId),
         role: Number(data.role),
       });
@@ -109,18 +111,22 @@ const ProjectMemberForm = ({
 
       onClose();
     } catch (err: any) {
-      console.log(err);
-      const message = err?.data?.Message || "Operation failed";
-      snackbar.error(message);
+      snackbar.error(err?.data?.Message || "Operation failed");
     }
   };
 
   return (
-    <Modal isOpen={isOpen} toggle={onClose} centered>
-      <ModalHeader toggle={onClose}>
+    <Modal
+      isOpen={isOpen}
+      toggle={onClose}
+      centered
+      contentClassName={modalClass}
+    >
+      <ModalHeader toggle={onClose} className={headerClass}>
         {isEditMode ? "Edit Team Member" : "Add Team Member"}
       </ModalHeader>
-      <ModalBody>
+
+      <ModalBody className={bodyClass}>
         <DynamicFormComponent
           formConfig={formConfig}
           onSubmit={handleSubmit}

@@ -1,28 +1,32 @@
 import { Box } from "@mui/material";
 import { fetchGeoByIp } from "../../../../features/user/profile/locationApi";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import DynamicFormComponent from "../../../../components/shared/form/CommonForm";
 import { userFormConfig } from "../configs/profile.config";
 
+interface ProfileFormValues {
+  country: string;
+  phone: string;
+}
+
 export function ProfileDetails() {
   const dispatch = useAppDispatch();
   const geo = useAppSelector((s) => s.geo.geo);
-  let defaultValues = {
-    country: geo?.isoCode || "",
-    phone: "",
-  };
 
   useEffect(() => {
     dispatch(fetchGeoByIp());
-
-    defaultValues = {
-      country: geo?.isoCode || "",
-      phone: "",
-    };
   }, [dispatch]);
 
-  const handleSubmit = (data: any) => {
+  const defaultValues = useMemo<ProfileFormValues>(
+    () => ({
+      country: geo?.isoCode ?? "",
+      phone: "",
+    }),
+    [geo?.isoCode]
+  );
+
+  const handleSubmit = (data: ProfileFormValues) => {
     console.log("Form submitted:", data);
     // call your update API here
   };

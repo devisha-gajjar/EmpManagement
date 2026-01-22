@@ -12,3 +12,7 @@
     padding: 1rem;
     border-radius: 10px;
 }
+
+[data-theme="dark"] .member-container {
+    background: linear-gradient(180deg, #131313, #272727);
+}

@@ -103,12 +103,19 @@ const Navbar = () => {
       dispatch(fetchUnreadCount());
     };
 
+    const onProjectMemberAssign = () => {
+      dispatch(fetchNavbarNotifications());
+      dispatch(fetchUnreadCount());
+    };
+
     notificationHubService.onNotificationMarkedAsRead(onMarkedRead);
     notificationHubService.onUnreadCountUpdated(onUnreadUpdated);
+    notificationHubService.onAssignedToProject(onProjectMemberAssign);
 
     return () => {
       notificationHubService.offNotificationMarkedAsRead(onMarkedRead);
       notificationHubService.offUnreadCountUpdated(onUnreadUpdated);
+      notificationHubService.offAssignedToProject(onProjectMemberAssign);
     };
   }, [dispatch]);
 
@@ -235,7 +242,8 @@ const Navbar = () => {
               <Badge badgeContent={unreadCount} color="error">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>)}
+            </IconButton>
+          )}
 
           {/* Profile */}
           <IconButton

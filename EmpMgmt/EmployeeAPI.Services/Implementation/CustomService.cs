@@ -37,7 +37,7 @@ public class CustomService(IUserRepository userRepository, IConfiguration config
         User user = _userRepository.GetAll().Include(u => u.Role).FirstOrDefault(u => u.Username == name) ?? throw new AppException(Constants.UNAUTHORIZED_USER);
 
         var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
-            ?? throw new AppException("JWT_SECRET not configured");
+            ?? throw new AppException(Constants.JWT_KEY_ERROR_MESSAGE);
 
         byte[] key = Encoding.UTF8.GetBytes(jwtSecret);
 

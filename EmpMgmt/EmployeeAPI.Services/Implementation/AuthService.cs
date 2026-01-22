@@ -34,42 +34,42 @@ namespace EmployeeAPI.Services.Implementation
         #endregion
 
         #region Login
-        public LoginResponse Login(string usernameOrEmail, string password)
+        public async Task<LoginResponse> Login(UserLoginDto dto)
         {
-            var user = db.Users
-                .Include(u => u.Role)
-                .FirstOrDefault(u =>
-                    (u.Username == usernameOrEmail || u.Email == usernameOrEmail)
-                    && !u.IsDeleted);
+            var user = await userRepository.GetByInclude(
+                u => (u.Email == dto.Email || u.Username == dto.Email) && !u.IsDeleted,
+                q => q.Include(u => u.Role)
+            ) ?? throw new AppException(Constants.INVALID_LOGIN_CREDENTIALS_MESSAGE);
 
-            if (user == null || !customService.Verify(password, user.Password))
+            if (!customService.Verify(dto.Password, user.Password))
                 throw new AppException(Constants.INVALID_LOGIN_CREDENTIALS_MESSAGE);
 
-            // 2FA enabled → OTP verification
+            // 2FA enabled
             if (user.IsTwoFactorEnabled)
             {
-                // 2FA secret not exists → setup screen
-                if (string.IsNullOrWhiteSpace(user.TwoFactorSecret))
-                {
-                    return new LoginResponse
-                    {
-                        Step = LoginStep.RequireTwoFactorSetup,
-                        TempToken = customService.GenerateTempToken(user.UserId)
-                    };
-                }
-
                 return new LoginResponse
                 {
-                    Step = LoginStep.RequireTwoFactor,
+                    Step = string.IsNullOrWhiteSpace(user.TwoFactorSecret)
+                        ? LoginStep.RequireTwoFactorSetup
+                        : LoginStep.RequireTwoFactor,
                     TempToken = customService.GenerateTempToken(user.UserId)
                 };
             }
 
-            // Normal login
+            // No 2FA → issue tokens
+            return IssueTokens(user, dto.RememberMe);
+        }
+
+        private LoginResponse IssueTokens(User user, bool rememberMe)
+        {
+            var accessToken = tokenService.GenerateAccessToken(user);
+            var refreshToken = tokenService.GenerateRefreshToken(user, rememberMe);
+
             return new LoginResponse
             {
                 Step = LoginStep.Success,
-                AccessToken = customService.GenerateJwtToken(user.Username)
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
             };
         }
 
@@ -139,7 +139,7 @@ namespace EmployeeAPI.Services.Implementation
         }
         #endregion
 
-        #region Verify Refresh Token
+        #region Validate Refresh Token
         public async Task<(string accessToken, string refreshToken)> ValidateRefreshTokens(string refreshToken)
         {
             if (string.IsNullOrEmpty(refreshToken))
