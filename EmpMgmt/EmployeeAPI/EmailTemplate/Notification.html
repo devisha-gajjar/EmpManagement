@@ -1,143 +1,145 @@
-    <table
-      width="100%"
-      cellpadding="0"
-      cellspacing="0"
+<table
+  width="100%"
+  cellpadding="0"
+  cellspacing="0"
+  style="
+    width: 100%;
+    background-color: #f4f6f8;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+  "
+>
+  <tr>
+    <th
+      align="center"
+      scope="col"
       style="
-        width: 100%;
-        background-color: #f4f6f8;
         padding: 30px 0;
-        border-collapse: collapse;
-        margin: 0;
-        padding: 0;
         background-color: #f4f6f8;
-        font-family: Arial, Helvetica, sans-serif;
+        font-weight: normal;
       "
     >
-      <tr>
-        <td align="center">
-          <table
-            width="100%"
-            cellpadding="0"
-            cellspacing="0"
+      <table
+        width="100%"
+        cellpadding="0"
+        cellspacing="0"
+        style="
+          max-width: 600px;
+          background-color: #ffffff;
+          border-radius: 8px;
+          overflow: hidden;
+          border-collapse: collapse;
+        "
+      >
+        <!-- Inner table header -->
+        <tr>
+          <th
+            align="center"
+            scope="col"
             style="
-              max-width: 600px;
-              background-color: #ffffff;
-              border-radius: 8px;
-              overflow: hidden;
-              border-collapse: collapse;
+              background-color: #2563eb;
+              padding: 20px;
+              color: #ffffff;
+              font-size: 20px;
+              font-weight: bold;
+              text-align: center;
             "
           >
-            <!-- Header -->
-            <tr>
-              <td
-                align="center"
+            Employee Management
+          </th>
+        </tr>
+
+        <!-- Content -->
+        <tr>
+          <td
+            style="
+              padding: 30px;
+              color: #333333;
+              font-size: 14px;
+              line-height: 1.6;
+            "
+          >
+            <div
+              style="
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 10px;
+                color: #111827;
+              "
+            >
+              Hello {UserName},
+            </div>
+
+            <p style="margin: 0 0 15px 0;">
+              You have received a new notification regarding the following:
+            </p>
+
+            <div
+              style="
+                background-color: #f1f5f9;
+                padding: 15px;
+                border-left: 4px solid #2563eb;
+                margin: 20px 0;
+                border-radius: 4px;
+              "
+            >
+              <strong>{NotificationTitle}</strong>
+              <p style="margin: 8px 0 0 0;">{NotificationMessage}</p>
+            </div>
+
+            <p style="margin: 0 0 20px 0;">
+              Please review this information at your earliest convenience.
+            </p>
+
+            <div style="text-align: center; margin: 25px 0;">
+              <a
+                href="{ActionUrl}"
                 style="
                   background-color: #2563eb;
-                  padding: 20px;
                   color: #ffffff;
-                "
-              >
-                <div
-                  style="
-                    font-size: 20px;
-                    font-weight: bold;
-                    margin-top: 10px;
-                  "
-                >
-                  Employee Management
-                </div>
-              </td>
-            </tr>
-
-            <!-- Content -->
-            <tr>
-              <td
-                style="
-                  padding: 30px;
-                  color: #333333;
+                  text-decoration: none;
+                  padding: 12px 24px;
                   font-size: 14px;
-                  line-height: 1.6;
+                  border-radius: 6px;
+                  display: inline-block;
                 "
               >
-                <div
-                  style="
-                    font-size: 18px;
-                    font-weight: bold;
-                    margin-bottom: 10px;
-                    color: #111827;
-                  "
-                >
-                  Hello {UserName},
-                </div>
+                View Notification
+              </a>
+            </div>
 
-                <p style="margin: 0 0 15px 0;">
-                  You have received a new notification regarding the following:
-                </p>
+            <p style="margin: 0 0 15px 0;">
+              If you did not expect this notification, you may safely ignore
+              this email.
+            </p>
 
-                <div
-                  style="
-                    background-color: #f1f5f9;
-                    padding: 15px;
-                    border-left: 4px solid #2563eb;
-                    margin: 20px 0;
-                    border-radius: 4px;
-                  "
-                >
-                  <strong>{NotificationTitle}</strong>
-                  <p style="margin: 8px 0 0 0;">{NotificationMessage}</p>
-                </div>
+            <p style="margin: 0;">
+              Regards,<br />
+              <strong>Employee Management Team</strong>
+            </p>
+          </td>
+        </tr>
 
-                <p style="margin: 0 0 20px 0;">
-                  Please review this information at your earliest convenience.
-                </p>
-
-                <div style="text-align: center; margin: 25px 0;">
-                  <a
-                    href="{ActionUrl}"
-                    style="
-                      background-color: #2563eb;
-                      color: #ffffff;
-                      text-decoration: none;
-                      padding: 12px 24px;
-                      font-size: 14px;
-                      border-radius: 6px;
-                      display: inline-block;
-                    "
-                  >
-                    View Notification
-                  </a>
-                </div>
-
-                <p style="margin: 0 0 15px 0;">
-                  If you did not expect this notification, you may safely ignore
-                  this email.
-                </p>
-
-                <p style="margin: 0;">
-                  Regards,<br />
-                  <strong>Employee Management Team</strong>
-                </p>
-              </td>
-            </tr>
-
-            <!-- Footer -->
-            <tr>
-              <td
-                align="center"
-                style="
-                  padding: 20px;
-                  font-size: 12px;
-                  color: #6b7280;
-                  background-color: #fafafa;
-                "
-              >
-                © {{Year}} Employee Management. All rights reserved.<br />
-                This is an automated message. Please do not reply.
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>
+        <tr>
+          <th
+            align="center"
+            scope="col"
+            style="
+              padding: 20px;
+              font-size: 12px;
+              color: #6b7280;
+              background-color: #fafafa;
+              font-weight: normal;
+              text-align: center;
+            "
+          >
+            © {{Year}} Employee Management. All rights reserved.<br />
+            This is an automated message. Please do not reply.
+          </th>
+        </tr>
+      </table>
+    </th>
+  </tr>
+</table>

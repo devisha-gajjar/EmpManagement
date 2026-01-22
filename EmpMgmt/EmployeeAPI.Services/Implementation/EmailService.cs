@@ -18,7 +18,7 @@ public class EmailService(IConfiguration config) : IEmailService
             var host = config["EmailSettings:SmtpHost"];
             var port = int.Parse(config["EmailSettings:SmtpPort"] ?? "587");
             var username = config["EmailSettings:SmtpUsername"];
-            var password = config["EmailSettings:SmtpPassword"];
+            var password = Environment.GetEnvironmentVariable("EmailSettings__SmtpPassword");
             var enableSsl = bool.Parse(config["EmailSettings:EnableSsl"] ?? "true");
 
             if (string.IsNullOrWhiteSpace(from) || string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))

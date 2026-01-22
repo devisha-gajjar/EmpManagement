@@ -141,22 +141,15 @@ public class AuthController(IAuthService authService, EmployeeMgmtContext db, IC
     }
 
     [HttpPost("facebook-login")]
-    public IActionResult FacebookLogin([FromBody] FacebookLoginDto dto)
+    public async Task<IActionResult> FacebookLogin([FromBody] FacebookLoginDto dto)
     {
-        var handler = new HttpClientHandler
-        {
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-        };
-        using var httpClient = new HttpClient(handler);
+        using var httpClient = new HttpClient();
 
-
-        // Synchronous call to Facebook Graph API
-        var result = httpClient.GetAsync(
-            $"https://graph.facebook.com/me?access_token={dto.AccessToken}&fields=id,email,first_name,last_name,picture"
-        ).GetAwaiter().GetResult();
+        var result = await httpClient.GetAsync(
+            $"https://graph.facebook.com/me?access_token={dto.AccessToken}&fields=id,name,email");
 
         if (!result.IsSuccessStatusCode)
-            return BadRequest("Invalid Facebook token.");
+            return Unauthorized("Invalid Facebook token");
 
         var content = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
         var fbUser = JsonSerializer.Deserialize<FacebookUser>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
