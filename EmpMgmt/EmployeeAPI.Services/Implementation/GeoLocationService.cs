@@ -1,9 +1,11 @@
+using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Services.IServices;
 using MaxMind.GeoIP2;
 using MaxMind.GeoIP2.Exceptions;
 using MaxMind.GeoIP2.Responses;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 
 namespace EmployeeAPI.Services.Implementation;
@@ -12,14 +14,27 @@ public class GeoLocationService : IGeoLocationService
 {
     private readonly DatabaseReader _reader;
     private readonly IWebHostEnvironment _env;
+    private readonly IConfiguration _config;
+    private readonly string _defaultIndiaIp;
 
-    private const string DefaultIndiaIp = Constants.INDIA_IP;
-
-    public GeoLocationService(IWebHostEnvironment env)
+    public GeoLocationService(IWebHostEnvironment env, IConfiguration config)
     {
         _env = env;
+        _config = config;
 
-        var dbPath = Path.Combine(env.ContentRootPath, "GeoIP", "GeoLite2-Country.mmdb");
+        _defaultIndiaIp =
+            _config["GeoSettings:MockIndiaIp"]
+            ?? throw new AppException("GeoSettings:MockIndiaIp is missing");
+
+        var dbPath = Path.Combine(
+            env.ContentRootPath,
+            "GeoIP",
+            "GeoLite2-Country.mmdb"
+        );
+
+        if (!File.Exists(dbPath))
+            throw new AppException("GeoIP database not found");
+
         _reader = new DatabaseReader(dbPath);
     }
 

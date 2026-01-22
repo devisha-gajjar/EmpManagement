@@ -7,7 +7,6 @@ public static class Constants
     public const string ADMIN_GROUP = "Admins";
     public const string BEARER = "Bearer";
     public const string USER_NOT_FOUND = "User not found!";
-    public const string INDIA_IP = "49.37.128.112";
     #endregion
 
     #region Token Messages
