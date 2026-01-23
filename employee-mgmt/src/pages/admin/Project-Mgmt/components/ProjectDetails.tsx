@@ -2,23 +2,27 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button, Col, Row } from "reactstrap";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
+import { useDispatch } from "react-redux";
+import { useTheme } from "@mui/material";
 
-import { getProjectDetailsCardConfigs } from "../configs/project-details.config";
 import PageHeader from "../../../../components/shared/page-header/PageHeader";
 import CardComponent from "../../../../components/shared/card/Card";
 
-import "../styles/ProjectDetails.css";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../../../app/store";
-import {
-  fetchProjectById,
-  // fetchProjectTasks,
-  updateTaskStatus,
-} from "../../../../features/admin/project-mgmt/projectDetailsApi";
-import { useAppSelector } from "../../../../app/hooks";
+import TextSkeleton from "../../../../components/shared/loader/SkeletonLoader/TextSkeleton";
+import CardSkeleton from "../../../../components/shared/loader/SkeletonLoader/CardSkeleton";
+
+import { getProjectDetailsCardConfigs } from "../configs/project-details.config";
 import AddTaskForm from "./AddTaskForm";
 import TaskDetails from "./TaskDetails";
-import { useTheme } from "@mui/material";
+
+import type { AppDispatch } from "../../../../app/store";
+import { useAppSelector } from "../../../../app/hooks";
+import {
+  fetchProjectById,
+  updateTaskStatus,
+} from "../../../../features/admin/project-mgmt/projectDetailsApi";
+
+import "../styles/ProjectDetails.css";
 
 const statusColumns = [
   "Pending",
@@ -33,6 +37,7 @@ const ProjectDetails = () => {
 
   const { id } = useParams();
   const projectId = Number(id);
+
   const dispatch = useDispatch<AppDispatch>();
 
   const { project, tasks, loading } = useAppSelector(
@@ -41,20 +46,17 @@ const ProjectDetails = () => {
 
   const muiTheme = useTheme();
   const isDark = muiTheme.palette.mode === "dark";
-
-  useEffect(() => {
-    dispatch(fetchProjectById(projectId));
-  }, [projectId, dispatch]);
-
-  if (loading || !project) {
-    return <div className="text-center py-5">Loading project…</div>;
-  }
-
   const completedCount = tasks.filter((t) => t.status === "Completed").length;
 
   const progressPercent = tasks.length
     ? Math.round((completedCount / tasks.length) * 100)
     : 0;
+
+  useEffect(() => {
+    if (projectId) {
+      dispatch(fetchProjectById(projectId));
+    }
+  }, [projectId, dispatch]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -66,6 +68,38 @@ const ProjectDetails = () => {
 
     dispatch(updateTaskStatus({ taskId, status: newStatus }));
   };
+
+  if (loading || !project) {
+    return (
+      <>
+        <div className="mb-3">
+          <TextSkeleton lines={2} />
+        </div>
+
+        <Row className="mb-4 p-3 border rounded">
+          <Col md={9}>
+            <TextSkeleton lines={2} />
+          </Col>
+          <Col md={3}>
+            <CardSkeleton count={1} />
+          </Col>
+        </Row>
+
+        <Row className="mb-4">
+          <CardSkeleton count={3} />
+        </Row>
+
+        <div className="kanban-grid">
+          {statusColumns.map((_, index) => (
+            <div key={index} className="kanban-column">
+              <TextSkeleton lines={1} />
+              <CardSkeleton count={3} />
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
 
   const { timelineCardConfig, tasksCardConfig, progressCardConfig } =
     getProjectDetailsCardConfigs(

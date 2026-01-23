@@ -27,7 +27,6 @@ function Root() {
     <ThemeProvider theme={getMuiTheme(mode)}>
       <CssBaseline />
       <ErrorBoundary>
-        <GlobalLoader />
         <BrowserRouter>
           <App />
         </BrowserRouter>

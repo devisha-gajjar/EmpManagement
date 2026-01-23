@@ -1,0 +1,30 @@
+/* SkeletonLoader.css */
+.skeleton {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin: 6px 0;
+    animation: shimmer 1.5s infinite linear;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -450px 0;
+    }
+
+    100% {
+        background-position: 450px 0;
+    }
+}
+
+.skeleton::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150px;
+    height: 100%;
+    width: 150px;
+    background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+    animation: shimmer 1.5s infinite;
+}

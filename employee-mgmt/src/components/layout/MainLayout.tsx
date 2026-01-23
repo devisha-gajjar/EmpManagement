@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { leaveHubService } from "../../services/signalR/leaveHub.service";
 import { notificationHubService } from "../../services/signalR/notificationHub.service";
 import { Box } from "@mui/material";
+import GlobalLoader from "../shared/loader/GlobalLoader";
 
 export default function MainLayout() {
   const { userId, role } = useAppSelector((state) => state.auth);
@@ -58,6 +59,7 @@ export default function MainLayout() {
       >
         <SnackbarComponent />
         <Navbar />
+        <GlobalLoader />
         <Box
           sx={{
             padding: "0.5rem 2rem 2rem 2rem",
