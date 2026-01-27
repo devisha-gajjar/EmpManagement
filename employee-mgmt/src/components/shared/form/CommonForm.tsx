@@ -155,7 +155,12 @@ export default function DynamicFormComponent({
                           country={countryCode}
                           value={value || ""}
                           onChange={onChange}
-                          inputStyle={{ width: "100%" }}
+                          specialLabel=""
+                          placeholder="Enter phone number"
+                          containerStyle={{ width: "100%" }}
+                          inputStyle={{
+                            width: "100%",
+                          }}
                         />
                       );
                     }

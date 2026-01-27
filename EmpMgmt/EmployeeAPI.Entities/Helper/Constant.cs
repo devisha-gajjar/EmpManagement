@@ -9,6 +9,10 @@ public static class Constants
     public const string USER_NOT_FOUND = "User not found!";
     #endregion
 
+    #region Images Path
+    public const string LOGO_PATH = "wwwroot/images/logo.png";
+    #endregion
+
     #region Token Messages
     public const string REMEMBER_ME_CLAIM_NAME = "Remeber me";
     public const string INVALID_TOKEN_FORMAT_MESSAGE = "Invalid Token Format.";
@@ -41,6 +45,16 @@ public static class Constants
     public const string CREATE_SUCCESS = "Created successfully";
     public const string UPDATE_SUCCESS = "Updated successfully";
     public const string DELETE_SUCCESS = "Deleted successfully";
+    #endregion
+
+    #region Colors
+    public const string LIGHT_BLUE = "#4f81bd";
+    #endregion
+
+
+    #region Employee mgmt
+    public const string EMPLOYEE_DATA_NULL = "No Employee Data to Export.";
+
     #endregion
 
     #region Project Mgmt

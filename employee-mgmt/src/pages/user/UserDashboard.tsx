@@ -1,5 +1,11 @@
 import { useEffect } from "react";
-import { Box, CircularProgress, Divider, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Divider,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   CenteredContainer,
@@ -16,6 +22,8 @@ export default function UserDashboard() {
   const { dashboard, loading, error } = useAppSelector(
     (state) => state.dashboard
   );
+
+  const theme = useTheme();
 
   useEffect(() => {
     dispatch(fetchDashboardData());
@@ -107,7 +115,7 @@ export default function UserDashboard() {
                     mb: 1,
                     borderRadius: 2,
                     border: "1px solid #e0e0e0",
-                    background: "#fafafa",
+                    background: theme.palette.background.default,
                   }}
                 >
                   <Typography variant="body2">

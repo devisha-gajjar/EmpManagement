@@ -57,5 +57,18 @@ namespace EmployeeAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportEmployees()
+        {
+            var stream = await _service.ExportEmployees();
+
+            return File(
+                stream,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"Employees_{DateTime.Now:yyyyMMddHHmmss}.xlsx"
+            );
+        }
+
     }
 }

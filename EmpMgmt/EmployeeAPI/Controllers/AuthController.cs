@@ -9,6 +9,7 @@ using System.Text.Json;
 using EmployeeAPI.Entities.DTO.RequestDto;
 using EmployeeAPI.Entities.DTO.ResponseDto;
 using System.Security.Claims;
+using EmployeeAPI.Entities.Helper;
 
 namespace EmployeeAPI.Controllers;
 
@@ -44,32 +45,23 @@ public class AuthController(IAuthService authService, EmployeeMgmtContext db, IC
     public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
     {
         var result = await authService.Login(dto);
+        if (result.RefreshToken is not null)
+            SetRefreshTokenCookie(result.RefreshToken, dto.RememberMe);
         return Ok(result);
-    }
-
-    [HttpPost("login-new")]
-    public async Task<IActionResult> LoginNew([FromBody] UserLoginDto dto)
-    {
-        var (accessToken, refreshToken) = await authService.AuthenticateUser(dto);
-
-        SetRefreshTokenCookie(refreshToken, dto.RememberMe);
-
-        return Ok(new
-        {
-            accessToken
-        });
     }
 
     private void SetRefreshTokenCookie(string refreshToken, bool rememberMe)
     {
+        var expiryTime = rememberMe
+                ? DateTime.UtcNow.AddDays(double.Parse(configuration["RememberMeExpiryDays"] ?? throw new AppException(Constants.REFRESH_TOKEN_EXPIRYTIME_NOT_CONFIGURED_MESSAGE)))
+                : DateTime.UtcNow.AddHours(double.Parse(configuration["RefreshTokenExpiryHours"] ?? throw new AppException(Constants.REFRESH_TOKEN_EXPIRYTIME_NOT_CONFIGURED_MESSAGE)));
+
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict,
-            Expires = rememberMe
-                ? DateTime.UtcNow.AddDays(30)
-                : DateTime.UtcNow.AddDays(1)
+            Expires = expiryTime
         };
 
         Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
@@ -186,6 +178,7 @@ public class AuthController(IAuthService authService, EmployeeMgmtContext db, IC
     public async Task<IActionResult> Verify2FA([FromBody] Verify2FADto dto)
     {
         var result = await authService.VerifyTwoFactorAsync(dto);
+        SetRefreshTokenCookie(result.RefreshToken!, result.RememberMe);
         return Ok(result);
     }
 

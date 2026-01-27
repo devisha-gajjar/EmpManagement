@@ -52,7 +52,7 @@ namespace EmployeeAPI.Services.Implementation
                     Step = string.IsNullOrWhiteSpace(user.TwoFactorSecret)
                         ? LoginStep.RequireTwoFactorSetup
                         : LoginStep.RequireTwoFactor,
-                    TempToken = customService.GenerateTempToken(user.UserId)
+                    TempToken = customService.GenerateTempToken(user.UserId, dto.RememberMe)
                 };
             }
 
@@ -126,15 +126,19 @@ namespace EmployeeAPI.Services.Implementation
                 dto.Code
             );
 
+            var rememberMe = bool.Parse(principal.FindFirst(ClaimTypes.UserData)?.Value!);
             if (!isValid)
                 throw new AppException("Invalid authentication code");
 
             // 4. Issue final access token
             var accessToken = customService.GenerateJwtToken(user.Username);
+            var refreshToken = tokenService.GenerateRefreshToken(user, rememberMe);
 
             return new AuthTokenResponseDto
             {
-                AccessToken = accessToken
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                RememberMe = rememberMe
             };
         }
         #endregion
@@ -177,11 +181,7 @@ namespace EmployeeAPI.Services.Implementation
 
             if (isExpired)
             {
-                bool rememberMe = tokenService.IsRememberMeEnabled(principal);
-                if (!rememberMe)
-                {
-                    throw new AppException(Constants.EXPIRED_LOGIN_SESSION_MESSAGE, StatusCodes.Status401Unauthorized);
-                }
+                throw new AppException(Constants.EXPIRED_LOGIN_SESSION_MESSAGE, StatusCodes.Status401Unauthorized);
             }
 
             string newAccessToken = tokenService.GenerateAccessToken(user);

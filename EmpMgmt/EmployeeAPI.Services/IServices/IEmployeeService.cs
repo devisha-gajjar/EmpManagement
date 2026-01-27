@@ -11,5 +11,6 @@ public interface IEmployeeService
     Employee? AddEmployee(AddEmployeeViewModelDto employeeDto);
     bool UpdateEmployee(int id, AddEmployeeViewModelDto employeeDto);
     bool DeleteEmployee(int id);
+    Task<MemoryStream> ExportEmployees();
 }
 

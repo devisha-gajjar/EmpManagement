@@ -69,7 +69,7 @@ export const userFormConfig: DynamicFormField[] = [
     // ───────────────── Phone ─────────────────
     {
         name: "phone",
-        label: "Phone",
+        label: "Phone Number",
         type: "phone",
         placeholder: "Enter phone number",
         gridClass: "half",

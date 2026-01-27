@@ -32,5 +32,4 @@ public class EmployeeRepository : GenericRepository<Employee>, IEmployeeReposito
         return _db.Employees.Include(e => e.Department).ToList();
     }
 
-
 }
