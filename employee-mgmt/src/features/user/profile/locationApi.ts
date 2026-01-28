@@ -9,3 +9,10 @@ export const fetchGeoByIp = createAsyncThunk(
         return res.data;
     }
 );
+
+export const sendCoordinatesToBE = (data: {
+    latitude: number;
+    longitude: number;
+}) => {
+    return axiosClient.post("/geo/coordinates", data);
+};

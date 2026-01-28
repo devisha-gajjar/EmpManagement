@@ -117,6 +117,7 @@ const authSlice = createSlice({
                     state.loginStep = "success";
                     localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
                     state.role = getRoleFromToken(accessToken);
+                    state.userName = getUserNameFromToken(accessToken);
                 }
 
                 if (step === 2) {

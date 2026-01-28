@@ -29,7 +29,8 @@ label {
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-.form-control:disabled {
+.form-control:disabled,
+.form-select:disabled {
     background-color: #f9fafb;
     color: #6b7280;
     cursor: not-allowed;
@@ -99,8 +100,9 @@ label {
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.35);
 }
 
-[data-theme="dark"] .form-control:disabled {
-    background-color: #111827;
+[data-theme="dark"] .form-control:disabled,
+.form-select:disabled {
+    background-color: #111827 !important;
     color: #aaaeb6;
 }
 

@@ -26,7 +26,10 @@ export default function AuthLayout({
         sx={{
           width: "50%",
           display: { xs: "none", md: "block" },
-          backgroundImage: "url(/src/assets/19766.jpg)",
+          backgroundImage:
+            theme.palette.mode === "dark"
+              ? "url(/src/assets/19766.jpg)"
+              : "url(/src/assets/login_bg_dark.jpg)",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPosition: "center",

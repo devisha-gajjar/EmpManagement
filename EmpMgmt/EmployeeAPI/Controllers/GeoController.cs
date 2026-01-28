@@ -1,3 +1,4 @@
+using EmployeeAPI.Entities.DTO.ResponseDto;
 using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ public class GeoController(IGeoLocationService geoService) : ControllerBase
     [HttpGet("country")]
     public async Task<IActionResult> GetCountry([FromQuery] string? ip)
     {
-        // 1️⃣ If IP not provided, get server public IP
+        // If IP not provided, get server public IP
         if (string.IsNullOrWhiteSpace(ip))
         {
             ip = await ClientIpResolver.GetPublicIpAddressAsync();
@@ -22,7 +23,7 @@ public class GeoController(IGeoLocationService geoService) : ControllerBase
         if (string.IsNullOrWhiteSpace(ip))
             return BadRequest("Public IP could not be determined");
 
-        // 2️⃣ Geo lookup
+        // Geo lookup
         var result = _geoService.GetCountryByIp(ip);
 
         if (result == null)
@@ -34,6 +35,17 @@ public class GeoController(IGeoLocationService geoService) : ControllerBase
             country = result.Country.Name,
             isoCode = result.Country.IsoCode,
             continent = result.Continent.Name
+        });
+    }
+
+    [HttpPost("coordinates")]
+    public IActionResult ReceiveCoordinates([FromBody] GeoCoordinateDto dto)
+    {
+        // For now: just log or return it back
+        return Ok(new
+        {
+            latitude = dto.Latitude,
+            longitude = dto.Longitude
         });
     }
 

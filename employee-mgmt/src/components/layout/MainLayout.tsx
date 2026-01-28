@@ -8,6 +8,8 @@ import { leaveHubService } from "../../services/signalR/leaveHub.service";
 import { notificationHubService } from "../../services/signalR/notificationHub.service";
 import { Box } from "@mui/material";
 import GlobalLoader from "../shared/loader/GlobalLoader";
+import { getBrowserLocation } from "../../services/location/geoLocation.service";
+import { sendCoordinatesToBE } from "../../features/user/profile/locationApi";
 
 export default function MainLayout() {
   const { userId, role } = useAppSelector((state) => state.auth);
@@ -38,6 +40,23 @@ export default function MainLayout() {
       }
     });
   }, [userId, role]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const location = await getBrowserLocation();
+
+        await sendCoordinatesToBE({
+          latitude: location.latitude,
+          longitude: location.longitude,
+        });
+
+        console.log("Coordinates sent to backend");
+      } catch (err) {
+        console.error("Location permission denied or failed", err);
+      }
+    })();
+  }, []);
 
   return (
     <div style={{ display: "flex", flex: 1, position: "relative" }}>
