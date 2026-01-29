@@ -1,6 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { fetchGeoByIp } from "./locationApi";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchUserGeo, sendCoordinatesToBE } from "./locationApi";
 import type { GeoResponse } from "../../../interfaces/geoLocation.interface";
+import { getBrowserLocation } from "../../../services/location/geoLocation.service";
 
 interface GeoState {
     geo: GeoResponse | null;
@@ -17,9 +18,21 @@ const geoSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(fetchGeoByIp.fulfilled, (state, action) => {
-            state.geo = action.payload;
-        });
+        builder
+            // .addCase(fetchGeoByIpApi.fulfilled, (state, action) => {
+            //     state.geo = action.payload;
+            // })
+            .addCase(fetchUserGeo.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchUserGeo.fulfilled, (state, action) => {
+                state.loading = false;
+                state.geo = action.payload;
+            })
+            .addCase(fetchUserGeo.rejected, (state) => {
+                state.loading = false;
+                state.geo = null;
+            });
     },
 });
 

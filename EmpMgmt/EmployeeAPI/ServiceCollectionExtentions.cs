@@ -28,7 +28,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITaskWorkLogService, TaskWorkLogService>();
         services.AddScoped<IUserDocumentService, UserDocumentService>();
         services.AddScoped<IEmailService, EmailService>();
-        services.AddSingleton<IGeoLocationService, GeoLocationService>();
         services.AddScoped<ITwoFactorService, TwoFactorService>();
         services.AddScoped<ITokenService, TokenService>();
 

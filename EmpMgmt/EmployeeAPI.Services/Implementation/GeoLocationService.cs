@@ -1,4 +1,5 @@
 using EmployeeAPI.Entities.DTO;
+using EmployeeAPI.Entities.DTO.ResponseDto;
 using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Services.IServices;
 using MaxMind.GeoIP2;
@@ -7,6 +8,7 @@ using MaxMind.GeoIP2.Responses;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using System.Net;
+using System.Text.Json;
 
 namespace EmployeeAPI.Services.Implementation;
 
@@ -16,11 +18,22 @@ public class GeoLocationService : IGeoLocationService
     private readonly IWebHostEnvironment _env;
     private readonly IConfiguration _config;
     private readonly string _defaultIndiaIp;
+    private readonly HttpClient _httpClient;
 
-    public GeoLocationService(IWebHostEnvironment env, IConfiguration config)
+    public GeoLocationService(
+     IWebHostEnvironment env,
+     IConfiguration config,
+     HttpClient httpClient)
     {
         _env = env;
         _config = config;
+        _httpClient = httpClient;
+
+        _httpClient.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");
+        _httpClient.DefaultRequestHeaders.Add(
+            "User-Agent",
+            "EmployeeAPI/1.0 (contact@yourcompany.com)"
+        );
 
         _defaultIndiaIp =
             _config["GeoSettings:MockIndiaIp"]
@@ -37,6 +50,7 @@ public class GeoLocationService : IGeoLocationService
 
         _reader = new DatabaseReader(dbPath);
     }
+
 
     public CountryResponse? GetCountryByIp(string ipAddress)
     {
@@ -78,5 +92,35 @@ public class GeoLocationService : IGeoLocationService
         return bytes[0] == 10 ||
                (bytes[0] == 172 && bytes[1] >= 16 && bytes[1] <= 31) ||
                (bytes[0] == 192 && bytes[1] == 168);
+    }
+
+    public async Task<AddressDto?> GetAddressAsync(double latitude, double longitude)
+    {
+        var url = $"reverse?lat={latitude}&lon={longitude}&format=json";
+
+        var response = await _httpClient.GetAsync(url);
+
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var json = await response.Content.ReadAsStringAsync();
+
+        using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+
+        if (!root.TryGetProperty("address", out var address))
+            return null;
+
+        return new AddressDto
+        {
+            DisplayAddress = root.GetProperty("display_name").GetString(),
+            Road = address.GetPropertyOrNull("road"),
+            City = address.GetPropertyOrNull("city")
+                    ?? address.GetPropertyOrNull("town")
+                    ?? address.GetPropertyOrNull("village"),
+            State = address.GetPropertyOrNull("state"),
+            Country = address.GetPropertyOrNull("country"),
+            PostalCode = address.GetPropertyOrNull("postcode")
+        };
     }
 }

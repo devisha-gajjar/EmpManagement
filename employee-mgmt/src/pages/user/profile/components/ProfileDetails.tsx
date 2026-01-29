@@ -1,9 +1,10 @@
 import { Box } from "@mui/material";
-import { fetchGeoByIp } from "../../../../features/user/profile/locationApi";
+import { fetchUserGeo } from "../../../../features/user/profile/locationApi";
 import { useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import DynamicFormComponent from "../../../../components/shared/form/CommonForm";
 import { userFormConfig } from "../configs/profile.config";
+import { resolveCountryIso } from "../../../../interfaces/geoLocation.interface";
 
 interface ProfileFormValues {
   country: string;
@@ -13,26 +14,27 @@ interface ProfileFormValues {
 export function ProfileDetails() {
   const dispatch = useAppDispatch();
   const geo = useAppSelector((s) => s.geo.geo);
+  console.log("Geo" + geo);
+  const loading = useAppSelector((s) => s.geo.loading);
 
   useEffect(() => {
-    dispatch(fetchGeoByIp());
+    dispatch(fetchUserGeo());
   }, [dispatch]);
 
   const defaultValues = useMemo<ProfileFormValues>(
     () => ({
-      country: geo?.isoCode ?? "",
+      country: resolveCountryIso(geo),
       phone: "",
     }),
-    [geo?.isoCode]
+    [geo]
   );
+
+  if (loading) {
+    return <div>Loading location…</div>;
+  }
 
   const handleSubmit = (data: ProfileFormValues) => {
     console.log("Form submitted:", data);
-    // call your update API here
-  };
-
-  const handleCancel = () => {
-    console.log("Cancelled");
   };
 
   return (
@@ -41,7 +43,7 @@ export function ProfileDetails() {
         formConfig={userFormConfig}
         defaultValues={defaultValues}
         onSubmit={handleSubmit}
-        onCancel={handleCancel}
+        onCancel={() => {}}
         submitLabel="Update Profile"
         cancleLabel="Reset"
       />

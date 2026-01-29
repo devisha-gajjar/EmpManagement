@@ -167,6 +167,7 @@
 //     LogManager.Shutdown();
 // }
 
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using EmployeeAPI;
@@ -174,11 +175,15 @@ using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Hubs;
 using EmployeeAPI.Middlewares;
+using EmployeeAPI.Services.Implementation;
+using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Polly;
+using Polly.Extensions.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -188,6 +193,11 @@ builder.Logging.AddConsole();
 
 // register all service - repo depenedency
 builder.Services.RegisterDependency();
+
+builder.Services
+            .AddHttpClient<IGeoLocationService, GeoLocationService>()
+            .AddPolicyHandler(GetRetryPolicy());
+
 
 // Add services to the container
 builder.Services.AddControllers()
@@ -296,6 +306,19 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
+
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError() // 5xx, 408
+        .OrResult(r => r.StatusCode == HttpStatusCode.TooManyRequests)
+        .WaitAndRetryAsync(
+            retryCount: 3,
+            sleepDurationProvider: retryAttempt =>
+                TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+        );
+}
+
 
 var app = builder.Build();
 

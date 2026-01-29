@@ -49,4 +49,30 @@ public class GeoController(IGeoLocationService geoService) : ControllerBase
         });
     }
 
+    [HttpPost("reverse")]
+    public async Task<IActionResult> ReverseGeocode(
+        [FromBody] GeoCoordinateDto dto)
+    {
+        if (dto.Latitude == 0 || dto.Longitude == 0)
+            return BadRequest("Invalid coordinates");
+
+        var address = await _geoService
+            .GetAddressAsync(dto.Latitude, dto.Longitude);
+
+        if (address == null)
+            return Ok(new
+            {
+                message = "Address not found",
+                latitude = dto.Latitude,
+                longitude = dto.Longitude
+            });
+
+        return Ok(new
+        {
+            latitude = dto.Latitude,
+            longitude = dto.Longitude,
+            address
+        });
+    }
+
 }
