@@ -1,7 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchUserGeo, sendCoordinatesToBE } from "./locationApi";
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchUserGeo } from "./locationApi";
 import type { GeoResponse } from "../../../interfaces/geoLocation.interface";
-import { getBrowserLocation } from "../../../services/location/geoLocation.service";
 
 interface GeoState {
     geo: GeoResponse | null;

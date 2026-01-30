@@ -90,7 +90,11 @@ export default function DocumentUpload() {
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
           e.preventDefault();
-          e.dataTransfer.files && handleFiles(e.dataTransfer.files);
+
+          const files = e.dataTransfer.files;
+          if (files && files.length > 0) {
+            handleFiles(files);
+          }
         }}
       >
         <div className="upload-content">

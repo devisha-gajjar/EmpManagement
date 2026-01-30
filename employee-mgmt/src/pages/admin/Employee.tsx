@@ -115,7 +115,7 @@ export default function Employees() {
         snackbar.success("Employee deleted successfully");
         // dispatch(fetchEmployees());
       } catch (err) {
-        snackbar.error("Failed to delete employee");
+        snackbar.error("Failed to delete employee - " + err);
       } finally {
         handleCloseDeleteDialog();
       }

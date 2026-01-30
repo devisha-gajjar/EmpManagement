@@ -47,6 +47,9 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => (ProjectRole)src.Role))
             .ForMember(dest => dest.user, opt => opt.MapFrom(src => src.User));
 
+        #endregion
+
+        #region DropDown
         CreateMap<Role, CommonListDropDownDto>()
                    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => CapitalizeFirst(src.RoleName)));
 
@@ -54,6 +57,14 @@ public class MappingProfile : Profile
             .ForMember(d => d.Id, o => o.MapFrom(s => s.UserId))
             .ForMember(d => d.Name, o => o.MapFrom(s => $"{s.FirstName} {s.LastName} - {s.Email}"));
 
+        CreateMap<Employee, CommonListDropDownDto>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
+            .ForMember(d => d.Name, o => o.MapFrom(s =>
+                $"{s.Name} - {s.Email}"));
+
+        CreateMap<Project, CommonListDropDownDto>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.ProjectId))
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.ProjectName));
 
         #endregion
 

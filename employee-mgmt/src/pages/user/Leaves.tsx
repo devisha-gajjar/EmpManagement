@@ -14,6 +14,7 @@ import {
   IconButton,
   Tooltip,
   TablePagination,
+  Chip,
 } from "@mui/material";
 import {
   fetchLeaves,
@@ -75,7 +76,13 @@ const Leaves = () => {
     return () => {
       leaveHubService.offLeaveStatusChanged(handleStatusChange);
     };
-  }, []);
+  }, [dispatch]);
+
+  const getLeaveColor = (status: string) => {
+    if (status === "Approved") return "success";
+    if (status === "Denied") return "error";
+    return "primary";
+  };
 
   const handleCloseDeleteDialog = () => {
     setIsDeleteDialogOpen(false);
@@ -110,7 +117,7 @@ const Leaves = () => {
   };
 
   const filteredLeaves = leaves.filter(
-    (leaves: any) =>
+    (leaves: LeaveRequestResponse) =>
       leaves.leaveType
         .toLowerCase()
         .includes(debouncedSearchTerm.toLowerCase()) ||
@@ -174,34 +181,26 @@ const Leaves = () => {
           leaveToEdit={selectedLeave}
         />
 
-        <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
+        <TableContainer
+          component={Paper}
+          elevation={3}
+          sx={{ borderRadius: 2 }}
+        >
           <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#1976d2" }}>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
-                  Leave ID
-                </TableCell>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
-                  Leave Type
-                </TableCell>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
-                  Start Date
-                </TableCell>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
-                  End Date
-                </TableCell>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
-                  Status
-                </TableCell>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
-                  Reason
-                </TableCell>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
-                  Created On
-                </TableCell>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
-                  Actions
-                </TableCell>
+            <TableHead
+              sx={(theme) => ({
+                backgroundColor: theme.palette.background.default,
+              })}
+            >
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>Leave ID</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Leave Type</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Start Date</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>End Date</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Reason</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Created On</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -214,13 +213,11 @@ const Leaves = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedLeaves.map((leave: LeaveRequestResponse, index) => (
+                paginatedLeaves.map((leave: LeaveRequestResponse) => (
                   <TableRow
                     key={leave.leaveRequestId}
-                    sx={{
-                      backgroundColor: index % 2 === 0 ? "#f5f5f5" : "#fff",
-                      "&:hover": { backgroundColor: "#e3f2fd" },
-                    }}
+                    hover
+                    sx={{ "&:hover": { backgroundColor: "#fafafa" } }}
                   >
                     <TableCell>{leave.leaveRequestId}</TableCell>
                     <TableCell>{leave.leaveType}</TableCell>
@@ -230,7 +227,14 @@ const Leaves = () => {
                     <TableCell>
                       {new Date(leave.endDate).toLocaleDateString()}
                     </TableCell>
-                    <TableCell>{leave.status}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={leave.status}
+                        color={getLeaveColor(leave.status)}
+                        variant="outlined"
+                        size="small"
+                      />
+                    </TableCell>
                     <TableCell>
                       {leave.reason?.trim() ? leave.reason : "-"}
                     </TableCell>

@@ -1,11 +1,5 @@
 import { useEffect } from "react";
-import {
-  Box,
-  CircularProgress,
-  Divider,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Divider, Typography, useTheme } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   CenteredContainer,

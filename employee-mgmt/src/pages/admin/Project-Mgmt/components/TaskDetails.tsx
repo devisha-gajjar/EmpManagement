@@ -156,7 +156,7 @@ const TaskDetails = ({ status, tasks, projectId }: Props) => {
 
       snackbar.success("Task deleted successfully!");
     } catch (error) {
-      snackbar.error("Failed to delete task");
+      snackbar.error("Failed to delete task : " + error);
     }
   };
 

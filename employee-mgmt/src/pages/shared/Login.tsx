@@ -61,7 +61,7 @@ export default function Login() {
   };
 
   const validateForm = (): boolean => {
-    let errors: ValidationErrors = {};
+    const errors: ValidationErrors = {};
     let isValid = true;
 
     if (!form.usernameOrEmail.trim()) {
@@ -149,7 +149,7 @@ export default function Login() {
     if (loginStep === "require_2fa_setup") {
       navigate("/auth/2fa-setup");
     }
-  }, [loginStep]);
+  }, [loginStep, navigate]);
 
   return (
     <AuthLayout>

@@ -4,7 +4,6 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
-import GlobalLoader from "./components/shared/loader/GlobalLoader";
 import { injectStore } from "./api/axiosClient";
 import ErrorBoundary from "./components/shared/error-boundry/ErrorBoundary";
 import { ThemeProvider, CssBaseline } from "@mui/material";

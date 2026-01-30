@@ -39,7 +39,7 @@ export default function TwoFactorSetup() {
         setSecret(res.secret);
       })
       .catch(console.error);
-  }, [tempToken]);
+  }, [dispatch, navigate, tempToken]);
 
   const handleVerify = () => {
     if (!tempToken || code.length !== 6) return;

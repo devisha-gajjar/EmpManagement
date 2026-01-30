@@ -2,18 +2,22 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { SnackbarComponent } from "../shared/snackbar/Snackbar";
-import { useAppSelector } from "../../app/hooks";
-import { useEffect } from "react";
+import { useAppSelector, useGlobalCommands } from "../../app/hooks";
+import { useEffect, useState } from "react";
 import { leaveHubService } from "../../services/signalR/leaveHub.service";
 import { notificationHubService } from "../../services/signalR/notificationHub.service";
 import { Box } from "@mui/material";
 import GlobalLoader from "../shared/loader/GlobalLoader";
 import { getBrowserLocation } from "../../services/location/geoLocation.service";
 import { sendCoordinatesToBE } from "../../features/user/profile/locationApi";
+import CommandPalette from "../search/CommandPalette";
 
 export default function MainLayout() {
   const { userId, role } = useAppSelector((state) => state.auth);
   const mode = useAppSelector((state) => state.theme.mode);
+
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const commands = useGlobalCommands();
 
   useEffect(() => {
     console.log("Auth state:", userId, role);
@@ -77,7 +81,13 @@ export default function MainLayout() {
         }}
       >
         <SnackbarComponent />
-        <Navbar />
+        <Navbar onOpenSearch={() => setIsPaletteOpen(true)} />
+        <CommandPalette
+          open={isPaletteOpen}
+          onOpen={() => setIsPaletteOpen(true)}
+          onClose={() => setIsPaletteOpen(false)}
+          commands={commands}
+        />
         <GlobalLoader />
         <Box
           sx={{

@@ -13,7 +13,7 @@ export default function DocumentTable() {
 
   useEffect(() => {
     dispatch(fetchUserDocument());
-  }, []);
+  }, [dispatch]);
 
   const getPreviewUrl = (filePath: string) =>
     `${environment.imageBaseUrl}/${filePath}`;

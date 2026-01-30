@@ -13,3 +13,9 @@ export enum ProjectRole {
     Tester = 4,
     Designer = 5,
 }
+
+export enum DropDownType {
+    Role = 1,
+    Employee = 2,
+    Project = 3,
+}

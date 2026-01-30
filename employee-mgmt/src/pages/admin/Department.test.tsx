@@ -32,9 +32,6 @@ const mockUseAppDispatch = useAppDispatch as jest.MockedFunction<
   typeof useAppDispatch
 >;
 const mockUseSnackbar = useSnackbar as jest.MockedFunction<typeof useSnackbar>;
-const mockFetchDepartments = fetchDepartments as jest.MockedFunction<
-  typeof fetchDepartments
->;
 
 describe("Department Component", () => {
   let mockDispatch: jest.Mock;

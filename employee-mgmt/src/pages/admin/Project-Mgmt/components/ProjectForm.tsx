@@ -17,7 +17,6 @@ const ProjectFormPage = () => {
   const isEditMode = Boolean(id);
 
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
 
   const { data: project, isLoading } = useGetProjectByIdQuery(Number(id), {
     skip: !isEditMode,

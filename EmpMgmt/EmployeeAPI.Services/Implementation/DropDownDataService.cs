@@ -13,7 +13,9 @@ namespace EmployeeAPI.Services.Implementation;
 public class DropDownDataService(
     IMapper _mapper,
     IMemoryCacheService _cacheService,
-    IGenericRepository<Role> roleRepository
+    IGenericRepository<Role> roleRepository,
+    IGenericRepository<Employee> employeeRepository,
+    IGenericRepository<Project> projectRepository
 ) : IDropDownDataService
 {
     public List<CommonListDropDownDto> GetDropDownListData(DropDownType dropDownType)
@@ -30,6 +32,8 @@ public class DropDownDataService(
         return dropDownType switch
         {
             DropDownType.Role => roleRepository.GetQueryableInclude(),
+            DropDownType.Employee => employeeRepository.GetQueryableInclude(),
+            DropDownType.Project => projectRepository.GetQueryableInclude(),
             _ => throw new ArgumentOutOfRangeException(nameof(dropDownType), dropDownType, null)
         };
     }

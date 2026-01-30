@@ -29,7 +29,6 @@ import {
   deleteNotification,
   fetchNavbarNotifications,
   fetchUnreadCount,
-  markNotificationAsRead,
 } from "../../features/user/notifications/notificationApi";
 import { notificationHubService } from "../../services/signalR/notificationHub.service";
 
@@ -70,7 +69,7 @@ const mockNotifications: Notification[] = [
   },
 ];
 
-const Navbar = () => {
+const Navbar = ({ onOpenSearch }: { onOpenSearch: () => void }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { userName, role } = useAppSelector((state) => state.auth);
@@ -78,10 +77,9 @@ const Navbar = () => {
   const [notificationAnchor, setNotificationAnchor] =
     useState<null | HTMLElement>(null);
   const [profileAnchor, setProfileAnchor] = useState<null | HTMLElement>(null);
-  const [notifications, setNotifications] =
-    useState<Notification[]>(mockNotifications);
+  const [notifications] = useState<Notification[]>(mockNotifications);
 
-  const { navbarList, unreadCount, loading } = useAppSelector(
+  const { navbarList, unreadCount } = useAppSelector(
     (state) => state.notification
   );
 
@@ -94,11 +92,11 @@ const Navbar = () => {
     dispatch(fetchNavbarNotifications());
     dispatch(fetchUnreadCount());
 
-    const onMarkedRead = (updatedNotification: any) => {
+    const onMarkedRead = () => {
       dispatch(fetchNavbarNotifications());
     };
 
-    const onUnreadUpdated = (unreadCount: number) => {
+    const onUnreadUpdated = () => {
       console.log("nudb");
       dispatch(fetchUnreadCount());
     };
@@ -226,6 +224,22 @@ const Navbar = () => {
           minHeight: "64px !important",
         }}
       >
+        <Box
+          onClick={onOpenSearch}
+          sx={{
+            px: 2,
+            py: 1,
+            borderRadius: "8px",
+            backgroundColor: "rgba(0,0,0,0.05)",
+            cursor: "pointer",
+            minWidth: 260,
+          }}
+        >
+          <Typography variant="body2" color="text.secondary">
+            Search... (Ctrl + S)
+          </Typography>
+        </Box>
+
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           {/* Notifications */}
           {role == "user" && (

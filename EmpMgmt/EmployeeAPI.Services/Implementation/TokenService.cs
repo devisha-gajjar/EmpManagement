@@ -128,7 +128,7 @@ public class TokenService(IConfiguration _configuration) : ITokenService
 
     public string GetUserIdFromToken(ClaimsPrincipal principal)
     {
-        return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        return principal.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
     }
 
     public DateTime GetTokenExpiration(string token)

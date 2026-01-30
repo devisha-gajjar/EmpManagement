@@ -14,6 +14,8 @@ public class Enum
     public enum DropDownType
     {
         Role = 1,
+        Employee = 2,
+        Project = 3
     }
 
     public enum ProjectStatus
