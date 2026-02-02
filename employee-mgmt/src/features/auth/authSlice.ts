@@ -40,7 +40,6 @@ const getUserNameFromToken = (token: string | null): string | null => {
     try {
         if (!token) return null;
         const payload = JSON.parse(atob(token.split(".")[1]));
-        // console.log("username", payload[userNameClaimKey]?.toLowerCase())
         return payload[userNameClaimKey]?.toLowerCase() || null;
     } catch {
         return null;
@@ -70,10 +69,15 @@ const authSlice = createSlice({
         logout(state) {
             state.token = null;
             state.role = null;
+            state.userId = null;
+            state.userName = null;
             state.isAuthenticated = false;
             state.error = null;
             state.registerSuccess = null;
+            state.tempToken = null;
+            state.loginStep = null;
             localStorage.removeItem(ACCESS_TOKEN_KEY);
+            localStorage.removeItem(TEMP_TOKEN_KEY);
         },
         // Action to clear any previous errors or success messages
         clearAuthStatus(state) {
@@ -83,9 +87,18 @@ const authSlice = createSlice({
         setReturnUrl(state, action) {
             state.returnUrl = action.payload;
         },
-
         clearReturnUrl(state) {
             state.returnUrl = null;
+        },
+        // New action to set credentials after token refresh
+        setCredentials(state, action) {
+            const { accessToken } = action.payload;
+            state.token = accessToken;
+            state.isAuthenticated = true;
+            state.role = getRoleFromToken(accessToken);
+            state.userId = getUserIdFromToken(accessToken);
+            state.userName = getUserNameFromToken(accessToken);
+            localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
         },
     },
     extraReducers: (builder) => {
@@ -95,15 +108,6 @@ const authSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            // .addCase(login.fulfilled, (state, action) => {
-            //     state.loading = false;
-            //     state.token = action.payload;
-            //     state.isAuthenticated = true;
-            //     state.error = null;
-            //     state.registerSuccess = null;
-            //     state.role = getRoleFromToken(action.payload);
-            //     localStorage.setItem("token", action.payload as string);
-            // })
             .addCase(login.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = null;
@@ -117,6 +121,7 @@ const authSlice = createSlice({
                     state.loginStep = "success";
                     localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
                     state.role = getRoleFromToken(accessToken);
+                    state.userId = getUserIdFromToken(accessToken);
                     state.userName = getUserNameFromToken(accessToken);
                 }
 
@@ -165,6 +170,8 @@ const authSlice = createSlice({
                 state.token = action.payload;
                 state.isAuthenticated = true;
                 state.role = getRoleFromToken(action.payload);
+                state.userId = getUserIdFromToken(action.payload);
+                state.userName = getUserNameFromToken(action.payload);
                 localStorage.setItem(ACCESS_TOKEN_KEY, action.payload);
             })
             .addCase(googleLogin.rejected, (state, action) => {
@@ -180,8 +187,9 @@ const authSlice = createSlice({
                 localStorage.removeItem(TEMP_TOKEN_KEY);
                 localStorage.setItem(ACCESS_TOKEN_KEY, action.payload);
                 state.role = getRoleFromToken(action.payload);
-            })
-            ;
+                state.userId = getUserIdFromToken(action.payload);
+                state.userName = getUserNameFromToken(action.payload);
+            });
     },
 });
 
@@ -189,7 +197,8 @@ export const {
     logout,
     clearAuthStatus,
     setReturnUrl,
-    clearReturnUrl
+    clearReturnUrl,
+    setCredentials
 } = authSlice.actions;
 
 export default authSlice.reducer;

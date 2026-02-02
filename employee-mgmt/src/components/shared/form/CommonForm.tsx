@@ -23,7 +23,7 @@ export default function DynamicFormComponent({
   onSubmit,
   onCancel,
   onSearch,
-  defaultValues = {},
+  defaultValues,
   submitLabel,
   cancleLabel,
   isFetching,

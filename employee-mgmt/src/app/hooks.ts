@@ -50,31 +50,35 @@ export type CommandItem = {
     subtitle: string;
     keywords: string;
     action: () => void;
+    roles?: string[];
 };
 
 export function useGlobalCommands() {
     const navigate = useNavigate();
+    const role = useAppSelector(state => state.auth.role);
     const [commands, setCommands] = useState<CommandItem[]>([]);
 
     useEffect(() => {
         async function load() {
             const employees = await getDropDownData(DropDownType.Employee);
             const projects = await getDropDownData(DropDownType.Project);
-
-            const employeeCommands: CommandItem[] = employees.map((e: any) => ({
+            console.log("role in pallete", role)
+            const employeeCommands: CommandItem[] = employees.map(e => ({
                 id: `emp-${e.id}`,
                 title: e.name,
                 subtitle: "Employee",
                 keywords: e.name.toLowerCase(),
-                action: () => navigate(`employees/${e.id}`)
+                roles: ["admin"],
+                action: () => navigate(`employees/${e.id}`),
             }));
 
-            const projectCommands: CommandItem[] = projects.map((p: any) => ({
+            const projectCommands: CommandItem[] = projects.map(p => ({
                 id: `proj-${p.id}`,
                 title: p.name,
                 subtitle: "Project",
                 keywords: p.name.toLowerCase(),
-                action: () => navigate(`project-details/${p.id}`)
+                roles: ["admin"],
+                action: () => navigate(`project-details/${p.id}`),
             }));
 
             const staticCommands: CommandItem[] = [
@@ -83,17 +87,109 @@ export function useGlobalCommands() {
                     title: "Dashboard",
                     subtitle: "Page",
                     keywords: "dashboard home",
-                    action: () => navigate("/dashboard")
-                }
+                    roles: ["user"],
+                    action: () => navigate("dashboard"),
+                },
+                {
+                    id: "profile",
+                    title: "Profile",
+                    subtitle: "Page",
+                    keywords: "profile document",
+                    roles: ["user"],
+                    action: () => navigate("profile"),
+                },
+                {
+                    id: "leave",
+                    title: "Leave List",
+                    subtitle: "Page",
+                    keywords: "Leave",
+                    roles: ["user"],
+                    action: () => navigate("leaves"),
+                },
+                {
+                    id: "notification",
+                    title: "Notification",
+                    subtitle: "Page",
+                    keywords: "notification notify updates",
+                    roles: ["user"],
+                    action: () => navigate("notification"),
+                },
+                {
+                    id: "dashboard",
+                    title: "Dashboard",
+                    subtitle: "Page",
+                    keywords: "dashboard home",
+                    roles: ["admin"],
+                    action: () => navigate("user/dashboard"),
+                },
+                {
+                    id: "dashboard",
+                    title: "Dashboard",
+                    subtitle: "Page",
+                    keywords: "dashboard home",
+                    roles: ["admin"],
+                    action: () => navigate("user/dashboard"),
+                },
+                {
+                    id: "dashboard",
+                    title: "Dashboard",
+                    subtitle: "Page",
+                    keywords: "dashboard home",
+                    roles: ["admin"],
+                    action: () => navigate("user/dashboard"),
+                },
+                {
+                    id: "dashboard",
+                    title: "Dashboard",
+                    subtitle: "Page",
+                    keywords: "dashboard home",
+                    roles: ["admin"],
+                    action: () => navigate("user/dashboard"),
+                },
+                {
+                    id: "dashboard",
+                    title: "Dashboard",
+                    subtitle: "Page",
+                    keywords: "dashboard home",
+                    roles: ["admin"],
+                    action: () => navigate("user/dashboard"),
+                },
+                {
+                    id: "dashboard",
+                    title: "Dashboard",
+                    subtitle: "Page",
+                    keywords: "dashboard home",
+                    roles: ["admin"],
+                    action: () => navigate("user/dashboard"),
+                },
+                {
+                    id: "dashboard",
+                    title: "Dashboard",
+                    subtitle: "Page",
+                    keywords: "dashboard home",
+                    roles: ["admin"],
+                    action: () => navigate("user/dashboard"),
+                },
             ];
 
-            setCommands([...employeeCommands, ...projectCommands, ...staticCommands]);
+            const allCommands = [
+                ...employeeCommands,
+                ...projectCommands,
+                ...staticCommands,
+            ];
+
+            setCommands(
+                allCommands.filter(
+                    cmd => !cmd.roles || cmd.roles.includes(role!)
+                )
+            );
         }
 
-        load();
-    }, [navigate]);
+        if (role) load();
+    }, [navigate, role]);
 
     return commands;
 }
+
 
 //#endregion

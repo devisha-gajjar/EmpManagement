@@ -97,7 +97,6 @@ const Navbar = ({ onOpenSearch }: { onOpenSearch: () => void }) => {
     };
 
     const onUnreadUpdated = () => {
-      console.log("nudb");
       dispatch(fetchUnreadCount());
     };
 

@@ -17,4 +17,5 @@ public class TaskResponseDto
 
     public decimal? EstimatedHours { get; set; }
     public UserBasicDto User { get; set; }
+    public string ProjectName { get; set; }
 }

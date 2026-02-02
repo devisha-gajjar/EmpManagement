@@ -10,6 +10,7 @@ import leaveListReducer from "../features/admin/leave/leaveSlice";
 import notificationReducer from "../features/user/notifications/notificationSlice";
 import projectDetailsReducer from "../features/admin/project-mgmt/projectDetailSlice";
 import taskWorkLogReducer from "../features/admin/project-mgmt/taskWorklogSlice";
+import userWorkLogReducer from "../features/user/task/userTasksSlice";
 import geoReducer from "../features/user/profile/locationSlice";
 import documentReducer from "../features/user/profile/documentSlice";
 import themeReducer from "../features/shared/themeSlice";
@@ -32,6 +33,7 @@ export const store = configureStore({
         taskWorkLogs: taskWorkLogReducer,
         documents: documentReducer,
         theme: themeReducer,
+        userTask: userWorkLogReducer,
         geo: geoReducer,
         [employeeApi.reducerPath]: employeeApi.reducer,
         [projectsApi.reducerPath]: projectsApi.reducer,

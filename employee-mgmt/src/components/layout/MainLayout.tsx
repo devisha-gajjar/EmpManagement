@@ -92,6 +92,8 @@ export default function MainLayout() {
         <Box
           sx={{
             padding: "0.5rem 2rem 2rem 2rem",
+            maxHeight: "51rem",
+            overflowY: "auto",
           }}
         >
           <Outlet />

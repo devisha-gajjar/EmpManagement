@@ -30,8 +30,8 @@ export default function CommandPalette({
       if (e.key === "Escape") onClose();
     }
 
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    globalThis.addEventListener("keydown", onKey);
+    return () => globalThis.removeEventListener("keydown", onKey);
   }, [onOpen, onClose]);
 
   const filtered = commands

@@ -35,7 +35,7 @@ public class UserTaskService(
             task.UpdatedOn = DateTime.Now;
 
             if (dto.Status == "Completed")
-                task.CompletedOn = DateTime.Now;
+                task.CompletedOn = DateTime.Now;    
 
             taskRepository.Update(task);
         }

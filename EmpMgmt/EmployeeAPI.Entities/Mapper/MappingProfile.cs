@@ -86,6 +86,7 @@ public class MappingProfile : Profile
 
         CreateMap<TaskDto, UserTask>()
             .ForMember(dest => dest.TaskId, opt => opt.Ignore())
+            .ForMember(dest => dest.UserId, opt => opt.Ignore())
             .ForMember(dest => dest.Project, opt => opt.Ignore())
             .ForMember(dest => dest.AssignedByNavigation, opt => opt.Ignore())
             .ForMember(dest => dest.Subtasks, opt => opt.Ignore())

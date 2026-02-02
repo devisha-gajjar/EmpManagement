@@ -22,6 +22,7 @@ import TaskWorkLogsPage from "./pages/admin/Project-Mgmt/components/TaskWorkLogs
 import MyProfilePage from "./pages/user/profile/components/MyProfielPage";
 import TwoFactorVerify from "./pages/auth/TwoFactorVerify";
 import TwoFactorSetup from "./pages/auth/TwoFactorSetup";
+import UserTasksPage from "./pages/user/work-flow/components/UserTasksPage";
 
 function App() {
   const routes = useRoutes([
@@ -46,7 +47,7 @@ function App() {
         { path: "dashboard", element: <UserDashboard /> },
         { path: "leaves", element: <Leaves /> },
         { path: "notification", element: <NotificationList /> },
-        { path: "tasks", element: <UserTask /> },
+        { path: "tasks", element: <UserTasksPage /> },
         { path: "profile", element: <MyProfilePage /> },
       ],
     },

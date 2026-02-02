@@ -30,6 +30,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<ITwoFactorService, TwoFactorService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IWorkFlowService, WorkFlowService>();
 
         //mappers
         services.AddAutoMapper(typeof(MappingProfile));
