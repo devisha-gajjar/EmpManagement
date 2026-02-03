@@ -108,3 +108,119 @@ VALUES
 (5, 1, '2025-12-10', 3, 'Average performance, needs more effort and skills improvement.');
 
 
+
+
+
+-- for the task details
+
+INSERT INTO public.task_tags (name)
+VALUES
+    ('UI'),
+    ('Admin'),
+    ('Dashboard')
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO public.task_tag_map (task_id, tag_id)
+SELECT 1, tag_id
+FROM public.task_tags
+WHERE name IN ('UI', 'Admin', 'Dashboard');
+
+
+INSERT INTO public.task_comments (task_id, user_id, comment, created_on)
+VALUES
+    (
+        1,
+        1,
+        'Admin dashboard layout looks good. Please ensure responsiveness.',
+        '2026-01-10 09:30:00'
+    ),
+    (
+        1,
+        2,
+        'Testing phase started. Found minor validation issues.',
+        '2026-01-11 14:15:00'
+    );
+
+INSERT INTO public.task_work_logs (
+    task_id,
+    user_id,
+    log_date,
+    hours_spent,
+    description,
+    created_on
+)
+VALUES
+    (
+        1,
+        5,
+        '2026-01-08',
+        4.00,
+        'Implemented dashboard widgets and charts',
+        '2026-01-08 18:00:00'
+    ),
+    (
+        1,
+        5,
+        '2026-01-09',
+        3.50,
+        'Fixed UI issues and improved loading performance',
+        '2026-01-09 17:30:00'
+    );
+
+
+INSERT INTO public.task_attachments (
+    task_id,
+    uploaded_by,
+    file_url,
+    uploaded_on
+)
+VALUES
+    (
+        1,
+        5,
+        '/uploads/admin-dashboard-v1.pdf',
+        '2026-01-09 16:45:00'
+    ),
+    (
+        1,
+        5,
+        '/uploads/admin-dashboard-test-report.xlsx',
+        '2026-01-11 11:20:00'
+    );
+
+
+INSERT INTO public.task_activity_log (
+    task_id,
+    user_id,
+    action,
+    old_value,
+    new_value,
+    created_on
+)
+VALUES
+    (
+        1,
+        2,
+        'TASK_CREATED',
+        NULL,
+        'Pending',
+        '2025-12-03 18:07:15'
+    ),
+    (
+        1,
+        5,
+        'STATUS_CHANGED',
+        'Pending',
+        'In Progress',
+        '2026-01-08 10:00:00'
+    ),
+    (
+        1,
+        5,
+        'STATUS_CHANGED',
+        'In Progress',
+        'Ready for Testing',
+        '2026-01-11 13:45:00'
+    );
+
+

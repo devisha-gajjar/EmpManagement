@@ -12,6 +12,7 @@ import { useAppSelector } from "./app/hooks";
 import { useEffect } from "react";
 import { environment } from "./environment/environment.dev";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { SnackbarComponent } from "./components/shared/snackbar/Snackbar";
 
 injectStore(store);
 
@@ -27,6 +28,7 @@ function Root() {
       <CssBaseline />
       <ErrorBoundary>
         <BrowserRouter>
+          <SnackbarComponent />
           <App />
         </BrowserRouter>
       </ErrorBoundary>

@@ -80,7 +80,6 @@ export default function MainLayout() {
               : "#01132eff",
         }}
       >
-        <SnackbarComponent />
         <Navbar onOpenSearch={() => setIsPaletteOpen(true)} />
         <CommandPalette
           open={isPaletteOpen}

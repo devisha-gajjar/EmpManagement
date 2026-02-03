@@ -4,7 +4,7 @@ import axios from "axios";
 import { environment } from "../../environment/environment.dev";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useSnackbar } from "../../app/hooks";
 import { logout, setReturnUrl, setCredentials } from "./authSlice";
 
 interface AuthGuardProps {
@@ -18,6 +18,7 @@ export default function AuthGuard({
 }: Readonly<AuthGuardProps>) {
   const { isAuthenticated, role } = useSelector((state: any) => state.auth);
   const location = useLocation();
+  const snackbar = useSnackbar();
   const dispatch = useAppDispatch();
   const [isValidating, setIsValidating] = useState(true);
 
@@ -28,7 +29,7 @@ export default function AuthGuard({
       // If no access token exists, try to refresh
       if (!token) {
         try {
-          // Attempt refresh using regular axios (not axiosClient to avoid interceptor loop)
+          // Attempt refresh using regular axios
           const refreshResponse = await axios.post(
             `${environment.baseUrl}/auth/refresh`,
             null,
@@ -43,8 +44,10 @@ export default function AuthGuard({
               accessToken: newAccessToken,
             })
           );
-        } catch (error) {
+        } catch (error: any) {
+          console.log("refresh fail in guard", error.response.data.Message);
           // Refresh failed, clear auth state
+          snackbar.error(error.response.data.Message);
           dispatch(logout());
         }
       }

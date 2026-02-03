@@ -412,21 +412,21 @@ public partial class EmployeeMgmtContext : DbContext
 
             entity.Property(e => e.CommentId).HasColumnName("comment_id");
             entity.Property(e => e.Comment).HasColumnName("comment");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_on");
             entity.Property(e => e.TaskId).HasColumnName("task_id");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.TaskComments)
+                .HasForeignKey(d => d.CreatedBy)
+                .HasConstraintName("task_comments_user_id_fkey");
 
             entity.HasOne(d => d.Task).WithMany(p => p.TaskComments)
                 .HasForeignKey(d => d.TaskId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("task_comments_task_id_fkey");
-
-            entity.HasOne(d => d.User).WithMany(p => p.TaskComments)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("task_comments_user_id_fkey");
         });
 
         modelBuilder.Entity<TaskTag>(entity =>

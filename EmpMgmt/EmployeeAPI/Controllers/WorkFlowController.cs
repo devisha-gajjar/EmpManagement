@@ -22,4 +22,13 @@ public class WorkFlowController(IWorkFlowService taskService) : ControllerBase
             Constants.FETCH_SUCCESS
         ));
     }
+
+    [HttpGet("tasks/{taskId:int}")]
+    [ProducesResponseType(typeof(TaskDetailResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetTaskDetail(int taskId)
+    {
+        var result = await taskService.GetTaskDetails(taskId);
+        return Ok(result);
+    }
 }

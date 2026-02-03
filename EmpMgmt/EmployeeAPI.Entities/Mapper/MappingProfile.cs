@@ -106,6 +106,49 @@ public class MappingProfile : Profile
 
         #endregion
 
+        #region WorkFlow Management
+
+        CreateMap<TaskDto, UserTask>()
+            .ForMember(dest => dest.TaskId, opt => opt.Ignore())
+            .ForMember(dest => dest.UserId, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectId, opt => opt.Ignore())
+            .ForMember(dest => dest.AssignedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedOn, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedOn, opt => opt.Ignore())
+
+            // Navigation properties
+            .ForMember(dest => dest.Project, opt => opt.Ignore())
+            .ForMember(dest => dest.AssignedByNavigation, opt => opt.Ignore())
+            .ForMember(dest => dest.User, opt => opt.Ignore())
+            .ForMember(dest => dest.Subtasks, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskActivityLogs, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskAttachments, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskComments, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskWorkLogs, opt => opt.Ignore())
+            .ForMember(dest => dest.Tags, opt => opt.Ignore());
+
+        CreateMap<UserTask, TaskHeaderDto>();
+
+        CreateMap<TaskComment, TaskCommentDto>();
+
+        CreateMap<AddCommentRequestDto, TaskComment>()
+            .ForMember(dest => dest.CommentId, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskId, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedOn, opt => opt.Ignore());
+
+        CreateMap<TaskWorkLog, TaskWorkLogDto>();
+
+        CreateMap<AddWorkLogRequestDto, TaskWorkLog>()
+            .ForMember(dest => dest.WorkLogId, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskId, opt => opt.Ignore())
+            .ForMember(dest => dest.UserId, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedOn, opt => opt.Ignore());
+
+        CreateMap<TaskActivityLog, TaskTimelineDto>();
+
+        #endregion
+
     }
 
     private static string ToTitleCase(string input) =>

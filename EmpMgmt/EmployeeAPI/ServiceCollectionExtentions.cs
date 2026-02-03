@@ -41,5 +41,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ILeaveRepository, LeaveRepository>();
+        services.AddScoped(typeof(ISqlQueryRepository), typeof(SqlQueryRepository));
     }
 }

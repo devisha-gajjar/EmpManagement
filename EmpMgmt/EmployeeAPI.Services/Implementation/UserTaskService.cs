@@ -21,6 +21,8 @@ public class UserTaskService(
         if (dto.TaskId == null || dto.TaskId == 0)
         {
             task = mapper.Map<UserTask>(dto);
+
+            task.UserId = dto.UserId;
             task.CreatedOn = DateTime.Now;
             task.UpdatedOn = DateTime.Now;
 
@@ -35,7 +37,7 @@ public class UserTaskService(
             task.UpdatedOn = DateTime.Now;
 
             if (dto.Status == "Completed")
-                task.CompletedOn = DateTime.Now;    
+                task.CompletedOn = DateTime.Now;
 
             taskRepository.Update(task);
         }

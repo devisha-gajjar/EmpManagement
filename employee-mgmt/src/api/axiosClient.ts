@@ -111,9 +111,9 @@ axiosClient.interceptors.response.use(
             } catch (refreshError) {
                 isRefreshing = false;
                 refreshSubscribers = [];
-
+                console.log("refresh error in axios", refreshError);
                 localStorage.removeItem(ACCESS_TOKEN_KEY);
-                window.location.href = "/login";
+                globalThis.location.href = "/login";
 
                 return Promise.reject(refreshError);
             }
