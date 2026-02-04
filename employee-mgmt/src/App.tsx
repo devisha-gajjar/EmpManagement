@@ -23,6 +23,7 @@ import MyProfilePage from "./pages/user/profile/components/MyProfielPage";
 import TwoFactorVerify from "./pages/auth/TwoFactorVerify";
 import TwoFactorSetup from "./pages/auth/TwoFactorSetup";
 import UserTasksPage from "./pages/user/work-flow/components/UserTasksPage";
+import UserTaskDetailPage from "./pages/user/work-flow/components/UserTaskDetailPage";
 
 function App() {
   const routes = useRoutes([
@@ -48,6 +49,7 @@ function App() {
         { path: "leaves", element: <Leaves /> },
         { path: "notification", element: <NotificationList /> },
         { path: "tasks", element: <UserTasksPage /> },
+        { path: "tasks/:taskId", element: <UserTaskDetailPage /> },
         { path: "profile", element: <MyProfilePage /> },
       ],
     },

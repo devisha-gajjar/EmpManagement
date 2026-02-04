@@ -8,28 +8,28 @@ public class TaskDetailResponseDto
     public List<TaskTimelineDto> Timeline { get; set; }
     public List<TaskWorkLogDto> WorkLogs { get; set; }
     public List<TaskCommentDto> Comments { get; set; }
-    public List<TaskAttachmentDto> Attachments { get; set; }  // Added
+    public List<TaskAttachmentDto> Attachments { get; set; }
 }
 
 public class TaskHeaderDto
 {
     public int TaskId { get; set; }
-    public string TaskName { get; set; }
-    public string Description { get; set; }
+    public string TaskName { get; set; } = null!;
+    public string? Description { get; set; }
 
-    public string Status { get; set; }
-    public string Priority { get; set; }
+    public string? Status { get; set; }
+    public string? Priority { get; set; }
 
-    public DateTime StartDate { get; set; }
-    public DateTime DueDate { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? DueDate { get; set; }
 
     public int ProjectId { get; set; }
     public int? AssignedTo { get; set; }
     public int? AssignedBy { get; set; }
 
-    public decimal EstimatedHours { get; set; }
-    public decimal SpentHours { get; set; }  // Added
-    public DateTime? CompletedOn { get; set; } // Added
+    public decimal? EstimatedHours { get; set; }
+    public decimal SpentHours { get; set; }
+    public DateTime? CompletedOn { get; set; }
 }
 
 public class TaskStatsDto
@@ -40,19 +40,20 @@ public class TaskStatsDto
 
 public class TaskTimelineDto
 {
-    public int ActivityId { get; set; }        // Added
-    public string Action { get; set; }        // Maps from ActivityType
+    public int ActivityId { get; set; }
+    public string Action { get; set; }
     public string OldValue { get; set; }
     public string NewValue { get; set; }
     public int UserId { get; set; }
+    public string UserName { get; set; }
     public DateTime CreatedOn { get; set; }
 }
 
 public class TaskCommentDto
 {
     public int CommentId { get; set; }
-    public int UserId { get; set; }
-    public string Comment { get; set; }       // Maps from CommentText
+    public int CreatedBy { get; set; }
+    public string Comment { get; set; }
     public DateTime CreatedOn { get; set; }
 }
 
@@ -60,10 +61,11 @@ public class TaskWorkLogDto
 {
     public int WorkLogId { get; set; }
     public int UserId { get; set; }
+    public string UserName { get; set; }
     public decimal HoursSpent { get; set; }
-    public DateTime LogDate { get; set; }      // Maps from log_date
+    public DateTime LogDate { get; set; }
     public string Description { get; set; }
-    public DateTime CreatedOn { get; set; }    // Added
+    public DateTime CreatedOn { get; set; }
 }
 
 public class TaskAttachmentDto

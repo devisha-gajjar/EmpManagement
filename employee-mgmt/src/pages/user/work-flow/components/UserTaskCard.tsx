@@ -1,19 +1,26 @@
 import "../styles/userTask.css";
 import type { TaskResponseDto } from "../../../../interfaces/userTask.interface,";
 import { truncateText } from "../../../../utils/text.util";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   task: TaskResponseDto;
 }
 
 export const UserTaskCard = ({ task }: Props) => {
+  const navigate = useNavigate();
+
   const isOverdue =
     task.dueDate &&
     new Date(task.dueDate) < new Date() &&
     task.status !== "Completed";
 
+  const handleClick = () => {
+    navigate(`/user/tasks/${task.taskId}`);
+  };
+
   return (
-    <div className="user-task-card">
+    <div className="user-task-card" onClick={handleClick}>
       {/* HEADER */}
       <div className="task-header">
         <div className="task-title">
@@ -27,7 +34,7 @@ export const UserTaskCard = ({ task }: Props) => {
         </div>
 
         <div
-          className={`status ${task.status.toLowerCase().replace(" ", "-")}`}
+          className={`status ${task.status!.toLowerCase().replace(" ", "-")}`}
         >
           {task.status}
         </div>

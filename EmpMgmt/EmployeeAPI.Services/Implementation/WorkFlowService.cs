@@ -114,7 +114,8 @@ public class WorkFlowService(IGenericRepository<UserTask> taskRepository, IGener
     #region Fetch Task Details
     public async Task<TaskDetailResponseDto> GetTaskDetails(int taskId)
     {
-        string query = "SELECT get_task_detail_full(@p_task_id)::text;";
+        string query = @"SELECT get_task_detail_full(@p_task_id)::text AS ""Value""";
+        // string query = "SELECT get_task_detail_full(@p_task_id)::text";
 
         NpgsqlParameter[] parameters =
         {

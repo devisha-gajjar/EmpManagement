@@ -50,10 +50,10 @@ public class GeoController(IGeoLocationService geoService) : ControllerBase
     }
 
     [HttpPost("reverse")]
-    public async Task<IActionResult> ReverseGeocode(
-        [FromBody] GeoCoordinateDto dto)
+    public async Task<IActionResult> ReverseGeocode([FromBody] GeoCoordinateDto dto)
     {
-        if (dto.Latitude == 0 || dto.Longitude == 0)
+        if (dto.Latitude < -90 || dto.Latitude > 90 ||
+        dto.Longitude < -180 || dto.Longitude > 180)
             return BadRequest("Invalid coordinates");
 
         var address = await _geoService

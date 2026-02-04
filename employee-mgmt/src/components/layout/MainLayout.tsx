@@ -2,7 +2,11 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { SnackbarComponent } from "../shared/snackbar/Snackbar";
-import { useAppSelector, useGlobalCommands } from "../../app/hooks";
+import {
+  useAppSelector,
+  useGlobalCommands,
+  useSnackbar,
+} from "../../app/hooks";
 import { useEffect, useState } from "react";
 import { leaveHubService } from "../../services/signalR/leaveHub.service";
 import { notificationHubService } from "../../services/signalR/notificationHub.service";
@@ -18,19 +22,15 @@ export default function MainLayout() {
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const commands = useGlobalCommands();
+  const snackbar = useSnackbar();
 
   useEffect(() => {
-    console.log("Auth state:", userId, role);
-
     if (!role) return;
-
-    console.log("role", role);
 
     leaveHubService.startConnection().then(() => {
       if (role == "admin") {
         leaveHubService.joinAdmin();
       } else {
-        console.log("join ad user in main layout");
         leaveHubService.joinUser(userId!);
       }
     });
@@ -39,7 +39,6 @@ export default function MainLayout() {
       if (role == "admin") {
         notificationHubService.joinAdmin();
       } else {
-        console.log("join ad user in main layout");
         notificationHubService.joinUser(userId!);
       }
     });
@@ -54,10 +53,8 @@ export default function MainLayout() {
           latitude: location.latitude,
           longitude: location.longitude,
         });
-
-        console.log("Coordinates sent to backend");
       } catch (err) {
-        console.error("Location permission denied or failed", err);
+        snackbar.error(`Location permission denied or failed ${err}`);
       }
     })();
   }, []);
