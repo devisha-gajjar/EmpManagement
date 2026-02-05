@@ -30,22 +30,7 @@ p {
   margin: 0 !important;
 }
 
-/* ===============================
-   COLLAPSIBLE
-================================ */
-.collapsible-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-
-.collapsible-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+/* Collapsable section */
 .chevron {
   width: 8px;
   height: 8px;
@@ -98,11 +83,12 @@ p {
 }
 
 /* Title refinement */
-.card-title {
+.collapsible-card-title {
   margin: 0 !important;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
-  color: #0f172a;
+  color: #002049;
+  margin-bottom: 5px;
 }
 
 /* :root {

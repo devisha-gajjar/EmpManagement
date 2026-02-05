@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getTaskDetailApi, getUserTasksApi } from "./userTasksApi";
-import type { TaskResponseDto } from "../../../interfaces/userTask.interface,";
+import { addTaskCommentApi, addTaskWorkLogApi, getTaskDetailApi, getUserTasksApi, updateTaskStatusApi } from "./userTasksApi";
+import type { TaskCommentDto, TaskResponseDto, TaskTimelineDto, TaskWorkLogDto } from "../../../interfaces/userTask.interface,";
 
 interface UserTasksState {
     tasks: TaskResponseDto[];
@@ -16,9 +16,6 @@ const initialState: UserTasksState = {
     error: null,
 };
 
-/**
- * Async Thunk
- */
 export const fetchUserTasks = createAsyncThunk<
     TaskResponseDto[],
     void,
@@ -42,9 +39,60 @@ export const fetchTaskDetail = createAsyncThunk<
         console.log("Value fetche");
         return await getTaskDetailApi(taskId);
     } catch (error: any) {
-        return rejectWithValue("Failed to fetch task detail");
+        return rejectWithValue(error?.response?.data?.message || "Failed to fetch task detail");
     }
 });
+
+export const addTaskComment = createAsyncThunk<
+    TaskCommentDto,
+    { taskId: number; comment: string },
+    { rejectValue: string }
+>("userTasks/addTaskComment", async ({ taskId, comment }, { rejectWithValue }) => {
+    try {
+        return await addTaskCommentApi(taskId, { comment });
+    } catch (error: any) {
+        return rejectWithValue(
+            error?.response?.data?.message || "Failed to add comment"
+        );
+    }
+});
+
+export const addTaskWorkLog = createAsyncThunk<
+    { workLog: TaskWorkLogDto; totalHours: number },
+    {
+        taskId: number;
+        hoursSpent: number;
+        logDate: string;
+        description?: string;
+    },
+    { rejectValue: string }
+>(
+    "userTasks/addTaskWorkLog",
+    async ({ taskId, ...payload }, { rejectWithValue }) => {
+        try {
+            return await addTaskWorkLogApi(taskId, payload);
+        } catch (error: any) {
+            return rejectWithValue(
+                error?.response?.data?.message || "Failed to add work log"
+            );
+        }
+    }
+);
+
+export const updateTaskStatus = createAsyncThunk<
+    TaskTimelineDto,
+    { taskId: number; status: string },
+    { rejectValue: string }
+>("userTasks/updateTaskStatus", async ({ taskId, status }, { rejectWithValue }) => {
+    try {
+        return await updateTaskStatusApi(taskId, { status });
+    } catch (error: any) {
+        return rejectWithValue(
+            error?.response?.data?.message || "Failed to update status"
+        );
+    }
+});
+
 
 const userTasksSlice = createSlice({
     name: "userTasks",
@@ -58,6 +106,7 @@ const userTasksSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // FETCH TASKS
             .addCase(fetchUserTasks.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -70,6 +119,7 @@ const userTasksSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload ?? "Something went wrong";
             })
+            // FETCH TASK DETAIL
             .addCase(fetchTaskDetail.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -81,6 +131,25 @@ const userTasksSlice = createSlice({
             .addCase(fetchTaskDetail.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload ?? "Something went wrong";
+            })
+            // ADD COMMENT
+            .addCase(addTaskComment.fulfilled, (state, action) => {
+                state.selectedTask?.comments.unshift(action.payload);
+            })
+            // ADD WORK LOG
+            .addCase(addTaskWorkLog.fulfilled, (state, action) => {
+                if (!state.selectedTask) return;
+
+                state.selectedTask.workLogs.unshift(action.payload.workLog);
+                state.selectedTask.stats.totalLoggedHours =
+                    action.payload.totalHours;
+            })
+            //  UPDATE STATUS
+            .addCase(updateTaskStatus.fulfilled, (state, action) => {
+                if (!state.selectedTask) return;
+
+                state.selectedTask.timeline.unshift(action.payload);
+                state.selectedTask.task.status = action.payload.newValue;
             });
     },
 });

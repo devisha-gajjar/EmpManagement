@@ -62,15 +62,7 @@ export function useGlobalCommands() {
         async function load() {
             const employees = await getDropDownData(DropDownType.Employee);
             const projects = await getDropDownData(DropDownType.Project);
-            console.log("role in pallete", role)
-            const employeeCommands: CommandItem[] = employees.map(e => ({
-                id: `emp-${e.id}`,
-                title: e.name,
-                subtitle: "Employee",
-                keywords: e.name.toLowerCase(),
-                roles: ["admin"],
-                action: () => navigate(`employees/${e.id}`),
-            }));
+            console.log("role in pallete", role);
 
             const projectCommands: CommandItem[] = projects.map(p => ({
                 id: `proj-${p.id}`,
@@ -104,7 +96,7 @@ export function useGlobalCommands() {
                     subtitle: "Page",
                     keywords: "Leave",
                     roles: ["user"],
-                    action: () => navigate("leaves"),
+                    action: () => navigate("leave"),
                 },
                 {
                     id: "notification",
@@ -114,66 +106,42 @@ export function useGlobalCommands() {
                     roles: ["user"],
                     action: () => navigate("notification"),
                 },
+                // admin commands
                 {
-                    id: "dashboard",
-                    title: "Dashboard",
+                    id: "employee",
+                    title: "Employee",
                     subtitle: "Page",
-                    keywords: "dashboard home",
+                    keywords: "employee emp",
                     roles: ["admin"],
-                    action: () => navigate("user/dashboard"),
+                    action: () => navigate("employees"),
                 },
                 {
-                    id: "dashboard",
-                    title: "Dashboard",
+                    id: "department",
+                    title: "Department",
                     subtitle: "Page",
-                    keywords: "dashboard home",
+                    keywords: "department dept",
                     roles: ["admin"],
-                    action: () => navigate("user/dashboard"),
+                    action: () => navigate("departments"),
                 },
                 {
-                    id: "dashboard",
-                    title: "Dashboard",
+                    id: "leave",
+                    title: "Leaves",
                     subtitle: "Page",
-                    keywords: "dashboard home",
+                    keywords: "leavelist leave",
                     roles: ["admin"],
-                    action: () => navigate("user/dashboard"),
+                    action: () => navigate("leavesList"),
                 },
                 {
-                    id: "dashboard",
-                    title: "Dashboard",
+                    id: "project",
+                    title: "Project",
                     subtitle: "Page",
-                    keywords: "dashboard home",
+                    keywords: "project prj",
                     roles: ["admin"],
-                    action: () => navigate("user/dashboard"),
-                },
-                {
-                    id: "dashboard",
-                    title: "Dashboard",
-                    subtitle: "Page",
-                    keywords: "dashboard home",
-                    roles: ["admin"],
-                    action: () => navigate("user/dashboard"),
-                },
-                {
-                    id: "dashboard",
-                    title: "Dashboard",
-                    subtitle: "Page",
-                    keywords: "dashboard home",
-                    roles: ["admin"],
-                    action: () => navigate("user/dashboard"),
-                },
-                {
-                    id: "dashboard",
-                    title: "Dashboard",
-                    subtitle: "Page",
-                    keywords: "dashboard home",
-                    roles: ["admin"],
-                    action: () => navigate("user/dashboard"),
+                    action: () => navigate("projects"),
                 },
             ];
 
             const allCommands = [
-                ...employeeCommands,
                 ...projectCommands,
                 ...staticCommands,
             ];

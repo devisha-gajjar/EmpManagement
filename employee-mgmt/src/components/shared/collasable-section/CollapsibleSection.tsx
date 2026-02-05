@@ -16,9 +16,9 @@ const CollapsibleSection = ({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <section className={`card collapsible ${open ? "open" : ""}`}>
+    <section className={`card p-3 collapsible ${open ? "open" : ""}`}>
       <div className="collapsible-header" onClick={() => setOpen((v) => !v)}>
-        <h4 className="card-title">{title}</h4>
+        <h4 className="collapsible-card-title">{title}</h4>
 
         <div className="collapsible-actions">
           {rightSlot}
