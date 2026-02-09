@@ -137,7 +137,9 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedOn, opt => opt.Ignore());
 
-        CreateMap<TaskWorkLog, TaskWorkLogDto>();
+        CreateMap<TaskWorkLog, TaskWorkLogDto>()
+            .ForMember(dest => dest.UserName,
+                opt => opt.MapFrom(src => src.User.Username));
 
         CreateMap<AddWorkLogRequestDto, TaskWorkLog>()
             .ForMember(dest => dest.WorkLogId, opt => opt.Ignore())

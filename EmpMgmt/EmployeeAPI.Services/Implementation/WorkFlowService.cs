@@ -73,17 +73,24 @@ public class WorkFlowService(IGenericRepository<UserTask> taskRepository, IGener
 
         workLogRepository.Add(entity);
 
+        // After Add(entity) and SaveChanges()
+        var savedEntity = await workLogRepository.GetByInclude(
+            x => x.WorkLogId == entity.WorkLogId,
+            q => q.Include(x => x.User)
+        );
+
         var total = await workLogRepository
             .GetAll()
             .Where(x => x.TaskId == taskId)
             .SumAsync(x => x.HoursSpent);
 
         return (
-            mapper.Map<TaskWorkLogDto>(entity),
+            mapper.Map<TaskWorkLogDto>(savedEntity),
             total
         );
     }
     #endregion
+
 
     #region Update Task Status
     public async Task<TaskTimelineDto> UpdateStatus(

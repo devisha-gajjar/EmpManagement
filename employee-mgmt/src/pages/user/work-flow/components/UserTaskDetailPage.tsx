@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import {
   fetchTaskDetail,
   clearUserTasks,
+  updateTaskStatus,
 } from "../../../../features/user/task/userTasksSlice";
 
 import "../styles/userTaskDetail.css";
@@ -12,17 +13,22 @@ import type {
   TaskTagDto,
   TaskCommentDto,
 } from "../../../../interfaces/userTask.interface,";
+
 import {
   formatActionSimple,
   formatStatusAction,
 } from "../../../../utils/formateStatusAction";
+
 import CollapsibleSection from "../../../../components/shared/collasable-section/CollapsibleSection";
 import AddWorkLogModal from "./AddWorkLogModal";
+import { taskStatusOptions } from "../../../../utils/constant";
 
 const UserTaskDetailPage = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const dispatch = useAppDispatch();
+
   const [showWorkLogModal, setShowWorkLogModal] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const { selectedTask, loading, error } = useAppSelector(
     (state) => state.userTask
@@ -30,6 +36,9 @@ const UserTaskDetailPage = () => {
 
   const { userName } = useAppSelector((state) => state.auth);
 
+  /* =======================
+     FETCH / CLEANUP
+  ======================== */
   useEffect(() => {
     if (taskId) {
       dispatch(fetchTaskDetail(Number(taskId)));
@@ -40,12 +49,30 @@ const UserTaskDetailPage = () => {
     };
   }, [dispatch, taskId]);
 
+  const { task, timeline, workLogs, comments, tags } = selectedTask;
+  /* =======================
+     STATUS SYNC
+  ======================== */
+  useEffect(() => {
+    if (task?.status) {
+      setSelectedStatus(task.status);
+    }
+  }, [task?.status]);
+
+  /* =======================
+     GUARDS (VERY IMPORTANT)
+  ======================== */
   if (loading) return <p className="page-state">Loading task…</p>;
   if (error) return <p className="page-state error">{error}</p>;
   if (!selectedTask) return null;
 
-  const { task, timeline, workLogs, comments, tags } = selectedTask;
+  /* =======================
+     SAFE DESTRUCTURING
+  ======================== */
 
+  /* =======================
+     DERIVED DATA
+  ======================== */
   const totalHours = workLogs.reduce(
     (total: number, log: TaskWorkLogDto) => total + log.hoursSpent,
     0
@@ -55,11 +82,20 @@ const UserTaskDetailPage = () => {
     (a, b) => new Date(a.createdOn).getTime() - new Date(b.createdOn).getTime()
   );
 
-  const openWorkModal = () => {
-    console.log("Reached in work log")
-    setShowWorkLogModal(true);
+  const handleStatusChange = () => {
+    if (!taskId || selectedStatus === task.status) return;
+
+    dispatch(
+      updateTaskStatus({
+        taskId: Number(taskId),
+        status: selectedStatus,
+      })
+    );
   };
 
+  /* =======================
+     RENDER
+  ======================== */
   return (
     <>
       <div className="task-detail-layout">
@@ -79,14 +115,17 @@ const UserTaskDetailPage = () => {
               ))}
             </div>
           </div>
+
           <p className="task-description">{task.description}</p>
         </div>
+
         <div className="main-container">
           <div className="section-container">
             {/* STATUS TIMELINE */}
             <CollapsibleSection title="Status Timeline" defaultOpen>
-              {/* TOP STATUS PROGRESSION */}
               <div className="status-progress">
+                {sortedTimeline.length === 0 && <div>No data available</div>}
+
                 {sortedTimeline.map((item, index) => (
                   <div key={item.activityId} className="status-step">
                     <div
@@ -107,15 +146,8 @@ const UserTaskDetailPage = () => {
                     )}
                   </div>
                 ))}
-
-                {sortedTimeline.length == 0 ? (
-                  <div>No data availbale to show</div>
-                ) : (
-                  <></>
-                )}
               </div>
 
-              {/* ACTIVITY HISTORY */}
               <div className="timeline-history">
                 {sortedTimeline.map((item) => (
                   <div key={item.activityId} className="timeline-row">
@@ -146,134 +178,92 @@ const UserTaskDetailPage = () => {
             </CollapsibleSection>
 
             {/* WORK LOG */}
-            <CollapsibleSection title="Work Log" defaultOpen={false}>
+            <CollapsibleSection title="Work Log">
               <div className="card-header">
-                <div className="card-header-left">
-                  <h4 className="card-title">Time Tracking</h4>
-                  <span className="badge">{totalHours}h logged</span>
-                </div>
+                <h4>Time Tracking</h4>
+                <span className="badge">{totalHours}h logged</span>
 
                 <button
                   className="log-time-btn"
-                  onClick={() => openWorkModal()}
+                  onClick={() => setShowWorkLogModal(true)}
                 >
                   + Log Time
                 </button>
               </div>
 
-              <div className="time-log-list">
-                {workLogs.map((w: TaskWorkLogDto) => (
-                  <div key={w.workLogId} className="time-log-item">
-                    <div className="avatar">
-                      {w.userName?.slice(0, 2).toUpperCase()}
-                    </div>
+              {workLogs.length === 0 && <div>No logs to show</div>}
 
-                    <div className="time-log-body">
-                      <div className="time-log-header">
-                        <span className="username">{w.userName}</span>
-                        <span className="separator">•</span>
-                        <span className="timestamp">
-                          {new Date(w.createdOn).toLocaleDateString()}{" "}
-                          {new Date(w.createdOn).toLocaleTimeString()}
-                        </span>
-                      </div>
-
-                      <p className="time-log-desc">{w.description}</p>
-                    </div>
-
-                    <span className="time-pill">{w.hoursSpent}h</span>
+              {workLogs.map((w: TaskWorkLogDto) => (
+                <div key={w.workLogId} className="time-log-item">
+                  <div className="avatar">
+                    {w.userName?.slice(0, 2).toUpperCase()}
                   </div>
-                ))}
 
-                {workLogs.length == 0 ? <div>No logs to show</div> : <></>}
-              </div>
+                  <div className="time-log-body">
+                    <span className="username">{w.userName}</span>
+                    <p>{w.description}</p>
+                  </div>
+
+                  <span className="time-pill">{w.hoursSpent}h</span>
+                </div>
+              ))}
             </CollapsibleSection>
 
             {/* COMMENTS */}
-            <CollapsibleSection title="Discussion" defaultOpen={false}>
-              <div className="discussion">
-                <div className="comments-list">
-                  {comments.map((c: TaskCommentDto) => (
-                    <div key={c.commentId} className="comment">
-                      <div className="avatar">
-                        {String(c.createdBy).slice(0, 2).toUpperCase()}
-                      </div>
-
-                      <div className="comment-content">
-                        <div className="comment-header">
-                          <span className="name">User {c.createdBy}</span>
-                          <span className="time">
-                            {/* {new Date(c.createdAt).toLocaleString()} */}
-                          </span>
-                        </div>
-
-                        <div className="comment-bubble">{c.comment}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Input */}
-                {comments.length > 0 && <div className="comment-border"></div>}
-
-                <div className="comment-input">
-                  <div className="avatar small">
-                    {String(userName).slice(0, 2).toUpperCase()}
+            <CollapsibleSection title="Discussion">
+              {comments.map((c: TaskCommentDto) => (
+                <div key={c.commentId} className="comment">
+                  <div className="avatar">
+                    {String(c.createdBy).slice(0, 2).toUpperCase()}
                   </div>
-                  <input placeholder="Write a comment..." />
-                  <button>
-                    <i className="bi bi-send"></i>
-                  </button>
+
+                  <div className="comment-bubble">{c.comment}</div>
                 </div>
+              ))}
+
+              <div className="comment-input">
+                <div className="avatar small">
+                  {String(userName).slice(0, 2).toUpperCase()}
+                </div>
+                <input placeholder="Write a comment..." />
+                <button>Send</button>
               </div>
             </CollapsibleSection>
           </div>
 
+          {/* SIDEBAR */}
           <aside className="task-sidebar">
             <div className="card p-3">
               <h5>Status</h5>
-              <span className={`status ${task.status?.toLowerCase()}`}>
-                {task.status}
-              </span>
 
-              <button className="primary-btn">Mark Complete</button>
-            </div>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+              >
+                {taskStatusOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
 
-            <div className="card p-3">
-              <h5>Details</h5>
-
-              <div className="detail-row">
-                <span>Project</span>
-                <strong>{task.projectId}</strong>
-              </div>
-
-              <div className="detail-row">
-                <span>Priority</span>
-                <strong>{task.priority}</strong>
-              </div>
-
-              <div className="detail-row">
-                <span>Due date</span>
-                <strong>
-                  {task.dueDate ? new Date(task.dueDate).toDateString() : "-"}
-                </strong>
-              </div>
-            </div>
-
-            <div className="card p-3">
-              <h5>Quick actions</h5>
-              <button className="secondary-btn">Log time</button>
-              <button className="secondary-btn">Edit task</button>
+              <button
+                className="primary-btn"
+                disabled={selectedStatus === task.status}
+                onClick={handleStatusChange}
+              >
+                Update Status
+              </button>
             </div>
           </aside>
         </div>
       </div>
-      {true && (
-        <AddWorkLogModal
-          taskId={task.taskId}
-          onClose={() => setShowWorkLogModal(false)}
-        />
-      )}
+
+      <AddWorkLogModal
+        open={showWorkLogModal}
+        taskId={task.taskId}
+        onClose={() => setShowWorkLogModal(false)}
+      />
     </>
   );
 };

@@ -1,80 +1,120 @@
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  IconButton,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 import { useAppDispatch } from "../../../../app/hooks";
 import { addTaskWorkLog } from "../../../../features/user/task/userTasksSlice";
 
 interface Props {
   taskId: number;
+  open: boolean;
   onClose: () => void;
 }
 
-const AddWorkLogModal = ({ taskId, onClose }: Props) => {
+const AddWorkLogModal = ({ taskId, open, onClose }: Props) => {
   const dispatch = useAppDispatch();
 
-  const [hoursSpent, setHoursSpent] = useState<number>(0);
-  const [logDate, setLogDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
-  const [description, setDescription] = useState("");
+  const [hours, setHours] = useState<number>(0);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [desc, setDesc] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
-    if (hoursSpent <= 0) return;
+  const handleSave = async () => {
+    if (hours <= 0) return;
 
-    await dispatch(
-      addTaskWorkLog({
-        taskId,
-        hoursSpent,
-        logDate,
-        description,
-      })
-    );
+    try {
+      setLoading(true);
 
-    onClose();
+      await dispatch(
+        addTaskWorkLog({
+          taskId,
+          hoursSpent: hours,
+          logDate: date,
+          description: desc,
+        })
+      ).unwrap(); // 🔑 important
+
+      onClose();
+    } catch (err) {
+      console.error("Failed to add work log", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h3>Log Time</h3>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{ sx: { borderRadius: 3 } }}
+    >
+      <DialogTitle sx={{ fontWeight: 600, pr: 5 }}>
+        Log Time
+        <IconButton
+          onClick={onClose}
+          sx={{ position: "absolute", right: 8, top: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
 
-        <div className="form-group">
-          <label>Hours Spent</label>
-          <input
+      <DialogContent dividers>
+        <Stack spacing={2}>
+          <TextField
+            label="Hours Spent"
             type="number"
-            min={0.25}
-            step={0.25}
-            value={hoursSpent}
-            onChange={(e) => setHoursSpent(Number(e.target.value))}
+            inputProps={{ min: 0.25, step: 0.25 }}
+            fullWidth
+            value={hours}
+            onChange={(e) => setHours(Number(e.target.value))}
           />
-        </div>
 
-        <div className="form-group">
-          <label>Date</label>
-          <input
+          <TextField
+            label="Date"
             type="date"
-            value={logDate}
-            onChange={(e) => setLogDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            fullWidth
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
           />
-        </div>
 
-        <div className="form-group">
-          <label>Description</label>
-          <textarea
+          <TextField
+            label="Description"
+            multiline
             rows={3}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            fullWidth
+            placeholder="What did you work on?"
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
           />
-        </div>
+        </Stack>
+      </DialogContent>
 
-        <div className="modal-actions">
-          <button className="secondary-btn" onClick={onClose}>
-            Cancel
-          </button>
-          <button className="primary-btn" onClick={handleSubmit}>
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
+      <DialogActions sx={{ px: 3, py: 2 }}>
+        <Button onClick={onClose} color="inherit">
+          Cancel
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={handleSave}
+          disabled={loading || hours <= 0}
+        >
+          {loading ? <CircularProgress size={20} color="inherit" /> : "Save"}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
