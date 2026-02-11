@@ -24,6 +24,7 @@ public class TaskHeaderDto
     public DateTime? DueDate { get; set; }
 
     public int ProjectId { get; set; }
+    public string ProjectName { get; set; }
     public int? AssignedTo { get; set; }
     public int? AssignedBy { get; set; }
 

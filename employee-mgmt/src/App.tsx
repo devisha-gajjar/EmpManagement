@@ -24,6 +24,8 @@ import TwoFactorVerify from "./pages/auth/TwoFactorVerify";
 import TwoFactorSetup from "./pages/auth/TwoFactorSetup";
 import UserTasksPage from "./pages/user/work-flow/components/UserTasksPage";
 import UserTaskDetailPage from "./pages/user/work-flow/components/UserTaskDetailPage";
+import Dashboard3D from "./pages/user/Dashboard3D";
+import UserDashboard3D from "./pages/user/UserDashboard3D";
 
 function App() {
   const routes = useRoutes([
@@ -51,6 +53,7 @@ function App() {
         { path: "tasks", element: <UserTasksPage /> },
         { path: "tasks/:taskId", element: <UserTaskDetailPage /> },
         { path: "profile", element: <MyProfilePage /> },
+        { path: "dashboard2", element: <UserDashboard3D /> },
       ],
     },
 

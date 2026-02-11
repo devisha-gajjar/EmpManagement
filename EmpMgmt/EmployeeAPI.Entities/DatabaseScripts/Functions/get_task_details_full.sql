@@ -30,6 +30,7 @@ BEGIN
 			'dueDate', to_char(ut.due_date, 'YYYY-MM-DD"T"HH24:MI:SS'),
 			'completedOn', to_char(ut.completed_on, 'YYYY-MM-DD"T"HH24:MI:SS'),
             'projectId', ut.project_id,
+			'projectName', p.project_name,
             'assignedTo', ut.user_id,
             'assignedBy', ut.assigned_by,
             'estimatedHours', ut.estimated_hours,
@@ -70,7 +71,7 @@ BEGIN
 		            'oldValue', tal.old_value,
 		            'newValue', tal.new_value,
 		            'userId', tal.user_id,
-		            'userName', CONCAT(u.first_name, ' ', u.last_name),
+		            'userName', u.user_name,
 		            'createdOn', to_char(
 		                tal.created_on,
 		                'YYYY-MM-DD"T"HH24:MI:SS'
@@ -91,7 +92,7 @@ BEGIN
 		        jsonb_build_object(
 		            'workLogId', wl.work_log_id,
 		            'userId', wl.user_id,
-		            'userName', CONCAT(u.first_name, ' ', u.last_name),
+		            'userName', u.user_name,
 		            'hoursSpent', wl.hours_spent,
 		            'logDate', to_char(wl.log_date, 'YYYY-MM-DD'),
 		            'description', wl.description,
@@ -141,15 +142,15 @@ BEGIN
         ), '[]'::jsonb)
 
     )
-    INTO result
-    FROM user_task ut
-    LEFT JOIN (
-        SELECT task_id, SUM(hours_spent) AS total_hours
-        FROM task_work_logs
-        GROUP BY task_id
-    ) wh ON wh.task_id = ut.task_id
-    WHERE ut.task_id = p_task_id;
-
+	  	INTO result
+		FROM user_task ut
+		LEFT JOIN projects p ON p.project_id = ut.project_id
+		LEFT JOIN (
+		    SELECT task_id, SUM(hours_spent) AS total_hours
+		    FROM task_work_logs
+		    GROUP BY task_id
+		) wh ON wh.task_id = ut.task_id
+		WHERE ut.task_id = p_task_id;
     RETURN result;
 END;
 $$;

@@ -147,7 +147,9 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.UserId, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedOn, opt => opt.Ignore());
 
-        CreateMap<TaskActivityLog, TaskTimelineDto>();
+        CreateMap<TaskActivityLog, TaskTimelineDto>()
+            .ForMember(dest => dest.UserName,
+                opt => opt.MapFrom(src => src.User.Username));
 
         #endregion
 

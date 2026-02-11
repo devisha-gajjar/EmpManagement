@@ -101,7 +101,7 @@ public class WorkFlowService(IGenericRepository<UserTask> taskRepository, IGener
 
         var oldStatus = task.Status;
         task.Status = dto.Status;
-        task.UpdatedOn = DateTime.UtcNow;
+        task.UpdatedOn = DateTime.Now;
 
         var activity = new TaskActivityLog
         {
@@ -114,7 +114,12 @@ public class WorkFlowService(IGenericRepository<UserTask> taskRepository, IGener
 
         activityLogRepository.Add(activity);
 
-        return mapper.Map<TaskTimelineDto>(activity);
+        var saved = await activityLogRepository.GetByInclude(
+                x => x.ActivityId == activity.ActivityId,
+                q => q.Include(x => x.User)
+            );
+
+        return mapper.Map<TaskTimelineDto>(saved);
     }
     #endregion
 

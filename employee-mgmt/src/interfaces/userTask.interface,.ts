@@ -45,6 +45,7 @@ export interface TaskHeaderDto {
     startDate?: string;
     dueDate?: string;
     projectId: number;
+    projectName: string;
     assignedTo?: number;
     assignedBy?: number;
     estimatedHours?: number;

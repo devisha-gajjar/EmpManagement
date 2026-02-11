@@ -22,6 +22,8 @@ import {
 import CollapsibleSection from "../../../../components/shared/collasable-section/CollapsibleSection";
 import AddWorkLogModal from "./AddWorkLogModal";
 import { taskStatusOptions } from "../../../../utils/constant";
+import { formatDate, formatDateWithTime } from "../../../../utils/dateUtil";
+import PageHeader from "../../../../components/shared/page-header/PageHeader";
 
 const UserTaskDetailPage = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -36,9 +38,6 @@ const UserTaskDetailPage = () => {
 
   const { userName } = useAppSelector((state) => state.auth);
 
-  /* =======================
-     FETCH / CLEANUP
-  ======================== */
   useEffect(() => {
     if (taskId) {
       dispatch(fetchTaskDetail(Number(taskId)));
@@ -49,30 +48,18 @@ const UserTaskDetailPage = () => {
     };
   }, [dispatch, taskId]);
 
-  const { task, timeline, workLogs, comments, tags } = selectedTask;
-  /* =======================
-     STATUS SYNC
-  ======================== */
   useEffect(() => {
-    if (task?.status) {
-      setSelectedStatus(task.status);
+    if (selectedTask?.task?.status) {
+      setSelectedStatus(selectedTask.task.status);
     }
-  }, [task?.status]);
+  }, [selectedTask?.task?.status]);
 
-  /* =======================
-     GUARDS (VERY IMPORTANT)
-  ======================== */
   if (loading) return <p className="page-state">Loading task…</p>;
   if (error) return <p className="page-state error">{error}</p>;
   if (!selectedTask) return null;
 
-  /* =======================
-     SAFE DESTRUCTURING
-  ======================== */
+  const { task, timeline, workLogs, comments, tags } = selectedTask;
 
-  /* =======================
-     DERIVED DATA
-  ======================== */
   const totalHours = workLogs.reduce(
     (total: number, log: TaskWorkLogDto) => total + log.hoursSpent,
     0
@@ -82,8 +69,10 @@ const UserTaskDetailPage = () => {
     (a, b) => new Date(a.createdOn).getTime() - new Date(b.createdOn).getTime()
   );
 
-  const handleStatusChange = () => {
-    if (!taskId || selectedStatus === task.status) return;
+  const handleChangeStatus = () => {
+    if (!taskId || !selectedTask) return;
+
+    if (selectedStatus === selectedTask.task.status) return;
 
     dispatch(
       updateTaskStatus({
@@ -93,11 +82,45 @@ const UserTaskDetailPage = () => {
     );
   };
 
-  /* =======================
-     RENDER
-  ======================== */
+  const handleMarkComplete = () => {
+    if (!taskId || !selectedTask) return;
+
+    if (selectedTask.task.status === "Completed") return;
+
+    dispatch(
+      updateTaskStatus({
+        taskId: Number(taskId),
+        status: "Completed",
+      })
+    );
+  };
+
+  const statusChanges = sortedTimeline.filter(
+    (item) => item.action === "STATUS_CHANGED"
+  );
+
+  const statusSteps =
+    statusChanges.length > 0
+      ? statusChanges
+      : [
+          {
+            activityId: "initial",
+            newValue: task.status,
+            userName: "System",
+            createdOn: task.startDate,
+          },
+        ];
+
   return (
     <>
+      <div className="mb-3">
+        <PageHeader
+          icon="clipboard-check"
+          title={task.taskName}
+          subtitle="View task information, timeline, and work logs"
+          theme="blue"
+        />
+      </div>
       <div className="task-detail-layout">
         <div className="task-main">
           {/* HEADER */}
@@ -124,28 +147,33 @@ const UserTaskDetailPage = () => {
             {/* STATUS TIMELINE */}
             <CollapsibleSection title="Status Timeline" defaultOpen>
               <div className="status-progress">
-                {sortedTimeline.length === 0 && <div>No data available</div>}
+                {statusSteps.map((item, index) => {
+                  const isCurrent = index === statusSteps.length - 1;
 
-                {sortedTimeline.map((item, index) => (
-                  <div key={item.activityId} className="status-step">
-                    <div
-                      className={`status-indicator ${
-                        index === sortedTimeline.length - 1 ? "current" : ""
-                      }`}
-                    />
+                  return (
+                    <div key={item.activityId} className="status-step">
+                      <div
+                        className={`status-indicator ${
+                          isCurrent ? "current" : "completed"
+                        }`}
+                      />
 
-                    <div className="status-meta">
-                      <span className="status-name">
-                        {formatActionSimple(item.action)}
-                      </span>
-                      <span className="status-user">{item.userName}</span>
+                      <div className="status-meta">
+                        <div className="status-name">{item.newValue}</div>
+
+                        <div className="status-user">
+                          Changed by <strong>{item.userName}</strong>
+                        </div>
+
+                        <div className="status-time">
+                          {formatDateWithTime(item.createdOn)}
+                        </div>
+                      </div>
+
+                      {!isCurrent && <div className="status-line" />}
                     </div>
-
-                    {index < sortedTimeline.length - 1 && (
-                      <div className="status-line" />
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="timeline-history">
@@ -178,7 +206,7 @@ const UserTaskDetailPage = () => {
             </CollapsibleSection>
 
             {/* WORK LOG */}
-            <CollapsibleSection title="Work Log">
+            <CollapsibleSection title="Work Log" defaultOpen={false}>
               <div className="card-header">
                 <h4>Time Tracking</h4>
                 <span className="badge">{totalHours}h logged</span>
@@ -187,7 +215,7 @@ const UserTaskDetailPage = () => {
                   className="log-time-btn"
                   onClick={() => setShowWorkLogModal(true)}
                 >
-                  + Log Time
+                  <i className="bi bi-plus"></i> Log Time
                 </button>
               </div>
 
@@ -210,7 +238,7 @@ const UserTaskDetailPage = () => {
             </CollapsibleSection>
 
             {/* COMMENTS */}
-            <CollapsibleSection title="Discussion">
+            <CollapsibleSection title="Discussion" defaultOpen={false}>
               {comments.map((c: TaskCommentDto) => (
                 <div key={c.commentId} className="comment">
                   <div className="avatar">
@@ -237,6 +265,7 @@ const UserTaskDetailPage = () => {
               <h5>Status</h5>
 
               <select
+                className="status-select"
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
               >
@@ -247,13 +276,52 @@ const UserTaskDetailPage = () => {
                 ))}
               </select>
 
-              <button
-                className="primary-btn"
-                disabled={selectedStatus === task.status}
-                onClick={handleStatusChange}
-              >
-                Update Status
-              </button>
+              <div className="d-flex gap-3">
+                <button
+                  className="primary-btn"
+                  onClick={handleChangeStatus}
+                  disabled={
+                    !selectedTask || selectedStatus === selectedTask.task.status
+                  }
+                >
+                  Change Status
+                </button>
+
+                <button
+                  className="primary-btn"
+                  onClick={handleMarkComplete}
+                  disabled={
+                    !selectedTask || selectedTask.task.status === "Completed"
+                  }
+                >
+                  Mark Complete
+                </button>
+              </div>
+            </div>
+            <div className="card p-3">
+              <h5>Details</h5>
+              <div className="detail-row">
+                <span>Project</span>
+                <strong>{task.projectName}</strong>
+              </div>
+              <div className="detail-row">
+                <span>Priority</span> <strong>{task.priority}</strong>
+              </div>
+              <div className="detail-row">
+                {" "}
+                <span>Due date</span>{" "}
+                <strong>
+                  {" "}
+                  {task.dueDate
+                    ? new Date(task.dueDate).toDateString()
+                    : "-"}{" "}
+                </strong>{" "}
+              </div>{" "}
+            </div>{" "}
+            <div className="card p-3">
+              {" "}
+              <h5>Quick actions</h5>{" "}
+              <button className="secondary-btn">Log time</button>{" "}
             </div>
           </aside>
         </div>

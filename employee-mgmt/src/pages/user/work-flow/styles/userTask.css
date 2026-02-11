@@ -4,6 +4,7 @@
     padding: 16px 18px;
     background: #ffffff;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
 }
 
 .user-task-card:hover {
