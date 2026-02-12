@@ -1,6 +1,5 @@
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.DTO.RequestDto;
-using EmployeeAPI.Entities.DTO.ResponseDto;
 using EmployeeAPI.Entities.Helper;
 using EmployeeAPI.Entities.Models;
 using EmployeeAPI.Repositories.IRepositories;
@@ -9,7 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace EmployeeAPI.Hubs;
 
-public class NotificationHub(IProjectMemberService projectMemberService, IGenericRepository<ProjectMember> projectMemberRepository, IUserTaskService userTaskService, INotificationService notificationService) : Hub
+public class NotificationHub(IProjectMemberService projectMemberService, IGenericRepository<ProjectMember> projectMemberRepository, IUserTaskService userTaskService, INotificationService notificationService, IWorkFlowService workFlowService) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -30,6 +29,15 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
     {
         Console.WriteLine("user joined hub!");
         await Groups.AddToGroupAsync(Context.ConnectionId, $"User_{userId}");
+    }
+    public async Task JoinTaskGroup(int taskId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"Task_{taskId}");
+    }
+
+    public async Task LeaveTaskGroup(int taskId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"Task_{taskId}");
     }
 
     public async Task AddOrUpdateProjectMember(ProjectMemberRequest request)
@@ -114,7 +122,6 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
 
     public async Task MarkNotificationAsRead(int notificationId)
     {
-        // 1️⃣ Call the service to mark as read
         var updatedNotification = await notificationService.MarkAsRead(notificationId);
 
         if (updatedNotification == null)
@@ -126,11 +133,9 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
 
         int userId = updatedNotification.UserId;
 
-        // 2️⃣ Notify user that this specific notification was marked as read
         await Clients.Group($"User_{userId}")
             .SendAsync("NotificationMarkedAsRead", updatedNotification);
 
-        // 3️⃣ Get new unread count and send it
         int unreadCount = await notificationService.GetUnreadCountAsync();
         await Clients.Group($"User_{userId}")
             .SendAsync("UnreadNotificationCountUpdated", unreadCount);
@@ -141,7 +146,6 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
         int userId = Context.User.GetUserId()
              ?? throw new AppException(Constants.UNAUTHORIZED_USER);
 
-        // 1️⃣ Call service to mark all (or selected) as read
         int markedCount = await notificationService.MarkAllAsRead(notificationIds);
 
         if (markedCount == 0)
@@ -150,7 +154,6 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
             return;
         }
 
-        // 2️⃣ Notify user that notifications were marked as read
         await Clients.Group($"User_{userId}")
             .SendAsync("AllNotificationsMarkedAsRead", new
             {
@@ -158,10 +161,37 @@ public class NotificationHub(IProjectMemberService projectMemberService, IGeneri
                 markedCount
             });
 
-        // 3️⃣ Send updated unread count
         int unreadCount = await notificationService.GetUnreadCountAsync();
         await Clients.Group($"User_{userId}")
             .SendAsync("UnreadNotificationCountUpdated", unreadCount);
     }
 
+    public async Task AddTaskComment(int taskId, AddCommentRequestDto request)
+    {
+        var result = await workFlowService.AddComment(taskId, request);
+
+        await Clients.Group($"Task_{taskId}")
+            .SendAsync("TaskCommentAdded", new
+            {
+                taskId,
+                commentId = result.CommentId,
+                message = result.Comment,
+                userName = result.CreatedBy,
+                createdAt = result.CreatedOn
+            });
+
+        // Optional: Also notify admin group
+        await Clients.Group(Constants.ADMIN_GROUP)
+            .SendAsync("TaskActivity", new
+            {
+                taskId,
+                action = "CommentAdded"
+            });
+    }
+
+    public async Task Typing(int taskId, string userName)
+    {
+        await Clients.OthersInGroup($"Task_{taskId}")
+            .SendAsync("UserTyping", userName);
+    }
 }

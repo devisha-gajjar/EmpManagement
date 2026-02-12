@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { addTaskCommentApi, addTaskWorkLogApi, getTaskDetailApi, getUserTasksApi, updateTaskStatusApi } from "./userTasksApi";
-import type { TaskCommentDto, TaskResponseDto, TaskTimelineDto, TaskWorkLogDto } from "../../../interfaces/userTask.interface,";
+import type { TaskCommentDto, TaskResponseDto, TaskTimelineDto, TaskWorkLogDto } from "../../../interfaces/userTask.interface";
 
 interface UserTasksState {
     tasks: TaskResponseDto[];

@@ -133,7 +133,7 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
       dueDate: task.dueDate?.split("T")[0],
       estimatedHours: task.estimatedHours ?? 0,
     };
-  }, [isEditMode, task?.taskId]);
+  }, [isEditMode, task?.taskId, task]);
 
   /* -------------------- SUBMIT -------------------- */
   const handleSubmit = async (data: any) => {

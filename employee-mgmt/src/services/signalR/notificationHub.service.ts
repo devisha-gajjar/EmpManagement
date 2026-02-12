@@ -3,6 +3,7 @@ import { environment } from "../../environment/environment.dev";
 import type { ProjectRole } from "../../enums/enum";
 import { ACCESS_TOKEN_KEY } from "../../utils/constant";
 import type { AssignedToProjectPayload, NotificationPayload, ProjectMemberChangedPayload, TaskAssignedPayload } from "../../interfaces/notification.interface";
+import type { TaskCommentDto } from "../../interfaces/userTask.interface";
 
 class NotificationHubService {
     public connection: signalR.HubConnection;
@@ -100,6 +101,30 @@ class NotificationHubService {
         this.connection.off("UnreadNotificationCountUpdated", callback);
     }
 
+    onTaskCommentAdded(
+        callback: (data: TaskCommentDto) => void
+    ) {
+        this.connection.on("TaskCommentAdded", callback);
+    }
+
+    offTaskCommentAdded(
+        callback: (data: TaskCommentDto) => void
+    ) {
+        this.connection.off("TaskCommentAdded", callback);
+    }
+
+    onUserTyping(
+        callback: (userName: string) => void
+    ) {
+        this.connection.on("UserTyping", callback);
+    }
+
+    offUserTyping(
+        callback: (userName: string) => void
+    ) {
+        this.connection.off("UserTyping", callback);
+    }
+
     async joinUser(userId: string) {
         await this.waitForConnection();
         await this.connection.invoke("JoinAsUser", userId);
@@ -151,6 +176,39 @@ class NotificationHubService {
         );
     }
 
+    async addTaskComment(
+        taskId: number,
+        payload: { comment: string }
+    ) {
+        await this.waitForConnection();
+        await this.connection.invoke("AddTaskComment", taskId, payload);
+    }
+
+    async sendTyping(taskId: number, userName: string) {
+
+        if (this.connection.state !== signalR.HubConnectionState.Connected) {
+            console.warn(
+                "Typing skipped. Current state:",
+                this.connection.state
+            );
+            return;
+        }
+
+        try {
+            await this.connection.invoke("Typing", taskId, userName);
+        } catch (err) {
+            console.error("Typing invoke failed:", err);
+        }
+    }
+
+    async joinTaskGroup(taskId: number) {
+        await this.waitForConnection();
+        await this.connection.invoke("JoinTaskGroup", taskId);
+    }
+
+    async leaveTaskGroup(taskId: number) {
+        await this.connection.invoke("LeaveTaskGroup", taskId);
+    }
 }
 
 export const notificationHubService = new NotificationHubService();

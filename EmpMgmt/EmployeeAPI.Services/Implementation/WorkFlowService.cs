@@ -59,8 +59,21 @@ public class WorkFlowService(IGenericRepository<UserTask> taskRepository, IGener
 
         commentRepository.Add(entity);
 
-        return mapper.Map<TaskCommentDto>(entity);
+        // IMPORTANT: reload including User
+        var savedEntity = await commentRepository.GetByInclude(
+            x => x.CommentId == entity.CommentId,
+            q => q.Include(x => x.Task).ThenInclude(x => x.User)
+        );
+
+        return new TaskCommentDto
+        {
+            CommentId = savedEntity.CommentId,
+            Comment = savedEntity.Comment,
+            CreatedBy = savedEntity.Task.User!.Username,  // return username here
+            CreatedOn = savedEntity.CreatedOn
+        };
     }
+
     #endregion
 
     #region Add WorkLog

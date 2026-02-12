@@ -1,5 +1,5 @@
 import "../styles/userTask.css";
-import type { TaskResponseDto } from "../../../../interfaces/userTask.interface,";
+import type { TaskResponseDto } from "../../../../interfaces/userTask.interface";
 import { truncateText } from "../../../../utils/text.util";
 import { useNavigate } from "react-router-dom";
 

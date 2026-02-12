@@ -53,9 +53,9 @@ public class TaskTimelineDto
 public class TaskCommentDto
 {
     public int CommentId { get; set; }
-    public int CreatedBy { get; set; }
+    public string CreatedBy { get; set; }
     public string Comment { get; set; }
-    public DateTime CreatedOn { get; set; }
+    public DateTime? CreatedOn { get; set; }
 }
 
 public class TaskWorkLogDto

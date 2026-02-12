@@ -71,7 +71,7 @@ BEGIN
 		            'oldValue', tal.old_value,
 		            'newValue', tal.new_value,
 		            'userId', tal.user_id,
-		            'userName', u.user_name,
+		            'userName', u.username,
 		            'createdOn', to_char(
 		                tal.created_on,
 		                'YYYY-MM-DD"T"HH24:MI:SS'
@@ -92,7 +92,7 @@ BEGIN
 		        jsonb_build_object(
 		            'workLogId', wl.work_log_id,
 		            'userId', wl.user_id,
-		            'userName', u.user_name,
+		            'userName', u.username,
 		            'hoursSpent', wl.hours_spent,
 		            'logDate', to_char(wl.log_date, 'YYYY-MM-DD'),
 		            'description', wl.description,
@@ -108,22 +108,28 @@ BEGIN
 		    WHERE wl.task_id = ut.task_id
 		), '[]'::jsonb),
 
-        /* =========================
-           Comments
-        ========================= */
-        'comments', COALESCE((
-            SELECT jsonb_agg(
-                jsonb_build_object(
-                    'commentId', tc.comment_id,
-                    'createdBy', tc.created_by,
-                    'comment', tc.comment,
-                    'createdOn', tc.created_on
-                )
-                ORDER BY tc.created_on DESC
-            )
-            FROM task_comments tc
-            WHERE tc.task_id = ut.task_id
-        ), '[]'::jsonb),
+	       /* =========================
+			   Comments
+			========================= */
+		'comments', COALESCE((
+		    SELECT jsonb_agg(
+		        jsonb_build_object(
+		            'commentId', tc.comment_id,
+		            'userId', tc.created_by,
+		            'userName', u.username,
+		            'comment', tc.comment,
+		            'createdOn', to_char(
+		                tc.created_on,
+		                'YYYY-MM-DD"T"HH24:MI:SS'
+		            )
+		        )
+		        ORDER BY tc.created_on DESC
+		    )
+		    FROM task_comments tc
+		    LEFT JOIN users u ON u.user_id = tc.created_by
+		    WHERE tc.task_id = ut.task_id
+		), '[]'::jsonb),
+
 
         /* =========================
            Attachments

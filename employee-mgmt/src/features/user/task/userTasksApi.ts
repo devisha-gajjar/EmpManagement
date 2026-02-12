@@ -1,6 +1,6 @@
 import type { ApiResponse } from "../../../interfaces/apiResponse.interface";
 import axiosClient from "../../../api/axiosClient";
-import type { TaskResponseDto, TaskDetailResponseDto, TaskCommentDto, TaskWorkLogDto, TaskTimelineDto } from "../../../interfaces/userTask.interface,";
+import type { TaskResponseDto, TaskDetailResponseDto, TaskCommentDto, TaskWorkLogDto, TaskTimelineDto } from "../../../interfaces/userTask.interface";
 
 /* =========================
    TASK LIST

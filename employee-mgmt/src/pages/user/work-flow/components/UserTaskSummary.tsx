@@ -1,6 +1,6 @@
 import { Col, Row } from "reactstrap";
 import CardComponent from "../../../../components/shared/card/Card";
-import type { TaskResponseDto } from "../../../../interfaces/userTask.interface,";
+import type { TaskResponseDto } from "../../../../interfaces/userTask.interface";
 
 interface Props {
   tasks?: TaskResponseDto[];

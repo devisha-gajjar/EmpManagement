@@ -266,6 +266,10 @@
     margin-bottom: 14px;
 }
 
+.card-header h4 {
+    font-size: 16px;
+}
+
 .card-header-left {
     display: flex;
     align-items: center;
@@ -362,63 +366,118 @@
     font-size: 13px;
 }
 
+.comment {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.comment.own {
+    flex-direction: row-reverse;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #00335c;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
 .comment-content {
-    flex: 1;
+    max-width: 70%;
+    display: flex;
+    flex-direction: column;
 }
 
 .comment-header {
     display: flex;
-    gap: 8px;
     align-items: center;
-    font-size: 13px;
-    margin-bottom: 4px;
+    gap: 8px;
+    margin-bottom: 6px;
 }
 
-.comment-header .name {
+.comment-user {
     font-weight: 600;
+    font-size: 14px;
+    color: #111827;
 }
 
-.comment-header .time {
-    color: #6b7280;
+.comment-time {
     font-size: 12px;
+    color: #6b7280;
 }
 
 .comment-bubble {
-    background: #f9fafb;
+    background: #f3f4f6;
     padding: 10px 14px;
-    border-radius: 10px;
+    border-radius: 14px;
     font-size: 14px;
-    line-height: 1.4;
+    line-height: 1.5;
+    word-wrap: break-word;
+    transition: background 0.2s ease;
 }
 
-.comment-border {
-    border-top: 1px solid #e5e7eb;
+.comment.own .comment-bubble {
+    background: #bbdffd;
+    border: 1px solid #00254456;
+    color: black;
 }
 
+.comment-bubble:hover {
+    background: #e5e7eb;
+}
+
+.comment.own .comment-bubble:hover {
+    background: #002544;
+}
+
+/* Input section */
 .comment-input {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding-top: 12px;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 10px;
 }
 
 .comment-input input {
     flex: 1;
     border: 1px solid #e5e7eb;
     border-radius: 20px;
-    padding: 10px 14px;
-    outline: none;
+    padding: 10px 16px;
+    font-size: 14px;
+    transition: border 0.2s ease;
+}
+
+.comment-input input:focus {
+    border-color: #00335c;
 }
 
 .comment-input button {
     border: none;
     background: #00335c;
     color: white;
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     cursor: pointer;
+    transition: transform 0.1s ease, background 0.2s ease;
 }
+
+.comment-input button:hover {
+    background: #002544;
+    transform: scale(1.05);
+}
+
 
 .status-select {
     width: 100%;
@@ -476,7 +535,9 @@
 
 [data-theme="dark"] .task-title,
 [data-theme="dark"] .username,
-[data-theme="dark"] .status-name {
+[data-theme="dark"] .status-name,
+[data-theme="dark"] .timeline-header,
+[data-theme="dark"] .task-sidebar-header {
     color: #f1f5f9;
 }
 
@@ -484,7 +545,8 @@
 [data-theme="dark"] .status-user,
 [data-theme="dark"] .status-time,
 [data-theme="dark"] .timestamp,
-[data-theme="dark"] .comment-header .time {
+[data-theme="dark"] .comment-header .time,
+[data-theme="dark"] .detail-row {
     color: #94a3b8;
 }
 

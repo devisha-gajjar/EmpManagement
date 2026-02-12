@@ -79,7 +79,7 @@ export interface TaskTimelineDto {
 ========================= */
 export interface TaskCommentDto {
     commentId: number;
-    createdBy: number;
+    createdBy: string;
     comment: string;
     createdOn: string;
 }
@@ -113,4 +113,8 @@ export interface TaskAttachmentDto {
 export interface TaskTagDto {
     tagId: number;
     name: string;
+}
+
+export interface TypingPayload {
+    userName: string;
 }

@@ -80,7 +80,7 @@ export default function LeaveList() {
       leaveHubService.offLeaveStatusChanged(handleStatusChange);
       leaveHubService.connection.off("NewLeaveRequest", onNewLeave);
     };
-  }, []);
+  }, [dispatch]);
 
   const filteredLeaves = leaves.filter(
     (leaves: any) =>
