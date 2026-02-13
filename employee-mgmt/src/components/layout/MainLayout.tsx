@@ -44,6 +44,51 @@ export default function MainLayout() {
     });
   }, [userId, role]);
 
+  //  useEffect(() => {
+  //   if (!role) return;
+
+  //   const startConnections = async () => {
+  //     try {
+  //       await leaveHubService.startConnection();
+  //       await notificationHubService.startConnection();
+
+  //       // Join rooms for user or admin
+  //       if (role === "admin") {
+  //         leaveHubService.joinAdmin();
+  //         notificationHubService.joinAdmin();
+  //       } else {
+  //         leaveHubService.joinUser(userId!);
+  //         notificationHubService.joinUser(userId!);
+  //       }
+
+  //       setConnectionStatus("Connected");
+  //     } catch (error) {
+  //       console.error("SignalR Connection Failed", error);
+  //       setConnectionStatus("Failed");
+  //     }
+  //   };
+
+  //   startConnections();
+
+  //   // Set up event listeners for reconnecting
+  //   leaveHubService.connection.onclose(() => {
+  //     setConnectionStatus("Disconnected");
+  //     console.log("Connection closed, retrying...");
+  //     setTimeout(startConnections, 3000); // Retry after 3 seconds
+  //   });
+
+  //   notificationHubService.connection.onclose(() => {
+  //     setConnectionStatus("Disconnected");
+  //     console.log("Connection closed, retrying...");
+  //     setTimeout(startConnections, 3000); // Retry after 3 seconds
+  //   });
+
+  //   return () => {
+  //     leaveHubService.connection.stop();
+  //     notificationHubService.connection.stop();
+  //   };
+  //  }, [userId, role]);
+
   useEffect(() => {
     (async () => {
       try {

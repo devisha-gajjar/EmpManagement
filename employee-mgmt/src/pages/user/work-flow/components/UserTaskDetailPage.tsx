@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import {
@@ -30,6 +30,8 @@ const UserTaskDetailPage = () => {
   const [newComment, setNewComment] = useState("");
   const [typingUser, setTypingUser] = useState<string | null>(null);
 
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const { selectedTask, loading, error } = useAppSelector(
     (state) => state.userTask
   );
@@ -52,7 +54,16 @@ const UserTaskDetailPage = () => {
 
     const handleTyping = (userName: string) => {
       setTypingUser(userName);
-      setTimeout(() => setTypingUser(null), 2000);
+
+      // Clear previous timer
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      // Set new timer
+      typingTimeoutRef.current = setTimeout(() => {
+        setTypingUser(null);
+      }, 2000);
     };
 
     notificationHubService.onUserTyping(handleTyping);
@@ -185,6 +196,7 @@ const UserTaskDetailPage = () => {
           title={task.taskName}
           subtitle="View task information, timeline, and work logs"
           theme="blue"
+          showBackButton={true}
         />
       </div>
       <div className="task-detail-layout">
@@ -344,6 +356,17 @@ const UserTaskDetailPage = () => {
                 );
               })}
 
+              {typingUser && (
+                <div className="typing-indicator">
+                  <strong>{typingUser}</strong> is typing
+                  <div className="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              )}
+
               <div className="comment-input">
                 <div className="avatar small">
                   {String(userName).slice(0, 2).toUpperCase()}
@@ -362,12 +385,6 @@ const UserTaskDetailPage = () => {
                   <i className="bi bi-send"></i>
                 </button>
               </div>
-
-              {typingUser && (
-                <div className="typing-indicator">
-                  {typingUser} is typing...
-                </div>
-              )}
             </CollapsibleSection>
           </div>
 

@@ -14,6 +14,7 @@ export interface TaskResponseDto {
     taskId: number;
     taskName: string;
     status?: string;
+    userId: number;
     priority?: string;
     dueDate?: string;
     description?: string;

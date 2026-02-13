@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 interface Props {
   task: TaskResponseDto;
+  isMine: boolean;
 }
 
-export const UserTaskCard = ({ task }: Props) => {
+export const UserTaskCard = ({ task, isMine }: Props) => {
   const navigate = useNavigate();
 
   const isOverdue =
@@ -20,7 +21,10 @@ export const UserTaskCard = ({ task }: Props) => {
   };
 
   return (
-    <div className="user-task-card" onClick={handleClick}>
+    <div
+      className={`user-task-card ${isMine ? "mine" : ""}`}
+      onClick={handleClick}
+    >
       {/* HEADER */}
       <div className="task-header">
         <div className="task-title">

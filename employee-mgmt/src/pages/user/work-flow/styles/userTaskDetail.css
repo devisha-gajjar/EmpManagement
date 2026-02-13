@@ -100,7 +100,9 @@
     border-radius: 10px;
 }
 
-.primary-btn:disabled {
+.primary-btn:disabled,
+.log-time-btn:disabled,
+.secondary-btn:disabled {
     background-color: #213342;
     color: #d6d5d5;
     cursor: no-drop;
@@ -478,6 +480,60 @@
     transform: scale(1.05);
 }
 
+.typing-indicator {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #6c757d;
+    animation: fadeIn 0.2s ease-in;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+    background-color: #6c757d;
+    border-radius: 50%;
+    animation: blink 1.4s infinite both;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0.2;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.2;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
 
 .status-select {
     width: 100%;

@@ -9,7 +9,12 @@ import { notificationHubService } from "../../../../services/signalR/notificatio
 const UserTasksPage = () => {
   const dispatch = useAppDispatch();
   const { tasks, loading, error } = useAppSelector((state) => state.userTask);
-  const userId = useAppSelector((state) => state.auth.userId);
+  const userId = Number.parseInt(useAppSelector((state) => state.auth.userId)!);
+  const sortedTasks = [...tasks].sort((a, b) => {
+    if (a.userId === userId && b.userId !== userId) return -1;
+    if (a.userId !== userId && b.userId === userId) return 1;
+    return 0;
+  });
 
   // Initial load
   useEffect(() => {
@@ -62,8 +67,12 @@ const UserTasksPage = () => {
         <p className="text-muted">No tasks assigned to you.</p>
       ) : (
         <div className="d-flex flex-column gap-3">
-          {tasks.map((task) => (
-            <UserTaskCard key={task.taskId} task={task} />
+          {sortedTasks.map((task) => (
+            <UserTaskCard
+              key={task.taskId}
+              task={task}
+              isMine={task.userId === userId}
+            />
           ))}
         </div>
       )}

@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using System.Text.Json;
 using AutoMapper;
 using EmployeeAPI.Entities.DTO;
@@ -23,16 +22,12 @@ public class WorkFlowService(IGenericRepository<UserTask> taskRepository, IGener
     #region Fetch User Task
     public async Task<List<TaskResponseDto>> GetTasksByUserIdAsync()
     {
-        var query = taskRepository.GetQueryableInclude(
-            includes:
-            [
-                t => t.Project,
-                t => t.Tags
-            ]
-        );
-
-        return await query
-            .Where(t => t.UserId == UserId)
+        return await taskRepository
+            .GetAll()
+            .Where(t =>
+                t.UserId == UserId ||
+                t.Project!.ProjectMembers.Any(pm => pm.UserId == UserId)
+            )
             .OrderByDescending(t => t.DueDate)
             .Select(t => new TaskResponseDto
             {
@@ -42,7 +37,8 @@ public class WorkFlowService(IGenericRepository<UserTask> taskRepository, IGener
                 Priority = t.Priority,
                 DueDate = t.DueDate,
                 Description = t.Description,
-                ProjectName = t.Project!.ProjectName
+                ProjectName = t.Project!.ProjectName,
+                UserId = t.UserId
             })
             .ToListAsync();
     }
