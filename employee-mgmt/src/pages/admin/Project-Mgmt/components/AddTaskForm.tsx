@@ -9,6 +9,8 @@ import { debounce, useTheme } from "@mui/material";
 import type { ProjectTask } from "../../../../interfaces/project.interface";
 import { taskStatusOptions } from "../../../../utils/constant";
 import { fetchProjectById } from "../../../../features/admin/project-mgmt/projectDetailsApi";
+import ModalCompound from "../../../../components/shared/modal/modal";
+import DialogCompound from "../../../../components/shared/modal/modal";
 
 interface Props {
   isOpen: boolean;
@@ -104,7 +106,7 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
     return base;
   }, [isEditMode, task, userOptions]);
 
-  /* -------------------- DEBOUNCED SEARCH (SAFE) -------------------- */
+  /* -------------------- DEBOUNCED SEARCH -------------------- */
   const debouncedSearch = useMemo(() => {
     return debounce(async (text: string) => {
       if (!text || text.length < 2) return;
@@ -119,7 +121,7 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
     };
   }, [debouncedSearch]);
 
-  /* -------------------- DEFAULT VALUES (STABLE) -------------------- */
+  /* -------------------- DEFAULT VALUES -------------------- */
   const defaultValues = useMemo(() => {
     if (!isEditMode || !task) return undefined;
 
@@ -167,19 +169,12 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      toggle={onClose}
-      centered
-      className={isDark ? "dark-modal" : ""}
-    >
-      <ModalHeader
-        toggle={onClose}
-        className={isDark ? "bg-dark text-white" : ""}
-      >
+    <DialogCompound open={isOpen} onClose={onClose}>
+      <DialogCompound.Header onClose={onClose}>
         {isEditMode ? "Edit Task" : "Add Task"}
-      </ModalHeader>
-      <ModalBody className={isDark ? "bg-dark text-white" : ""}>
+      </DialogCompound.Header>
+
+      <DialogCompound.Body>
         <DynamicFormComponent
           formConfig={formConfig}
           onSubmit={handleSubmit}
@@ -190,8 +185,8 @@ const AddTaskForm = ({ isOpen, onClose, projectId, taskId, task }: Props) => {
           defaultValues={defaultValues}
           onSearch={debouncedSearch}
         />
-      </ModalBody>
-    </Modal>
+      </DialogCompound.Body>
+    </DialogCompound>
   );
 };
 

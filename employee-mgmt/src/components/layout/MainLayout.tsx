@@ -33,7 +33,8 @@ export default function MainLayout() {
       } else {
         leaveHubService.joinUser(userId!);
       }
-    });
+    }); +
+      
 
     notificationHubService.startConnection().then(() => {
       if (role == "admin") {

@@ -4,6 +4,7 @@ import { Card, CardBody } from "reactstrap";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { formatDate } from "../../../../utils/dateUtil";
 import { fetchTaskWorkLogs } from "../../../../features/admin/project-mgmt/taskWorklogApi";
+import PageHeader from "../../../../components/shared/page-header/PageHeader";
 
 const TaskWorkLogsPage = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -17,29 +18,52 @@ const TaskWorkLogsPage = () => {
     }
   }, [taskId]);
 
-  if (loading) return <p>Loading work logs...</p>;
+  if (loading)
+    return (
+      <div className="container mt-3">
+        <p>Loading work logs...</p>
+      </div>
+    );
 
   return (
     <div className="container mt-3">
-      <h5 className="mb-3">Work Logs – {data?.taskName}</h5>
+      {/* Page Header */}
+      <div className="mb-3">
+        <PageHeader
+          icon="assignment"
+          title="Task Work Logs"
+          subtitle="View the detailed work logs for this task"
+          theme="blue"
+        />
+      </div>
 
+      {/* No work logs */}
       {data?.workLogs.length === 0 && (
         <p className="text-muted">No work logs found.</p>
       )}
 
+      {/* Work log cards */}
       {data?.workLogs.map((log) => (
-        <Card key={log.workLogId} className="mb-2">
+        <Card
+          key={log.workLogId}
+          className="mb-3 shadow-sm border-0"
+          style={{ borderRadius: "0.5rem" }}
+        >
           <CardBody>
-            <div className="d-flex justify-content-between">
-              <strong>{log.userName}</strong>
+            <div className="d-flex justify-content-between align-items-center">
+              <strong className="text-primary">{log.userName}</strong>
               <span className="text-muted">{formatDate(log.logDate)}</span>
             </div>
 
-            <div className="mt-1">
-              <span className="badge bg-primary">{log.hoursSpent} hrs</span>
+            <div className="mt-2">
+              <span className="badge bg-info text-dark">
+                {log.hoursSpent} hrs
+              </span>
             </div>
 
-            {log.description && <p className="mt-2 mb-0">{log.description}</p>}
+            {log.description && (
+              <p className="mt-2 mb-0 text-secondary">{log.description}</p>
+            )}
           </CardBody>
         </Card>
       ))}
