@@ -74,6 +74,7 @@ const AddLeaveDialog = ({ open, onClose, leaveToEdit }: Props) => {
       name: "reason",
       type: "text",
       label: "Reason",
+      placeholder: "Enter reason for leave",
       rules: { required: "Reason is required" },
     },
   ];

@@ -65,7 +65,7 @@ public class WorkFlowService(IGenericRepository<UserTask> taskRepository, IGener
         {
             CommentId = savedEntity.CommentId,
             Comment = savedEntity.Comment,
-            CreatedBy = savedEntity.Task.User!.Username,  // return username here
+            CreatedBy = savedEntity.Task.User!.Username,
             CreatedOn = savedEntity.CreatedOn
         };
     }

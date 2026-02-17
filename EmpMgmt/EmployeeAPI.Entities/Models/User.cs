@@ -43,6 +43,12 @@ public partial class User
 
     public DateTime? TwoFactorEnabledOn { get; set; }
 
+    public int FailedLoginCount { get; set; }
+
+    public DateTime? LastFailedLogin { get; set; }
+
+    public DateTime? LockoutUntil { get; set; }
+
     public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
 
     public virtual ICollection<Department> Departments { get; set; } = new List<Department>();

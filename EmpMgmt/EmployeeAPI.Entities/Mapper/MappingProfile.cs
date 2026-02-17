@@ -108,24 +108,24 @@ public class MappingProfile : Profile
 
         #region WorkFlow Management
 
-        CreateMap<TaskDto, UserTask>()
-            .ForMember(dest => dest.TaskId, opt => opt.Ignore())
-            .ForMember(dest => dest.UserId, opt => opt.Ignore())
-            .ForMember(dest => dest.ProjectId, opt => opt.Ignore())
-            .ForMember(dest => dest.AssignedBy, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedOn, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedOn, opt => opt.Ignore())
+        // CreateMap<TaskDto, UserTask>()
+        //     .ForMember(dest => dest.TaskId, opt => opt.Ignore())
+        //     .ForMember(dest => dest.UserId, opt => opt.Ignore())
+        //     .ForMember(dest => dest.ProjectId, opt => opt.Ignore())
+        //     .ForMember(dest => dest.AssignedBy, opt => opt.Ignore())
+        //     .ForMember(dest => dest.CreatedOn, opt => opt.Ignore())
+        //     .ForMember(dest => dest.UpdatedOn, opt => opt.Ignore())
 
-            // Navigation properties
-            .ForMember(dest => dest.Project, opt => opt.Ignore())
-            .ForMember(dest => dest.AssignedByNavigation, opt => opt.Ignore())
-            .ForMember(dest => dest.User, opt => opt.Ignore())
-            .ForMember(dest => dest.Subtasks, opt => opt.Ignore())
-            .ForMember(dest => dest.TaskActivityLogs, opt => opt.Ignore())
-            .ForMember(dest => dest.TaskAttachments, opt => opt.Ignore())
-            .ForMember(dest => dest.TaskComments, opt => opt.Ignore())
-            .ForMember(dest => dest.TaskWorkLogs, opt => opt.Ignore())
-            .ForMember(dest => dest.Tags, opt => opt.Ignore());
+        //     // Navigation properties
+        //     .ForMember(dest => dest.Project, opt => opt.Ignore())
+        //     .ForMember(dest => dest.AssignedByNavigation, opt => opt.Ignore())
+        //     .ForMember(dest => dest.User, opt => opt.Ignore())
+        //     .ForMember(dest => dest.Subtasks, opt => opt.Ignore())
+        //     .ForMember(dest => dest.TaskActivityLogs, opt => opt.Ignore())
+        //     .ForMember(dest => dest.TaskAttachments, opt => opt.Ignore())
+        //     .ForMember(dest => dest.TaskComments, opt => opt.Ignore())
+        //     .ForMember(dest => dest.TaskWorkLogs, opt => opt.Ignore())
+        //     .ForMember(dest => dest.Tags, opt => opt.Ignore());
 
         CreateMap<UserTask, TaskHeaderDto>();
 

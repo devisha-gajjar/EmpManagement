@@ -52,6 +52,7 @@ export default function EmployeeFormDialog({
     () => [
       {
         name: "name",
+        placeholder: "Enter full name",
         label: "Full Name",
         type: "text",
         rules: { required: true },
@@ -62,6 +63,7 @@ export default function EmployeeFormDialog({
       },
       {
         name: "email",
+        placeholder: "Enter Email Address",
         label: "Email Address",
         type: "text",
         rules: {
@@ -76,6 +78,7 @@ export default function EmployeeFormDialog({
       {
         name: "salary",
         label: "Salary",
+        placeholder: "0",
         type: "number",
         gridClass: "half",
         rules: { required: true, min: 1 },

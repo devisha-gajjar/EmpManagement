@@ -369,3 +369,9 @@ ALTER TABLE public.users
 ADD COLUMN is_two_factor_enabled BOOLEAN NOT NULL DEFAULT false,
 ADD COLUMN two_factor_secret TEXT,
 ADD COLUMN two_factor_enabled_on TIMESTAMP;
+
+
+ALTER TABLE public.users
+ADD COLUMN failed_login_count integer NOT NULL DEFAULT 0,
+ADD COLUMN last_failed_login timestamp without time zone,
+ADD COLUMN lockout_until timestamp without time zone;

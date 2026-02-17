@@ -9,6 +9,7 @@ using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using static EmployeeAPI.Entities.Enums.Enum;
 
 namespace EmployeeAPI.Services.Implementation
@@ -41,8 +42,39 @@ namespace EmployeeAPI.Services.Implementation
                 q => q.Include(u => u.Role)
             ) ?? throw new AppException(Constants.INVALID_LOGIN_CREDENTIALS_MESSAGE);
 
-            if (!customService.Verify(dto.Password, user.Password))
+            if (user.LockoutUntil.HasValue && user.LockoutUntil > DateTime.UtcNow)
+                throw new AppException("Account is temporarily locked. Try again later.");
+
+            if (user.FailedLoginCount >= 3)
+            {
+                if (string.IsNullOrWhiteSpace(dto.CaptchaToken))
+                    throw new AppException("Captcha required.");
+
+                var captchaValid = await VerifyCaptchaAsync(dto.CaptchaToken);
+                if (!captchaValid)
+                    throw new AppException("Invalid captcha.");
+            }
+
+            if (!customService.Verify(dto.Password!, user.Password))
+            {
+                user.FailedLoginCount++;
+                user.LastFailedLogin = DateTime.UtcNow;
+
+                // Optional: lock account after 10 failures
+                if (user.FailedLoginCount >= 10)
+                    user.LockoutUntil = DateTime.UtcNow.AddMinutes(15);
+
+                userRepository.Update(user);
+
                 throw new AppException(Constants.INVALID_LOGIN_CREDENTIALS_MESSAGE);
+            }
+
+            // Successful login → reset counters
+            user.FailedLoginCount = 0;
+            user.LastFailedLogin = null;
+            user.LockoutUntil = null;
+
+            userRepository.Update(user);
 
             // 2FA enabled
             if (user.IsTwoFactorEnabled)
@@ -194,6 +226,31 @@ namespace EmployeeAPI.Services.Implementation
 
             return (newAccessToken, newRefreshToken);
         }
+        #endregion
+
+        #region Verify Captcha
+        private async Task<bool> VerifyCaptchaAsync(string token)
+        {
+            var secretKey = "YOUR_SECRET_KEY";
+
+            var values = new Dictionary<string, string>
+                {
+                    { "secret", secretKey },
+                    { "response", token }
+                };
+
+            using var client = new HttpClient();
+            var response = await client.PostAsync(
+                "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+                new FormUrlEncodedContent(values)
+            );
+
+            var json = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<dynamic>(json);
+
+            return result.success == true;
+        }
+
         #endregion
     }
 }

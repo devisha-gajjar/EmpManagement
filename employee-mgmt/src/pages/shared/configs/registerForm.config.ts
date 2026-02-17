@@ -9,6 +9,7 @@ export const RegisterFormFields: DynamicFormField[] = [
         gridClass: "half",
         rules: { required: true },
         validationMessages: { required: "First name is required" },
+        placeholder: "Enter first name"
     },
     {
         label: "Last Name",
@@ -17,6 +18,7 @@ export const RegisterFormFields: DynamicFormField[] = [
         gridClass: "half",
         rules: { required: true },
         validationMessages: { required: "Last name is required" },
+        placeholder: "Enter last name"
     },
     {
         label: "Username",
@@ -24,6 +26,7 @@ export const RegisterFormFields: DynamicFormField[] = [
         type: "text",
         rules: { required: true },
         validationMessages: { required: "Username is required" },
+        placeholder: "Enter user name"
     },
     {
         label: "Email",
@@ -37,6 +40,7 @@ export const RegisterFormFields: DynamicFormField[] = [
             required: "Email is required",
             pattern: "Invalid email address",
         },
+        placeholder: "Enter "
     },
     {
         label: "Password",

@@ -503,14 +503,21 @@ public partial class EmployeeMgmtContext : DbContext
             entity.Property(e => e.EmploymentStartDate)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("employment_start_date");
+            entity.Property(e => e.FailedLoginCount).HasColumnName("failed_login_count");
             entity.Property(e => e.FirstName)
                 .HasMaxLength(255)
                 .HasColumnName("first_name");
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.IsTwoFactorEnabled).HasColumnName("is_two_factor_enabled");
+            entity.Property(e => e.LastFailedLogin)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("last_failed_login");
             entity.Property(e => e.LastName)
                 .HasMaxLength(255)
                 .HasColumnName("last_name");
+            entity.Property(e => e.LockoutUntil)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("lockout_until");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");

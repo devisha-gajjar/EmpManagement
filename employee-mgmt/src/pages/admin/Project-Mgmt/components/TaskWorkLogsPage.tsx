@@ -26,23 +26,21 @@ const TaskWorkLogsPage = () => {
     );
 
   return (
-    <div className="container mt-3">
-      {/* Page Header */}
+    <div>
       <div className="mb-3">
         <PageHeader
           icon="assignment"
           title="Task Work Logs"
           subtitle="View the detailed work logs for this task"
-          theme="blue"
+          theme="purple"
+          showBackButton={true}
         />
       </div>
 
-      {/* No work logs */}
       {data?.workLogs.length === 0 && (
         <p className="text-muted">No work logs found.</p>
       )}
 
-      {/* Work log cards */}
       {data?.workLogs.map((log) => (
         <Card
           key={log.workLogId}
@@ -51,14 +49,12 @@ const TaskWorkLogsPage = () => {
         >
           <CardBody>
             <div className="d-flex justify-content-between align-items-center">
-              <strong className="text-primary">{log.userName}</strong>
+              <strong className="text">{log.userName}</strong>
               <span className="text-muted">{formatDate(log.logDate)}</span>
             </div>
 
             <div className="mt-2">
-              <span className="badge bg-info text-dark">
-                {log.hoursSpent} hrs
-              </span>
+              <span className="badge text-dark">{log.hoursSpent} hrs</span>
             </div>
 
             {log.description && (
