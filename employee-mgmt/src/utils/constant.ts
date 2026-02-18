@@ -137,3 +137,6 @@ export const taskStatusOptions = [
   { label: "Ready for Testing", value: "Ready for Testing" },
   { label: "Completed", value: "Completed" },
 ];
+
+
+export const siteKey = "0x4AAAAAACfAYEkm7YuXVVPq";

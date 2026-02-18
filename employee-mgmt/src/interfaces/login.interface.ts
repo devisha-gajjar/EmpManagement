@@ -2,6 +2,7 @@ export interface LoginData {
     email: string;
     password: string;
     rememberMe: boolean;
+    captchaToken: string;
 }
 
 export interface RegisterData {

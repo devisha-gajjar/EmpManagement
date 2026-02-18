@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { googleLogin, login } from "../../features/auth/authApi";
@@ -14,7 +14,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
-import { emailRegex } from "../../utils/constant";
+import { emailRegex, siteKey } from "../../utils/constant";
 import AuthLayout from "../../components/layout/AuthLayout";
 import PasswordField from "../../components/shared/password-field/PasswordField";
 import { clearReturnUrl } from "../../features/auth/authSlice";
@@ -42,6 +42,9 @@ export default function Login() {
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {}
   );
+
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const [captchaToken, setCaptchaToken] = useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (validationErrors[e.target.name as keyof ValidationErrors]) {
@@ -99,6 +102,7 @@ export default function Login() {
           email: form.usernameOrEmail,
           password: form.password,
           rememberMe: form.rememberMe,
+          captchaToken: captchaToken,
         })
       );
     }
@@ -150,6 +154,24 @@ export default function Login() {
       navigate("/auth/2fa-setup");
     }
   }, [loginStep, navigate]);
+
+  useEffect(() => {
+    // Check if the script loaded and 'turnstile' exists
+    if (window.turnstile && turnstileRef.current) {
+      window.turnstile.render(turnstileRef.current, {
+        sitekey: siteKey, // replace with your Cloudflare site key
+        callback: (token: string) => {
+          setCaptchaToken(token);
+        },
+        "error-callback": () => {
+          setCaptchaToken("");
+        },
+        "expired-callback": () => {
+          setCaptchaToken("");
+        },
+      });
+    }
+  }, []);
 
   return (
     <AuthLayout>
@@ -221,6 +243,8 @@ export default function Login() {
               </Typography>
             }
           />
+
+          <div ref={turnstileRef} style={{ margin: "20px 0" }} />
 
           <Button
             fullWidth

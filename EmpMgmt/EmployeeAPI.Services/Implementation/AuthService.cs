@@ -9,12 +9,13 @@ using EmployeeAPI.Repositories.IRepositories;
 using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using static EmployeeAPI.Entities.Enums.Enum;
 
 namespace EmployeeAPI.Services.Implementation
 {
-    public class AuthService(EmployeeMgmtContext db, ICustomService customService, IGenericRepository<User> userRepository, ITwoFactorService twoFactorService, ITokenService tokenService) : IAuthService
+    public class AuthService(EmployeeMgmtContext db, ICustomService customService, IGenericRepository<User> userRepository, ITwoFactorService twoFactorService, ITokenService tokenService, IConfiguration configuration) : IAuthService
     {
         #region Register
         public User? Register(User user, string password)
@@ -62,7 +63,7 @@ namespace EmployeeAPI.Services.Implementation
 
                 // Optional: lock account after 10 failures
                 if (user.FailedLoginCount >= 10)
-                    user.LockoutUntil = DateTime.UtcNow.AddMinutes(15);
+                    user.LockoutUntil = DateTime.Now.AddMinutes(15);
 
                 userRepository.Update(user);
 
@@ -231,7 +232,7 @@ namespace EmployeeAPI.Services.Implementation
         #region Verify Captcha
         private async Task<bool> VerifyCaptchaAsync(string token)
         {
-            var secretKey = "YOUR_SECRET_KEY";
+            var secretKey = configuration["Cloudflare:SecretKey"];
 
             var values = new Dictionary<string, string>
                 {
