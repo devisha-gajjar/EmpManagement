@@ -20,7 +20,6 @@ import PasswordField from "../../components/shared/password-field/PasswordField"
 import { clearReturnUrl } from "../../features/auth/authSlice";
 import { GoogleLogin } from "@react-oauth/google";
 
-// validation errors
 interface ValidationErrors {
   usernameOrEmail?: string;
   password?: string;
@@ -30,8 +29,15 @@ export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
-  const { loading, error, isAuthenticated, role, returnUrl, loginStep } =
-    useAppSelector((state) => state.auth);
+  const {
+    loading,
+    error,
+    isAuthenticated,
+    role,
+    returnUrl,
+    loginStep,
+    failedLoginAttempt,
+  } = useAppSelector((state) => state.auth);
 
   const [form, setForm] = useState({
     usernameOrEmail: "",
@@ -42,9 +48,12 @@ export default function Login() {
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {}
   );
-
-  const turnstileRef = useRef<HTMLDivElement>(null);
   const [captchaToken, setCaptchaToken] = useState<string>("");
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  const showCaptcha = failedLoginAttempt > 2 || error === "Captcha required.";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (validationErrors[e.target.name as keyof ValidationErrors]) {
@@ -71,6 +80,7 @@ export default function Login() {
       errors.usernameOrEmail = "Email or Username is required.";
       isValid = false;
     }
+
     if (!form.password.trim()) {
       errors.password = "Password is required.";
       isValid = false;
@@ -95,7 +105,6 @@ export default function Login() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (validateForm()) {
       dispatch(
         login({
@@ -113,17 +122,44 @@ export default function Login() {
     navigate("/register");
   };
 
-  // const handleGoogleResponse = (response: any) => {
-  //   const idToken = response.credential;
+  // ✅ Render Turnstile ONCE inside useEffect — NOT in the ref callback.
+  // The ref callback fires on every re-render which caused duplicate widgets.
+  useEffect(() => {
+    if (!showCaptcha) return;
+    if (!containerRef.current) return;
+    if (!window.turnstile) return;
 
-  //   if (!idToken) {
-  //     console.error("Google ID Token not received");
-  //     return;
-  //   }
+    // Already rendered — skip
+    if (widgetIdRef.current) return;
 
-  //   dispatch(googleLogin(idToken));
-  // };
+    widgetIdRef.current = window.turnstile.render(containerRef.current, {
+      sitekey: siteKey,
+      callback: (token: string) => setCaptchaToken(token),
+      "error-callback": () => setCaptchaToken(""),
+      "expired-callback": () => setCaptchaToken(""),
+    });
 
+    // Cleanup on unmount or when captcha hides
+    return () => {
+      if (widgetIdRef.current && window.turnstile) {
+        window.turnstile.remove(widgetIdRef.current);
+        widgetIdRef.current = null;
+        setCaptchaToken("");
+      }
+    };
+  }, [showCaptcha]);
+
+  // ✅ Reset the existing widget after each failed attempt
+  useEffect(() => {
+    if (!showCaptcha) return;
+    if (!widgetIdRef.current) return;
+    if (!window.turnstile) return;
+
+    window.turnstile.reset(widgetIdRef.current);
+    setCaptchaToken("");
+  }, [failedLoginAttempt]);
+
+  // Navigate after successful login
   useEffect(() => {
     if (!isAuthenticated || !role) return;
 
@@ -145,33 +181,15 @@ export default function Login() {
     }
   }, [isAuthenticated, role, returnUrl, navigate, dispatch]);
 
+  // Navigate to 2FA steps
   useEffect(() => {
     if (loginStep === "require_2fa") {
       navigate("/auth/2fa");
     }
-
     if (loginStep === "require_2fa_setup") {
       navigate("/auth/2fa-setup");
     }
   }, [loginStep, navigate]);
-
-  useEffect(() => {
-    // Check if the script loaded and 'turnstile' exists
-    if (window.turnstile && turnstileRef.current) {
-      window.turnstile.render(turnstileRef.current, {
-        sitekey: siteKey, // replace with your Cloudflare site key
-        callback: (token: string) => {
-          setCaptchaToken(token);
-        },
-        "error-callback": () => {
-          setCaptchaToken("");
-        },
-        "expired-callback": () => {
-          setCaptchaToken("");
-        },
-      });
-    }
-  }, []);
 
   return (
     <AuthLayout>
@@ -210,16 +228,6 @@ export default function Login() {
             helperText={validationErrors.usernameOrEmail}
           />
 
-          {/* <TextField
-            fullWidth
-            label="Password"
-            type="password"
-            margin="normal"
-            name="password"
-            onChange={handleChange}
-            error={!!validationErrors.password}
-            helperText={validationErrors.password}
-          /> */}
           <PasswordField
             fullWidth
             label="Password"
@@ -244,7 +252,10 @@ export default function Login() {
             }
           />
 
-          <div ref={turnstileRef} style={{ margin: "20px 0" }} />
+          {/* ✅ Simple div — Turnstile is injected via useEffect, not ref callback */}
+          {showCaptcha && (
+            <div ref={containerRef} style={{ margin: "20px 0" }} />
+          )}
 
           <Button
             fullWidth
@@ -256,16 +267,15 @@ export default function Login() {
           >
             {loading ? "Signing in..." : "Login"}
           </Button>
+
           <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
             <GoogleLogin
               onSuccess={(credentialResponse) => {
                 const idToken = credentialResponse.credential;
-
                 if (!idToken) {
                   console.error("Google ID Token not received");
                   return;
                 }
-
                 dispatch(googleLogin(idToken));
               }}
               onError={() => {

@@ -10,12 +10,13 @@ using EmployeeAPI.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using static EmployeeAPI.Entities.Enums.Enum;
 
 namespace EmployeeAPI.Services.Implementation
 {
-    public class AuthService(EmployeeMgmtContext db, ICustomService customService, IGenericRepository<User> userRepository, ITwoFactorService twoFactorService, ITokenService tokenService, IConfiguration configuration) : IAuthService
+    public class AuthService(EmployeeMgmtContext db, ICustomService customService, IGenericRepository<User> userRepository, ITwoFactorService twoFactorService, ITokenService tokenService, IConfiguration configuration, ILogger<AuthService> logger) : IAuthService
     {
         #region Register
         public User? Register(User user, string password)
@@ -43,7 +44,7 @@ namespace EmployeeAPI.Services.Implementation
                 q => q.Include(u => u.Role)
             ) ?? throw new AppException(Constants.INVALID_LOGIN_CREDENTIALS_MESSAGE);
 
-            if (user.LockoutUntil.HasValue && user.LockoutUntil > DateTime.UtcNow)
+            if (user.LockoutUntil.HasValue && user.LockoutUntil > DateTime.Now)
                 throw new AppException("Account is temporarily locked. Try again later.");
 
             if (user.FailedLoginCount >= 3)
@@ -59,7 +60,7 @@ namespace EmployeeAPI.Services.Implementation
             if (!customService.Verify(dto.Password!, user.Password))
             {
                 user.FailedLoginCount++;
-                user.LastFailedLogin = DateTime.UtcNow;
+                user.LastFailedLogin = DateTime.Now;
 
                 // Optional: lock account after 10 failures
                 if (user.FailedLoginCount >= 10)
@@ -67,7 +68,12 @@ namespace EmployeeAPI.Services.Implementation
 
                 userRepository.Update(user);
 
-                throw new AppException(Constants.INVALID_LOGIN_CREDENTIALS_MESSAGE);
+                // Return the failed login count
+                return new LoginResponse
+                {
+                    FailedLoginAttempt = user.FailedLoginCount,
+                    Message = "Invalid credentials"
+                };
             }
 
             // Successful login → reset counters
@@ -85,9 +91,11 @@ namespace EmployeeAPI.Services.Implementation
                     Step = string.IsNullOrWhiteSpace(user.TwoFactorSecret)
                         ? LoginStep.RequireTwoFactorSetup
                         : LoginStep.RequireTwoFactor,
-                    TempToken = customService.GenerateTempToken(user.UserId, dto.RememberMe)
+                    TempToken = customService.GenerateTempToken(user.UserId, dto.RememberMe),
+                    FailedLoginAttempt = user.FailedLoginCount // Include the failed login count in the response
                 };
             }
+            logger.LogInformation("User logged in successfully");
 
             // No 2FA → issue tokens
             return IssueTokens(user, dto.RememberMe);

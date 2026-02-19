@@ -14,6 +14,7 @@ export interface AuthState {
     error: string | null;
     registerSuccess: string | null;
     returnUrl: string | null;
+    failedLoginAttempt: number;
 }
 
 const getRoleFromToken = (token: string | null): string | null => {
@@ -60,6 +61,7 @@ const initialState: AuthState = {
     loading: false,
     error: null,
     registerSuccess: null,
+    failedLoginAttempt: 0,
 };
 
 const authSlice = createSlice({
@@ -109,10 +111,17 @@ const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(login.fulfilled, (state, action) => {
+                console.log("LOGIN PAYLOAD:", action.payload);
                 state.loading = false;
-                state.error = null;
+                // state.error = null;
 
-                const { step, accessToken, tempToken } = action.payload;
+                const { step, accessToken, tempToken, failedLoginAttempt, message } = action.payload;
+
+                state.failedLoginAttempt = failedLoginAttempt;
+
+                if (step == 0) {
+                    state.error = message;
+                }
 
                 if (step === 1) {
                     // SUCCESS
