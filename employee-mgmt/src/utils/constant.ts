@@ -1,4 +1,4 @@
-export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const emailRegex = /^[^\s][a-zA-Z0-9._%+-]*@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
 export const phoneRegex = /^\+?[1-9]\d{6,14}$/;
 
 export const TEMP_TOKEN_KEY = "temp_token";

@@ -25,7 +25,45 @@ const PasswordField: React.FC<PasswordFieldProps> = (props) => {
   return (
     <TextField
       {...props}
+      fullWidth
+      variant="outlined"
       type={showPassword ? "text" : "password"}
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          height: "46px",
+          borderRadius: "8px",
+          fontSize: "1rem",
+          backgroundColor:
+            document.documentElement.dataset.theme === "dark"
+              ? "#1f2933"
+              : "#ffffff",
+          color:
+            document.documentElement.dataset.theme === "dark"
+              ? "#f9fafb"
+              : "#111827",
+
+          "&.Mui-focused": {
+            boxShadow: "0 0 0 4px rgba(37, 99, 235, 0.25)",
+          },
+
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#d1d5db",
+          },
+
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#249bfcb2",
+            borderWidth: "0.5px",
+          },
+        },
+
+        "& input::placeholder": {
+          color:
+            document.documentElement.dataset.theme === "dark"
+              ? "#9ca3af"
+              : "#6b7280",
+          opacity: 1,
+        },
+      }}
       slotProps={{
         input: {
           endAdornment: (

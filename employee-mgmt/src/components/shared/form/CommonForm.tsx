@@ -17,6 +17,7 @@ import PhoneInput from "react-phone-input-2";
 import { City, Country, State } from "country-state-city";
 import "react-phone-input-2/lib/material.css";
 import { useEffect } from "react";
+import PasswordField from "../password-field/PasswordField";
 
 export default function DynamicFormComponent({
   formConfig,
@@ -69,6 +70,21 @@ export default function DynamicFormComponent({
                       errors[field.name] as any,
                       field.validationMessages
                     );
+
+                    if (field.type === "password") {
+                      return (
+                        <PasswordField
+                          name={field.name}
+                          value={value ?? ""}
+                          onChange={onChange}
+                          placeholder={field.placeholder}
+                          error={!!errorMessage}
+                          helperText={errorMessage}
+                          disabled={field.disabled}
+                          fullWidth
+                        />
+                      );
+                    }
 
                     // ----- Country Select -----
                     if (field.type === "country-select") {

@@ -42,8 +42,6 @@ export function useDebounce(value: string, delay: number) {
 }
 //#endregion
 
-//#region 
-
 export type CommandItem = {
     id: string;
     title: string;
@@ -53,111 +51,114 @@ export type CommandItem = {
     roles?: string[];
 };
 
+/**
+ * Async loader kept OUTSIDE the hook
+ * Fixes Sonar nested function issue
+ */
+async function loadCommands(
+    role: string,
+    navigate: ReturnType<typeof useNavigate>
+): Promise<CommandItem[]> {
+    const projects = await getDropDownData(DropDownType.Project);
+
+    const projectCommands: CommandItem[] = projects.map((p) => ({
+        id: `proj-${p.id}`,
+        title: p.name,
+        subtitle: "Project",
+        keywords: p.name.toLowerCase(),
+        roles: ["admin"],
+        action: () => navigate(`project-details/${p.id}`),
+    }));
+
+    const staticCommands: CommandItem[] = [
+        {
+            id: "dashboard",
+            title: "Dashboard",
+            subtitle: "Page",
+            keywords: "dashboard home",
+            roles: ["user"],
+            action: () => { navigate("dashboard") },
+        },
+        {
+            id: "profile",
+            title: "Profile",
+            subtitle: "Page",
+            keywords: "profile document",
+            roles: ["user"],
+            action: () => { navigate("profile") },
+        },
+        {
+            id: "leave",
+            title: "Leave List",
+            subtitle: "Page",
+            keywords: "leave",
+            roles: ["user"],
+            action: () => { navigate("leave") },
+        },
+        {
+            id: "notification",
+            title: "Notification",
+            subtitle: "Page",
+            keywords: "notification notify updates",
+            roles: ["user"],
+            action: () => { navigate("notification") },
+        },
+        {
+            id: "employee",
+            title: "Employee",
+            subtitle: "Page",
+            keywords: "employee emp",
+            roles: ["admin"],
+            action: () => { navigate("employees") },
+        },
+        {
+            id: "department",
+            title: "Department",
+            subtitle: "Page",
+            keywords: "department dept",
+            roles: ["admin"],
+            action: () => { navigate("departments") },
+        },
+        {
+            id: "leaves",
+            title: "Leaves",
+            subtitle: "Page",
+            keywords: "leave list",
+            roles: ["admin"],
+            action: () => { navigate("leavesList") },
+        },
+        {
+            id: "project",
+            title: "Project",
+            subtitle: "Page",
+            keywords: "project prj",
+            roles: ["admin"],
+            action: () => { navigate("projects") },
+        },
+    ];
+
+    const allCommands = [...projectCommands, ...staticCommands];
+
+    return allCommands.filter((cmd) => !cmd.roles || cmd.roles.includes(role));
+}
+
 export function useGlobalCommands() {
     const navigate = useNavigate();
-    const role = useAppSelector(state => state.auth.role);
+    const role = useAppSelector((state) => state.auth.role);
     const [commands, setCommands] = useState<CommandItem[]>([]);
 
     useEffect(() => {
-        async function load() {
-            const employees = await getDropDownData(DropDownType.Employee);
-            const projects = await getDropDownData(DropDownType.Project);
-            console.log("role in pallete", role);
+        if (!role) return;
 
-            const projectCommands: CommandItem[] = projects.map(p => ({
-                id: `proj-${p.id}`,
-                title: p.name,
-                subtitle: "Project",
-                keywords: p.name.toLowerCase(),
-                roles: ["admin"],
-                action: () => navigate(`project-details/${p.id}`),
-            }));
+        const init = async () => {
+            const result = await loadCommands(role, navigate);
+            setCommands(result);
+        };
 
-            const staticCommands: CommandItem[] = [
-                {
-                    id: "dashboard",
-                    title: "Dashboard",
-                    subtitle: "Page",
-                    keywords: "dashboard home",
-                    roles: ["user"],
-                    action: () => navigate("dashboard"),
-                },
-                {
-                    id: "profile",
-                    title: "Profile",
-                    subtitle: "Page",
-                    keywords: "profile document",
-                    roles: ["user"],
-                    action: () => navigate("profile"),
-                },
-                {
-                    id: "leave",
-                    title: "Leave List",
-                    subtitle: "Page",
-                    keywords: "Leave",
-                    roles: ["user"],
-                    action: () => navigate("leave"),
-                },
-                {
-                    id: "notification",
-                    title: "Notification",
-                    subtitle: "Page",
-                    keywords: "notification notify updates",
-                    roles: ["user"],
-                    action: () => navigate("notification"),
-                },
-                // admin commands
-                {
-                    id: "employee",
-                    title: "Employee",
-                    subtitle: "Page",
-                    keywords: "employee emp",
-                    roles: ["admin"],
-                    action: () => navigate("employees"),
-                },
-                {
-                    id: "department",
-                    title: "Department",
-                    subtitle: "Page",
-                    keywords: "department dept",
-                    roles: ["admin"],
-                    action: () => navigate("departments"),
-                },
-                {
-                    id: "leave",
-                    title: "Leaves",
-                    subtitle: "Page",
-                    keywords: "leavelist leave",
-                    roles: ["admin"],
-                    action: () => navigate("leavesList"),
-                },
-                {
-                    id: "project",
-                    title: "Project",
-                    subtitle: "Page",
-                    keywords: "project prj",
-                    roles: ["admin"],
-                    action: () => navigate("projects"),
-                },
-            ];
-
-            const allCommands = [
-                ...projectCommands,
-                ...staticCommands,
-            ];
-
-            setCommands(
-                allCommands.filter(
-                    cmd => !cmd.roles || cmd.roles.includes(role!)
-                )
-            );
-        }
-
-        if (role) load();
+        void init(); // fixes Sonar promise misuse
     }, [navigate, role]);
 
     return commands;
 }
-
 
 //#endregion

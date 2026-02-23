@@ -97,6 +97,8 @@ label {
 [data-theme="dark"] .form-control:focus,
 [data-theme="dark"] .form-select:focus {
     border-color: #4a90e2;
+    background-color: #000f18;
+    color: white;
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.35);
 }
 

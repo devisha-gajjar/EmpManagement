@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice";
-// import employeesReducer from "../features/employees/empSlice";
 import loaderReducer from "../features/shared/loaderSlice"
 import snackbarReducer from "../features/shared/snackbarSlice";
 import departmentReducer from "../features/admin/department/departmentSlice";

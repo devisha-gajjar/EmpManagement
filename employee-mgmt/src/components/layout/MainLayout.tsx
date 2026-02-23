@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import { SnackbarComponent } from "../shared/snackbar/Snackbar";
 import {
   useAppSelector,
   useGlobalCommands,
@@ -33,8 +32,7 @@ export default function MainLayout() {
       } else {
         leaveHubService.joinUser(userId!);
       }
-    }); +
-      
+    });
 
     notificationHubService.startConnection().then(() => {
       if (role == "admin") {
@@ -99,8 +97,12 @@ export default function MainLayout() {
           latitude: location.latitude,
           longitude: location.longitude,
         });
-      } catch (err) {
-        snackbar.error(`Location permission denied or failed ${err}`);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          snackbar.error(err.message);
+        } else {
+          snackbar.error("Something went wrong");
+        }
       }
     })();
   }, []);

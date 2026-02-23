@@ -286,13 +286,15 @@ const Navbar = ({ onOpenSearch }: { onOpenSearch: () => void }) => {
           anchorEl={notificationAnchor}
           open={Boolean(notificationAnchor)}
           onClose={handleNotificationClose}
-          PaperProps={{
-            sx: {
-              mt: 1.5,
-              width: 420,
-              maxHeight: 500,
-              borderRadius: "12px",
-              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+          slotProps={{
+            paper: {
+              sx: {
+                mt: 1.5,
+                width: 420,
+                maxHeight: 500,
+                borderRadius: "12px",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+              },
             },
           }}
           transformOrigin={{ horizontal: "right", vertical: "top" }}
@@ -479,12 +481,14 @@ const Navbar = ({ onOpenSearch }: { onOpenSearch: () => void }) => {
         anchorEl={profileAnchor}
         open={Boolean(profileAnchor)}
         onClose={handleProfileClose}
-        PaperProps={{
-          sx: {
-            mt: 1.5,
-            width: 280,
-            borderRadius: "12px",
-            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+        slotProps={{
+          paper: {
+            sx: {
+              mt: 1.5,
+              width: 280,
+              borderRadius: "12px",
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+            },
           },
         }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}

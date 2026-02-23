@@ -22,7 +22,7 @@ import { GoogleLogin } from "@react-oauth/google";
 
 interface ValidationErrors {
   usernameOrEmail?: string;
-  password?: string;
+  passwordError?: string;
 }
 
 export default function Login() {
@@ -82,12 +82,7 @@ export default function Login() {
     }
 
     if (!form.password.trim()) {
-      errors.password = "Password is required.";
-      isValid = false;
-    }
-
-    if (form.password.trim() && form.password.length < 6) {
-      errors.password = "Password must be at least 6 characters long.";
+      errors.passwordError = "Password is required.";
       isValid = false;
     }
 
@@ -122,8 +117,6 @@ export default function Login() {
     navigate("/register");
   };
 
-  // ✅ Render Turnstile ONCE inside useEffect — NOT in the ref callback.
-  // The ref callback fires on every re-render which caused duplicate widgets.
   useEffect(() => {
     if (!showCaptcha) return;
     if (!containerRef.current) return;
@@ -149,7 +142,7 @@ export default function Login() {
     };
   }, [showCaptcha]);
 
-  // ✅ Reset the existing widget after each failed attempt
+  // Reset the existing widget after each failed attempt
   useEffect(() => {
     if (!showCaptcha) return;
     if (!widgetIdRef.current) return;
@@ -233,8 +226,8 @@ export default function Login() {
             label="Password"
             name="password"
             onChange={handleChange}
-            error={!!validationErrors.password}
-            helperText={validationErrors.password}
+            error={!!validationErrors.passwordError}
+            helperText={validationErrors.passwordError}
           />
 
           <FormControlLabel
@@ -252,7 +245,6 @@ export default function Login() {
             }
           />
 
-          {/* ✅ Simple div — Turnstile is injected via useEffect, not ref callback */}
           {showCaptcha && (
             <div ref={containerRef} style={{ margin: "20px 0" }} />
           )}

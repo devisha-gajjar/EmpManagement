@@ -40,7 +40,7 @@ export const RegisterFormFields: DynamicFormField[] = [
             required: "Email is required",
             pattern: "Invalid email address",
         },
-        placeholder: "Enter "
+        placeholder: "Enter email address"
     },
     {
         label: "Password",
@@ -54,6 +54,7 @@ export const RegisterFormFields: DynamicFormField[] = [
             required: "Password is required",
             minLength: "Minimum 8 characters",
         },
+        placeholder: "Enter password"
     },
     {
         label: "Confirm Password",
@@ -63,6 +64,7 @@ export const RegisterFormFields: DynamicFormField[] = [
         validationMessages: {
             required: "Confirm password is required",
         },
+        placeholder: "Confirm password"
     },
     {
         label: "Phone",
@@ -73,6 +75,7 @@ export const RegisterFormFields: DynamicFormField[] = [
         validationMessages: {
             pattern: "Invalid phone number",
         },
+        placeholder: "Enter Phone number"
     },
     {
         label: "Zipcode",
@@ -87,10 +90,12 @@ export const RegisterFormFields: DynamicFormField[] = [
             minLength: "Zipcode must be 6 digits",
             maxLength: "Zipcode must be 6 digits",
         },
+        placeholder: "Enter zipcode"
     },
     {
         label: "Address",
         name: "address",
         type: "text",
+        placeholder: "Enter address"
     },
 ];
