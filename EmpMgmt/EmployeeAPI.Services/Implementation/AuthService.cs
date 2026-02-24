@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text;
 using EmployeeAPI.Entities.Data;
 using EmployeeAPI.Entities.DTO;
 using EmployeeAPI.Entities.DTO.RequestDto;
@@ -238,9 +239,11 @@ namespace EmployeeAPI.Services.Implementation
         #endregion
 
         #region Verify Captcha
-        private async Task<bool> VerifyCaptchaAsync(string token)
+        private static async Task<bool> VerifyCaptchaAsync(string token)
         {
-            var secretKey = configuration["Cloudflare:SecretKey"];
+            var secretKey = Environment.GetEnvironmentVariable("CLOUDFLARE_SECRET");
+
+            Console.WriteLine("---- secret" + secretKey);
 
             var values = new Dictionary<string, string>
                 {

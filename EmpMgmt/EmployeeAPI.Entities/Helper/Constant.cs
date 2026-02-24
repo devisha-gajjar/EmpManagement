@@ -27,7 +27,10 @@ public static class Constants
     public const string EXPIRED_LOGIN_SESSION_MESSAGE = "Your Login Session has expired. Please login again.";
     public const string FAILED_TOKEN_GENERATION_MESSAGE = "Failed to generate session tokens.";
     public const string INVALID_LOGIN_CREDENTIALS_MESSAGE = "Invalid Login Credentials.";
+    #endregion
 
+    #region Login Messages
+    public const string CLOUDFLARE_SECRET_NOT_CONFIGURE = "Cloudflare secret is not configures.";
     #endregion
 
     #region Entity Field Names

@@ -98,7 +98,9 @@ export default function MainLayout() {
           longitude: location.longitude,
         });
       } catch (err: unknown) {
+        console.log(err);
         if (err instanceof Error) {
+          console.log("Inner err", err);
           snackbar.error(err.message);
         } else {
           snackbar.error("Something went wrong");

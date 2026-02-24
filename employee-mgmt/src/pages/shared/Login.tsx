@@ -216,15 +216,36 @@ export default function Login() {
             label="Email or Username"
             margin="normal"
             name="usernameOrEmail"
+            value={form.usernameOrEmail}
             onChange={handleChange}
             error={!!validationErrors.usernameOrEmail}
             helperText={validationErrors.usernameOrEmail}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px", // more rounded
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#adb5bd",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#022A52",
+                },
+                "&.Mui-focused": {
+                  boxShadow: "0 0 0 4px rgba(37, 99, 235, 0.25)",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#249bfcb2",
+                  borderWidth: "0.5px",
+                },
+                marginBottom: "10px",
+              },
+            }}
           />
 
           <PasswordField
             fullWidth
             label="Password"
             name="password"
+            value={form.password}
             onChange={handleChange}
             error={!!validationErrors.passwordError}
             helperText={validationErrors.passwordError}

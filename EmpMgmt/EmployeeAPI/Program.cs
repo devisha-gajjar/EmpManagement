@@ -95,7 +95,7 @@ builder.Services.AddAuthorization();
 var jwtSecret =
     builder.Configuration["JWT_SECRET"]
     ?? Environment.GetEnvironmentVariable("JWT_SECRET")
-    ?? throw new Exception("JWT_SECRET not configured");
+    ?? throw new Exception(Constants.JWT_KEY_ERROR_MESSAGE);
 
 var signingKey = new SymmetricSecurityKey(
     Encoding.UTF8.GetBytes(jwtSecret)

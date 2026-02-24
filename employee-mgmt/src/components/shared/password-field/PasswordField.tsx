@@ -7,9 +7,14 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-type PasswordFieldProps = TextFieldProps;
+type PasswordFieldProps = TextFieldProps & {
+  height?: number | string;
+};
 
-const PasswordField: React.FC<PasswordFieldProps> = (props) => {
+const PasswordField: React.FC<PasswordFieldProps> = ({
+  height = 55,
+  ...props
+}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -30,7 +35,7 @@ const PasswordField: React.FC<PasswordFieldProps> = (props) => {
       type={showPassword ? "text" : "password"}
       sx={{
         "& .MuiOutlinedInput-root": {
-          height: "46px",
+          height: typeof height === "number" ? `${height}px` : height,
           borderRadius: "8px",
           fontSize: "1rem",
           backgroundColor:
