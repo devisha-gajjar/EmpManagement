@@ -67,7 +67,9 @@ function Department() {
       </div>
 
       {departments.length === 0 ? (
-        <Typography>No departments found.</Typography>
+        <Alert severity="info" sx={{ mt: 2 }}>
+          No Department found.
+        </Alert>
       ) : (
         <List>
           {departments.map((d) => (

@@ -115,8 +115,8 @@ const UserTaskDetailPage = () => {
 
   const { task, timeline, workLogs, tags } = selectedTask;
 
-  const currentUserId = userId;
-  const isAssignedUser = task?.userId === currentUserId;
+  const currentUserId = Number.parseInt(userId!);
+  const isAssignedUser = task?.assignedTo === currentUserId;
 
   const totalHours = workLogs.reduce(
     (total: number, log: TaskWorkLogDto) => total + log.hoursSpent,
