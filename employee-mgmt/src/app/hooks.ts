@@ -93,7 +93,7 @@ async function loadCommands(
             subtitle: "Page",
             keywords: "leave",
             roles: ["user"],
-            action: () => { navigate("leave") },
+            action: () => { navigate("leaves") },
         },
         {
             id: "notification",
@@ -155,7 +155,7 @@ export function useGlobalCommands() {
             setCommands(result);
         };
 
-        void init(); // fixes Sonar promise misuse
+        void init();
     }, [navigate, role]);
 
     return commands;
